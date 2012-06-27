@@ -1,0 +1,70 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    История изменений характеристик
+{% endblock %}
+
+{% block content %}
+    <h1>История изменений характеристик комьютера</h1>
+    <div id="pc_detail_parent">
+        <table>
+            <tbody id="table_pc_parent">
+            <tr>
+                <th>Фирма</th>
+                <td>{{ pc.company }}</td>
+            </tr>
+            <tr>
+                <th>ID</th>
+                <td>{{ pc.pc_nameId }}</td>
+            </tr>
+            <tr>
+                <th>HOSTNAME</th>
+                <td>{{ pc.pc_name }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id='tableDiv'>
+        <div id="preTableTop">
+            <p>Количество Изменений {{ paginator.count }}</p>
+        </div>
+        <table class='listTable'>
+            <thead>
+            <tr>
+                <th>Характеристика</th>
+                <th>Значение</th>
+                <th>Когда последний раз изменялась</th>
+                <th>Кто последний раз изменил</th>
+            </tr>
+            </thead>
+            <tbody id="mainTable">
+            {% for opt in options %}
+                <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ opt.id }}">
+                    <td class='valueCol'>{{ opt.option }}</td>
+                    <td class='valueCol'>{{ opt.body }}</td>
+                    <td class='dateCol' >{{ opt.date }}</td>
+                    <td class='dateCol' >{{ opt.user.first_name }} {{ opt.user.last_name }}</td>
+                    {% empty %}
+                <tr>
+                    <td colspan="4">У данного комьютера нет истории характеристик</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p id='paginator'>&nbsp;
+            {% if paginator.num_pages > 1 %}
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">&larr; Предыдущая &nbsp;</a>
+                {% endif %}
+                <span class="current_page">Страница {{ page_obj.number }} из {{ paginator.num_pages }}.</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">&nbsp; Следующая &rarr;</a>
+                {% endif %}
+            {% endif %}
+        </p>
+    </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

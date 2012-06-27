@@ -1,0 +1,130 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Чат
+{% endblock %}
+
+{% block content %}
+    <h1>Обсуждение вопроса</h1>
+    <div class="q_but"></div>
+    <div class='q_pc_detail'>
+        {% if not user_is_company %}
+            {% if question.pc_from %}
+                <button onclick="GetPcInfo()" class='but_q_pc_detail' type="button" id="{{ question.pc_from.id }}">Информация о ПК</button>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div id='question' class='borderLine3'></div>
+    <div id="messages">
+        <div id="messBlock"></div>
+        <div class='red_error'>
+            <p>
+                {% if error_msg %}
+                    {{ error_msg }}
+                {% endif %}
+            </p>
+        </div>
+        <div id="messForm" class="borderLine oneMsg">
+            <form action="{% url chat question.pk %}" method="POST">{% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                {{ form.non_field_errors }}
+                <div class="fieldWrapper">
+                    <span id="error_mess">{{ form.body.errors }}</span>
+                    <label id="mes_table_lable" for="id_body">Сообщение:</label>
+                    <table id="mes_table">
+                        <tbody>
+                            <tr>
+                                <td id='mes_table_message'>{{ form.body }}</td>
+                                <td id="mes_table_button"><input id="mes_button" type="submit" value="Отправить" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="q_but"></div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function ChangeStatus(){
+                var st = $('.quesBut').attr('id');
+                $.post('/change_status/{{ question.id }}/', { status : st, csrfmiddlewaretoken: '{{ csrf_token }}' }).done(
+                        function(){
+                            GetQuestionNoHide();
+                            GetButtonsNoHide();
+                        });
+        }
+        function GetQuestion(){
+            $('#question').hide();
+            $.ajax({
+                url: '/ajax/get_ques/{{ question.id }}/',
+                type: 'GET',
+                dataType: 'html'
+            }).done(function(data){
+                        $('#question').empty().append(data).fadeIn();
+                    })
+        }
+        function GetQuestionNoHide(){
+            $.ajax({
+                url: '/ajax/get_ques/{{ question.id }}/',
+                type: 'GET',
+                dataType: 'html'
+            }).done(function(data){
+                        $('#question').empty().append(data);
+                    })
+        }
+        function GetButtons(){
+            $('.q_but').hide();
+            $.ajax({
+               url: '/ajax/get_but/{{ question.id }}/',
+               type: "GET",
+               dataType: 'html'
+            }).done(function(data){
+                        $('.q_but').empty().append(data).fadeIn();
+                    });
+        }
+        function GetButtonsNoHide(){
+            $.ajax({
+                url: '/ajax/get_but/{{ question.id }}/',
+                type: "GET",
+                dataType: 'html'
+            }).done(function(data){
+                        $('.q_but').empty().append(data);
+                    });
+        }
+        function GetChat(){
+            $('#messBlock').hide();
+            $.ajax({
+                url:'/ajax/get_chat_mess/{{ question.id }}/',
+                type: 'GET',
+                dataType: 'html'
+            }).done(function(data){
+                        $('#messBlock').empty().append(data).fadeIn();
+                    });
+        }
+        function GetChatNoHide(){
+            $.ajax({
+                url:'/ajax/get_chat_mess/{{ question.id }}/',
+                type: 'GET',
+                dataType: 'html'
+            }).done(function(data){
+                        $('#messBlock').empty().append(data);
+                    });
+        }
+        function GetPcInfo(){
+            var id = $('.but_q_pc_detail').attr('id');
+            window.location = '/pc_detail/' + id + '/'
+        }
+        $(document).ready(function(){
+            GetQuestion();
+            GetButtons();
+            GetChat();
+            setInterval('GetChatNoHide()', 5000);
+            setInterval('GetQuestionNoHide()', 5000);
+        });
+    </script>
+{% endblock %}

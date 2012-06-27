@@ -1,0 +1,35 @@
+<div id='tableDiv'>
+    <div id="preTableTop">
+        <p>Количество компьютеров {{ paginator.count }}</p>
+    </div>
+    <table class='listTable'>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Host name</th>
+        </tr>
+        </thead>
+        <tbody id="mainTable">
+        {% for pc in pc_list %}
+            <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ pc.id }}">
+                <td>{{ pc.pc_nameId }}</td>
+                <td>{{ pc.pc_name }}</td>
+        {% empty %}
+            <tr>
+                <td colspan="2">Нет компбютеров в данной фирме</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p id='paginator'>&nbsp;
+        {% if paginator.num_pages > 1 %}
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">&larr; Предыдущая &nbsp;</a>
+            {% endif %}
+            <span class="current_page">Страница {{ page_obj.number }} из {{ paginator.num_pages }}.</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">&nbsp; Следующая &rarr;</a>
+            {% endif %}
+        {% endif %}
+    </p>
+</div>

@@ -1,0 +1,55 @@
+{% extends 'main.html' %}
+
+{% block script %}
+    <script>
+        function GetOptions(){
+            $('#id_option').hide();
+            $.ajax({
+                url: '/ajax/get_options_for_add/{{ pc_pk }}/',
+                type: 'GET',
+                dataType: 'html',
+                success : function(data){
+                    $('#id_option').empty().append(data).fadeIn();
+                }
+            }).done(function(){
+                        ShowMessage();
+                    });
+        }
+        function ShowMessage(){
+            if($('#id_option option').length<2){
+                $('#message').fadeIn();
+            }
+        }
+        function HideMess(){
+            $('#message').hide();
+        }
+        function AddOptionForAll(){
+            var id = $('.but_add_option_for_all').attr('id')
+            window.location = '/add_pc_option_for_all/' + id + '/';
+        }
+        $(document).ready(function(){
+            HideMess();
+            GetOptions();
+        });
+    </script>
+{% endblock %}
+
+{% block title %}
+    Добавление характеристики
+{% endblock %}
+
+{% block content %}
+    <h1>Добавление харакетристики для ПК</h1>
+    <div id="message">
+        <p>Если список характеристик пуст то все опции заполнены, добавьте новый вид характеристики</p>
+        <button type="button" onclick="AddOptionForAll()" id="{{ pc_pk }}" class='but_add_option_for_all'>Добавить вид характеристики</button>
+    </div>
+    <div id='question' class='borderLine'>
+        <form action="{% url add_option pc_pk %}" method="POST">{% csrf_token %}
+            <table id='tableForm'>
+                {{ form.as_table }}
+            </table>
+            <input type="submit" value="Добавить" />
+        </form>
+    </div>
+{% endblock %}

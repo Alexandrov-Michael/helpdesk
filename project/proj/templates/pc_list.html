@@ -1,0 +1,79 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Список доступных компьютеров
+{% endblock %}
+
+{% block content %}
+    <h1>Список компьютеров в ваших компаниях</h1>
+    <div id="choise_company">
+        <p class="p_error" id="p_choise_msg">Выберите пожалуйста компанию</p>
+        <p id="message">Если список компаний пуст, то вы не обслуживаете ни одну компанию</p>
+        <select id='sel_choise_company' name='name_sel_choise_company' onchange="GetPcList()">
+            <option value="0" selected="selected">---------</option>
+        </select>
+    </div>
+    <div id='ajax_pc_list'></div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function GetCompany(){
+            $('#message').hide();
+            $('#sel_choise_company').hide();
+            $.ajax({
+                url: '/ajax/get_company_for_pc_list/',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#sel_choise_company').append(data).fadeIn();
+                }
+            }).done(function(){
+                        GetOptionsLen();
+                    });
+        }
+        function GetOptionsLen(){
+            if($('#sel_choise_company option').length<2){
+                $('#p_choise_msg').fadeOut();
+                $('#message').fadeIn();
+            }
+        }
+        function GetPcList(){
+            var value = $('#sel_choise_company').val()
+            if(value != 0){
+                $('#p_choise_msg').fadeOut();
+                $('#ajax_pc_list').hide();
+                $.ajax({
+                    url: '/ajax/get_pc_for_list/'+value+'/',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(data){
+                        $('#ajax_pc_list').empty().append(data).fadeIn();
+                    }
+                }).done(function(){
+                            GetPcDetail();
+                            HoverTr();
+                        });
+            }else{
+                    $('#ajax_pc_list').fadeOut().empty();
+                    $('#choise_company p').fadeIn();
+            }
+        }
+        function GetPcDetail(){
+            $('#mainTable tr').click(function(){
+                var id = $(this).attr('id');
+                window.location = '/pc_detail/' + id + '/';
+            });
+        }
+        function HoverTr(){
+            $('#mainTable tr').hover( function(){
+                 $('td', this).css('background','#6699ff');
+            }, function(){
+                        $('td', this).css( 'background','');
+            });
+        }
+        $(document).ready(function(){
+            GetCompany();
+        });
+    </script>
+{% endblock %}

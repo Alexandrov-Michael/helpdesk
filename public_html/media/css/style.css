@@ -1,0 +1,352 @@
+/*stylesheet for FREGATSOFT*/
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+    color: #333;
+    background: #fff;
+}
+
+/* LINKS */
+
+a{
+    outline: none;
+}
+
+a:link, a:visited {
+    color: #5b80b2;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #036;
+}
+
+a img {
+    border: none;
+}
+
+a.section:link, a.section:visited {
+    color: white;
+    text-decoration: none;
+}
+
+.errorlist{
+    color: red;
+    margin: 3px;
+}
+
+
+/* header */
+
+/* headerTop */
+
+#headerTop {
+    background: none repeat scroll 0 0 #417690;
+    color: #FFFFCC;
+    overflow: hidden;
+}
+
+#logo h1 {
+    color: #F4F379;
+    font-size: 18px;
+    font-weight: normal;
+    margin:8px 0;
+    padding: 0 10px;
+}
+
+.information{
+    font-size: 11px;
+    padding: 1.2em 10px;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    top: 0;
+}
+
+.information a{
+    color:white;
+}
+
+
+/* menu */
+
+#menu{
+    padding: 5px 5px 5px 10px;
+    border:1px solid #CCCCCC;
+}
+
+#menu a{
+    font-size: 17px;
+}
+
+#menu ul li{
+    display: inline;
+    margin: 0 15px 0 0;
+}
+
+
+/* content */
+
+#content{
+    margin: 10px 15px;
+}
+
+
+/* tableDiv */
+
+#tableDiv {
+    position: relative;
+    width: 100%;
+    background: none repeat scroll 0 0 white;
+    border: 1px solid #CCCCCC;
+    margin:5px 0 10px 0;
+}
+
+#preTableTop {
+    background: url("../img/nav-bg-reverse.gif") repeat-x scroll 0 -10px white;
+    border-bottom: 1px solid #DDDDDD;
+    border-top: 1px solid #FFFFFF;
+    color: #999999;
+    padding: 7px;
+    font-size: 13px;
+}
+
+#paginator {
+    background: url("../img/nav-bg.gif") repeat-x scroll 0 180% white;
+    border-bottom: 1px solid #EEEEEE;
+    border-top: none;
+    color: #666666;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.listTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+.listTable th, .listTable td{
+    padding: 5px;
+}
+
+.listTable thead tr th{
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.listTable thead tr th:first-child{
+    border-left: none;
+}
+
+.listTable thead tr th:last-child{
+    border-right: none;
+}
+
+.listTable tbody tr td{
+    border: 1px solid #ccc;
+}
+
+.listTable tbody tr td:last-child{
+    border-right: none;
+}
+
+
+.firstTd{
+    background: none repeat scroll 0 0 #EDF3FE;
+}
+
+.secondTd{
+
+}
+
+.plus{
+    background: #C8FFCB;
+}
+
+.minus{
+    background: yellow;
+}
+
+.check{
+    width: 10%;
+}
+
+.dateCol{
+    width: 20%;
+}
+
+.valueCol{
+    width: 30%;
+}
+
+.numbers{
+    width: 4%;
+}
+
+#mainTable tr:hover{
+    cursor: pointer;
+}
+
+/* edit questions */
+
+.borderLine {
+    border:1px solid #ccc;
+}
+
+
+#question{
+    padding: 7px;
+    margin:10px 0 0 0;
+}
+
+#messages{
+    margin: 15px 0 0 0;
+    width: 60%;
+}
+
+.oneMsg{
+    border-radius: 11px;
+    padding: 10px;
+    margin:0 0 10px 0;
+}
+
+.oneMsgAdmin{
+    border:2px solid #AEC5FF;
+}
+
+.oneMsgUser{
+    border:2px solid #93DC8F;
+}
+
+.userName{
+    font-weight: bold;
+    margin:0 0 5px 0;
+}
+
+
+.quesBut{
+    margin: 10px;
+}
+
+
+/* chat */
+
+#q_table th{
+    text-align: right;
+    padding: 5px 0 0 0;
+}
+
+#q_table td{
+    padding: 5px 0 0 10px;
+}
+
+#mes_button{
+    width: 95px;
+    height: 95px;
+}
+
+#mes_table_lable{
+    font-weight: bold;
+}
+
+#error_mess ul{
+    margin: 0 0 0 13px;
+    color: red;
+}
+
+.borderLine3{
+    border:3px solid #ccc;
+}
+
+.chat_question_body{
+    font-style: italic;
+}
+
+.p_error{
+    color: blue;
+    font-size: 15px;
+    margin: 10px 0 10px 0;
+}
+
+#choise_company{
+    margin: 10px 0 10px 0;
+}
+
+#pc_detail_parent{
+    margin: 10px;
+}
+
+#table_pc_parent th{
+    text-align: right;
+    padding: 3px 5px 0 0;
+}
+
+#div_add_but{
+    margin: 10px;
+}
+
+.q_pc_detail{
+    margin: 0 0 0 10px;
+}
+
+.but_history_but{
+    margin: 0 0 5px 10px;
+}
+
+.bold_span{
+    font-weight: bold;
+}
+
+#message{
+    font-weight: bold;
+    color: red;
+    margin: 15px 0 5px 0;
+}
+
+input[type="submit"], button{
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: url("../img/nav-bg.gif") repeat-x scroll center bottom white;
+    border-color: #DDDDDD #AAAAAA #AAAAAA #DDDDDD;
+    border-style: solid;
+    border-width: 1px;
+    color: black;
+    padding: 3px 5px;
+}
+
+#tableForm{
+    margin: 0 0 10px 0;
+}
+
+#change_pc_option{
+    padding: 7px;
+}
+
+.but_add_option_for_all{
+    margin: 5px 0 5px 0;
+}
+
+.note{
+    color: #003398;
+    margin: 5px 0 5px 0;
+    font-size: 15px;
+}
+
+.red_error{
+    color: red;
+    font-size: 17px;
+    margin: 10px 0 10px 0;
+}

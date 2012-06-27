@@ -1,0 +1,50 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Задать вопрос
+{% endblock %}
+
+
+{% block content %}
+    <h1>Задать вопроса</h1>
+    <div id='question' class='borderLine'>
+        <div class="note">
+            <p>Представтесь пожалуйста</p>
+        </div>
+        <form action="{% url add_q %}" method="POST">{% csrf_token %}
+            <table id='tableForm'>
+                {{ form.as_table }}
+            </table>
+            <input type="submit" value="Создать вопрос" />
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+    function GetPcFrom(){
+        $('#id_user_from').hide();
+                    $.ajax({
+                        url: '/ajax/get_pc_from/',
+                        dataType: 'html',
+                        type:'GET'
+                    }).done(function(data){
+                                $('#id_user_from').empty().append(data).fadeIn();
+              });
+    }
+    function GetUserTo(){
+        $('#id_user_to').hide();
+        $.ajax({
+            url: '/ajax/get_user_to/',
+            dataType: 'html',
+            type:'GET'
+        }).done(function(data){
+                    $('#id_user_to').empty().append(data).fadeIn();
+                });
+    }
+    $(document).ready(function(){
+        GetPcFrom();
+        GetUserTo();
+    });
+    </script>
+{% endblock %}

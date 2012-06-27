@@ -1,0 +1,65 @@
+<table>
+    <tbody id="q_table">
+    <tr>
+        <th>Дата создания вопроса:</th>
+        <td>{{ question.date }}</td>
+    </tr>
+    <tr>
+        <th>От кого:</th>
+        <td>
+            {{ question.user_from.first_name }}
+            {% if question.user_from.last_name %}
+                {{ question.user_from.last_name }}
+            {% endif %}
+            {% if question.pc_from %}
+                : {{ question.pc_from }} {{ question.worker_from }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Кому:</th>
+        <td>
+            {{ question.user_to.first_name }}
+            {% if question.user_to.last_name %}
+                {{ question.user_to.last_name }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Вопрос:</th>
+        <td class='chat_question_body'>{{ question.body }}</td>
+    </tr>
+    <tr>
+        <th>Закрыт отправителем:</th>
+        <td style='
+                {% if question.user_check %}
+                    color:green;
+                {% else %}
+                    color:red;
+                {% endif %}
+                '>
+            {% if question.user_check %}
+                Вопрос закрыт
+            {% else %}
+                Вопрос открыт
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Закрыт получателем:</th>
+        <td style='
+                {% if question.admin_check %}
+                    color:green;
+                {% else %}
+                    color:red;
+                {% endif %}
+                '>
+            {% if question.admin_check %}
+                Вопрос закрыт
+            {% else %}
+                Вопрос открыт
+            {% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>

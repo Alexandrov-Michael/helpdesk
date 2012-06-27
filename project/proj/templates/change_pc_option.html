@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Изменение характеристики ПК
+{% endblock %}
+
+{% block content %}
+    <h1>Изменение характеритики ПК</h1>
+    <div id='change_pc_option' class='borderLine'>
+        <form action="{% url option_change object.id %}" method="POST">{% csrf_token %}
+            <table id='tableForm'>
+                {{ form.as_table }}
+            </table>
+            <input type="submit" value='Изменить' />
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{{ MEDIA_URL }}css/style.css" type='text/css' rel='stylesheet' />
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
+    <title>
+    {% block title %}
+        Главная
+    {% endblock %}
+     | ФРЕГАТСОФТ
+    </title>
+    {% block links %}
+    {% endblock %}
+    {% block head_script %}
+    {% endblock %}
+</head>
+<body>
+<div id='wropper'>
+    <div id='header'>
+        <div id='headerTop'>
+            <div id='logo'>
+                <h1>HELPDESK от компании ООО "ФРЕГАТСОФТ"</h1>
+            </div>
+            <div class='information'>
+                Добро пожаловать, {{ USER_LOGON }}.
+                <a href="#">Документация</a>
+                /
+                <a href="/accounts/logout/">Выйти</a>
+            </div>
+        </div><!--headerTop-->
+        <div id='headerBot'>
+            <div class='messages'>
+            </div>
+            <div id='menu'>
+                {% block menu %}
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/add_q/">Задать вопрос</a></li>
+                        {% if not user_is_company %}
+                            <li><a href="{% url pc_list %}">Список ПК</a></li>
+                            <li><a href="{% url add_pc %}">Добавить ПК</a></li>
+                        {% endif %}
+                    </ul>
+                {% endblock %}
+            </div>
+        </div><!--headerBot-->
+    </div><!--header-->
+    <div id='content'>
+        {% block content %}
+        <h1>Список выших вопросов</h1>
+        <div id='tableDiv'></div>
+        {% endblock %}
+    </div><!--content-->
+    <div id='footer'>
+        {% block footer %}
+        {% endblock %}
+    </div><!--footer-->
+</div><!--wropper-->
+{% block script %}
+    <script>
+        function GetQues(){
+            $('tbody tr').click(function(){
+                var id = $(this).attr('id');
+                if(id){
+                    window.location = '/chat/' + id;
+                }
+            })
+        }
+        function getDetailHover(){
+            $('#mainTable tr').hover( function(){
+                $('td', this).css('background','#6699ff');
+            }, function(){
+                $('td', this).css( 'background','');
+            });
+        }
+        function GetIndexQuestion(){
+            $('#tableDiv').hide();
+            $.ajax({
+                url: '/ajax/get_index_ques/',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data){
+                            $('#tableDiv').empty().append(data).fadeIn();
+                            }
+            }).done(function(){
+                        getDetailHover();
+                        GetQues();
+                    });
+        }
+        function GetIndexQuestionNoHide(){
+            $.ajax({
+                url: '/ajax/get_index_ques/',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#tableDiv').empty().append(data);
+                }
+            }).done(function(){
+                        getDetailHover();
+                        GetQues();
+                    });
+        }
+        $(document).ready(function(){
+            GetIndexQuestion();
+            setInterval('GetIndexQuestionNoHide()', 60000);
+        });
+    </script>
+{% endblock %}
+</body>
+</html>
