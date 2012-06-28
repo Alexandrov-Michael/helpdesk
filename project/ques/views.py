@@ -499,6 +499,7 @@ class GetReportListForReportForQuesView(ListView):
     template_name = 'ajax_get_report_list_for_report_ques.html'
     company_post_filter = 'company'
     user_post_filter = 'user'
+    paginate_by = 30
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -660,6 +661,7 @@ class GetReportForPcHistoryView(ListView):
     pc_get_filter = 'pc'
     user_get_filter = 'user'
     company_get_filter = 'company'
+    paginate_by = 30
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
