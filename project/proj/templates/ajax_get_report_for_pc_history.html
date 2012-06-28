@@ -1,0 +1,41 @@
+<div id='tableDiv'>
+    <div id="preTableTop">
+        <p>Количество изменений {{ paginator.count }}</p>
+    </div>
+    <table class='listTable'>
+        <thead>
+        <tr>
+            <th>Дата изменения</th>
+            <th>Кто изменил</th>
+            <th>ПК</th>
+            <th>Характеристика</th>
+            <th>Значение</th>
+        </tr>
+        </thead>
+        <tbody id="mainTable">
+        {% for item in changes %}
+            <tr class='{% cycle 'firstTd' 'secondTd' %}'>
+                <td>{{ item.date }}</td>
+                <td>{{ item.user.first_name }} {{ item.user.last_name }}</td>
+                <td>{{ item.pc }}</td>
+                <td>{{ item.option }}</td>
+                <td>{{ item.body }}</td>
+                {% empty %}
+            <tr>
+                <td colspan="5">История изменений пуста</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p id='paginator'>&nbsp;
+        {% if paginator.num_pages > 1 %}
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">&larr; Предыдущая &nbsp;</a>
+            {% endif %}
+            <span class="current_page">Страница {{ page_obj.number }} из {{ paginator.num_pages }}.</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">&nbsp; Следующая &rarr;</a>
+            {% endif %}
+        {% endif %}
+    </p>
+</div>

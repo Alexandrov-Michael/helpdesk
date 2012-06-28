@@ -1,0 +1,4 @@
+<option selected="selected" value="0">---------</option>
+{% for item in companys %}
+    <option value="{{ item.com_user.id }}">{{ item.com_user.first_name }}</option>
+{% endfor %}

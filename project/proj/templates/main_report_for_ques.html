@@ -1,0 +1,70 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Отчет по вопросам
+{% endblock %}
+
+{% block content %}
+    <h1>Отчет по заданным вопросам</h1>
+    <div class="choise_options">
+        <div class="div_choise_company choise_margin">
+            <p>Выберите компанию</p>
+            <select onchange="GetReportForCompany()" id="sel_choise_company" name='sel_choise_company'></select>
+        </div>
+        <div class="div_choise_user choise_margin">
+            <p>Выберите сотрудника</p>
+            <select onchange="GetReportForCompany()" id="sel_choise_user" name='sel_choise_user'></select>
+        </div>
+    </div>
+    <div id="report_list"></div>
+{% endblock %}
+
+
+{% block script %}
+    <script type="text/javascript">
+        function GetCompanyList(){
+            $('#report_list').hide();
+            $('.div_choise_company').hide();
+            $.ajax({
+                url : '/ajax/get_company_for_report_ques/',
+                type: 'GET',
+                dataType: 'html',
+                success : function(data){
+                    $('#sel_choise_company').empty().append(data);
+                }
+            }).done(function(){
+                        $('.div_choise_company').fadeIn();
+                    });
+        }
+        function GetUserList(){
+            $('.div_choise_user').hide();
+            $.ajax({
+                url : '/ajax/get_users_for_report_ques/',
+                type: 'GET',
+                dataType: 'html',
+                success : function(data){
+                    $('#sel_choise_user').empty().append(data);
+                }
+            }).done(function(){
+                        $('.div_choise_user').fadeIn();
+                    });
+        }
+        function GetReportForCompany(){
+            $('#report_list').hide();
+            var company = $('#sel_choise_company').val();
+            var user = $('#sel_choise_user').val()
+            $.ajax({
+                url: '/ajax/get_report_for_report_ques/' + company + '/' + user +'/',
+                type : 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#report_list').empty().append(data).fadeIn();
+                }
+            });
+        }
+        $(document).ready(function(){
+            GetCompanyList();
+            GetUserList();
+        });
+    </script>
+{% endblock %}

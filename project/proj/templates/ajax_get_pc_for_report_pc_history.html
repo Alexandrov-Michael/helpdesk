@@ -1,0 +1,4 @@
+<option selected="selected" value="0">---------</option>
+{% for item in pc_list %}
+    <option value="{{ item.id }}">{{ item.pc_nameId }} {{ item.pc_name }}</option>
+{% endfor %}
