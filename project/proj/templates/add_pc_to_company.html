@@ -4,6 +4,7 @@
     <script>
         function GetCompany(){
             $('#id_company').hide();
+            $('#message').hide();
             $.ajax({
                 url: '/ajax/get_company_for_pc_add/',
                 type: 'GET',
@@ -11,7 +12,14 @@
                 success : function(data){
                     $('#id_company').empty().append(data).fadeIn();
                 }
-            })
+            }).done(function(){
+                        CheckNullCompanyList();
+                    });
+        }
+        function CheckNullCompanyList(){
+            if($('#id_company option').length<2){
+                $('#message').fadeIn();
+            }
         }
         $(document).ready(function(){
            GetCompany();
@@ -25,6 +33,9 @@
 
 {% block content %}
     <h1>Добавление компьютера в компанию</h1>
+    <div id="message">
+        <p>Если список компаний пуст, то не обслуживаете ни одну из компаний</p>
+    </div>
     <div id='question' class='borderLine'>
         <form action="{% url add_pc %}" method="POST">{% csrf_token %}
             <table id='tableForm'>
