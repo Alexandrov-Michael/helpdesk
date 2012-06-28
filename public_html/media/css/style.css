@@ -2,6 +2,7 @@
 * {
     margin: 0;
     padding: 0;
+    /*overflow: auto;*/
 }
 
 
@@ -81,7 +82,7 @@ a.section:link, a.section:visited {
 
 #menu{
     padding: 5px 5px 5px 10px;
-    border:1px solid #CCCCCC;
+    height: 40px;
 }
 
 #menu a{
@@ -89,15 +90,26 @@ a.section:link, a.section:visited {
 }
 
 #menu ul li{
-    display: inline;
     margin: 0 15px 0 0;
+    /*change 20120628*/
+    /*display: inline;*/
+    display: block;
+    float: left;
 }
 
+/*change 20120628*/
+#headerBot{
+    border:1px solid #CCCCCC;
+}
 
 /* content */
 
 #content{
-    margin: 10px 15px;
+    /*margin: 10px 15px;*/
+    /*change 20120628*/
+    float: left;
+    padding: 10px 15px;
+    width: 97%;
 }
 
 
@@ -207,6 +219,12 @@ a.section:link, a.section:visited {
 #question{
     padding: 7px;
     margin:10px 0 0 0;
+    width: 800px;
+}
+
+.q_body{
+    word-wrap: break-word;
+    width: 600px;
 }
 
 #messages{
@@ -218,6 +236,7 @@ a.section:link, a.section:visited {
     border-radius: 11px;
     padding: 10px;
     margin:0 0 10px 0;
+    width: 620px;
 }
 
 .oneMsgAdmin{
@@ -240,6 +259,9 @@ a.section:link, a.section:visited {
 
 
 /* chat */
+#q_table{
+    width: 800px;
+}
 
 #q_table th{
     text-align: right;
@@ -373,4 +395,15 @@ input[type="submit"], button{
 
 .div_choise_pc{
     float: left;
+}
+
+#menu li .hide_menu li{
+    display: list-item;
+    list-style: none;
+    position:
+}
+
+.body_q{
+    word-wrap: break-word;
+    width: 500px;
 }

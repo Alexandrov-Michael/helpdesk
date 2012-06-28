@@ -13,6 +13,20 @@
     {% endblock %}
     {% block head_script %}
     {% endblock %}
+    <script type="text/javascript">
+        function HideMenuHide(){
+            $('.hide_menu').hide();
+        }
+        function ClicItemMenu(){
+            $('#menu ul li').click(function(){
+                $('ul', this).toggle();
+            });
+        }
+        $(document).ready(function(){
+            HideMenuHide();
+            ClicItemMenu();
+        })
+    </script>
 </head>
 <body>
 <div id='wropper'>
@@ -41,8 +55,12 @@
                             <li><a href="{% url add_pc %}">Добавить ПК</a></li>
                         {% endif %}
                         {% if user_is_report %}
-                            <li><a href="{% url report_ques %}">Отчет по вопросам</a></li>
-                            <li><a href="{% url report_pc_history %}">Отчет по пк</a></li>
+                            <li><a href="#">Отчеты</a>
+                                <ul class='hide_menu'>
+                                    <li><a href="{% url report_ques %}">Отчет по вопросам</a></li>
+                                    <li><a href="{% url report_pc_history %}">Отчет по пк</a></li>
+                                </ul>
+                            </li>
                         {% endif %}
                     </ul>
                 {% endblock %}
@@ -52,7 +70,7 @@
     <div id='content'>
         {% block content %}
         <h1>Список выших вопросов</h1>
-        <div id='tableDiv'></div>
+        <div id='tableDivWrop'></div>
         {% endblock %}
     </div><!--content-->
     <div id='footer'>
@@ -84,7 +102,7 @@
                 type: 'GET',
                 dataType: 'html',
                 success: function(data){
-                            $('#tableDiv').empty().append(data).fadeIn();
+                            $('#tableDivWrop').empty().append(data).fadeIn();
                             }
             }).done(function(){
                         getDetailHover();
@@ -97,7 +115,7 @@
                 type: 'GET',
                 dataType: 'html',
                 success: function(data){
-                    $('#tableDiv').empty().append(data);
+                    $('#tableDivWrop').empty().append(data);
                 }
             }).done(function(){
                         getDetailHover();
