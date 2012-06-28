@@ -7,7 +7,8 @@ def run():
 
     #создаем группу для компаний
 
-    group, created = Group.objects.get_or_create(name = settings.COMPANY_GROUP_NAME)
+    comapny_group, created = Group.objects.get_or_create(name = settings.COMPANY_GROUP_NAME)
+    reports_group, created = Group.objects.get_or_create(name = settings.GROUP_REPORT_ADMIN)
 
     #создаем пользователя для выбора всех компаний
 
@@ -19,5 +20,6 @@ def run():
 
     admin = User.objects.get(pk=1)
     admin.first_name = u'Главный куратор'
+    admin.goups.add(reports_group)
     admin.save()
 

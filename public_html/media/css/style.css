@@ -350,3 +350,27 @@ input[type="submit"], button{
     font-size: 17px;
     margin: 10px 0 10px 0;
 }
+
+.div_choise_company{
+    float: left;
+}
+
+.div_choise_user{
+    float: left;
+}
+
+.choise_margin{
+    margin: 10px 10px 10px 0;
+}
+
+#report_list{
+    margin: 60px 0 0 0;
+}
+
+.choise_options P{
+    margin: 0 0 3px 0;
+}
+
+.div_choise_pc{
+    float: left;
+}

@@ -120,6 +120,7 @@ class ChangePcOption(UpdateView):
     template_name = 'change_pc_option.html'
     company_group = settings.COMPANY_GROUP_NAME
     model = PcOptionsList
+    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -128,6 +129,11 @@ class ChangePcOption(UpdateView):
             self.user.groups.all().get(name = self.company_group)
             raise Http404
         except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+            except Group.DoesNotExist:
+                pass
             return super(ChangePcOption, self).dispatch(request, *args, **kwargs)
 
 
@@ -144,6 +150,7 @@ class ChangePcOption(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(ChangePcOption, self).get_context_data(**kwargs)
         context['user_is_company'] = False
+        context['user_is_report']  = self.user_is_report_group
         return context
 
     def form_valid(self, form):
@@ -165,6 +172,7 @@ class PcList(TemplateView):
     """
     template_name = 'pc_list.html'
     company_group = settings.COMPANY_GROUP_NAME
+    user_is_report_group = False
 
     def is_user_group_company(self):
         try:
@@ -180,12 +188,18 @@ class PcList(TemplateView):
             self.user.groups.all().get(name = self.company_group)
             raise Http404
         except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+            except Group.DoesNotExist:
+                pass
             return super(PcList, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         user_is_company = self.is_user_group_company()
         context = super(PcList, self).get_context_data(**kwargs)
         context['user_is_company'] = user_is_company
+        context['user_is_report']  = self.user_is_report_group
         return context
 
 
@@ -245,6 +259,7 @@ class PcDetail(ListView):
     company_group = settings.COMPANY_GROUP_NAME
     pk_url_kwarg  = 'pk'
     paginate_by = 40
+    user_is_report_group = False
 
 
     @method_decorator(login_required)
@@ -254,6 +269,11 @@ class PcDetail(ListView):
             self.user.groups.all().get(name = self.company_group)
             raise Http404
         except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+            except Group.DoesNotExist:
+                pass
             return super(PcDetail, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -275,6 +295,8 @@ class PcDetail(ListView):
     def get_context_data(self, **kwargs):
         context = super(PcDetail, self).get_context_data(**kwargs)
         context['pc'] = self.pc
+        context['user_is_company'] = False
+        context['user_is_report']  = self.user_is_report_group
         return context
 
 
@@ -287,6 +309,7 @@ class AddPcOption(FormView):
     success_url = None
     pk_url_kwarg  = 'pk'
     company_group = settings.COMPANY_GROUP_NAME
+    user_is_report_group = False
 
 
     @method_decorator(login_required)
@@ -296,6 +319,11 @@ class AddPcOption(FormView):
             self.user.groups.all().get(name = self.company_group)
             raise Http404
         except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+            except Group.DoesNotExist:
+                pass
             return super(AddPcOption, self).dispatch(request, *args, **kwargs)
 
     def get_pk(self):
@@ -342,6 +370,8 @@ class AddPcOption(FormView):
     def get_context_data(self, **kwargs):
         context = super(AddPcOption, self).get_context_data(**kwargs)
         context['pc_pk'] = self.get_pk()
+        context['user_is_company'] = False
+        context['user_is_report']  = self.user_is_report_group
         return context
 
 
@@ -388,6 +418,7 @@ class PcOptionHistoryView(ListView):
     company_group = settings.COMPANY_GROUP_NAME
     model = PcOptionListHistory
     context_object_name = 'options'
+    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -396,6 +427,11 @@ class PcOptionHistoryView(ListView):
             self.user.groups.all().get(name = self.company_group)
             raise Http404
         except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+            except Group.DoesNotExist:
+                pass
             return super(PcOptionHistoryView, self).dispatch(request, *args, **kwargs)
 
     def get_pk(self):
@@ -417,6 +453,8 @@ class PcOptionHistoryView(ListView):
     def get_context_data(self, **kwargs):
         context = super(PcOptionHistoryView, self).get_context_data(**kwargs)
         context['pc'] = self.pc
+        context['user_is_company'] = False
+        context['user_is_report']  = self.user_is_report_group
         return context
 
 
@@ -428,6 +466,7 @@ class AddCompanyPcView(CreateView):
     form_class = AddCompanyPcForm
     template_name = 'add_pc_to_company.html'
     success_url = None
+    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -436,6 +475,11 @@ class AddCompanyPcView(CreateView):
             self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
             raise Http404
         except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+            except Group.DoesNotExist:
+                pass
             return super(AddCompanyPcView, self).dispatch(request, *args, **kwargs)
 
 
@@ -443,6 +487,11 @@ class AddCompanyPcView(CreateView):
         url = u'/pc_detail/%s/' % (self.object.id,)
         return url
 
+    def get_context_data(self, **kwargs):
+        context = super(AddCompanyPcView, self).get_context_data(**kwargs)
+        context['user_is_company'] = False
+        context['user_is_report']  = self.user_is_report_group
+        return context
 
 
 
@@ -476,6 +525,7 @@ class AddPcOptionForAllView(CreateView):
     template_name = 'add_option_pc_for_all_pc.html'
     success_url = None
     pk_url_kwarg  = 'pk'
+    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -484,6 +534,11 @@ class AddPcOptionForAllView(CreateView):
             self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
             raise Http404
         except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+            except Group.DoesNotExist:
+                pass
             return super(AddPcOptionForAllView, self).dispatch(request, *args, **kwargs)
 
     def get_pk(self):
@@ -502,6 +557,8 @@ class AddPcOptionForAllView(CreateView):
         self.pk = self.get_pk()
         context = super(AddPcOptionForAllView, self).get_context_data(**kwargs)
         context['pc_pk'] = self.pk
+        context['user_is_company'] = False
+        context['user_is_report']  = self.user_is_report_group
         return context
 
 

@@ -28,6 +28,8 @@ urlpatterns = patterns('',
     url(r'^add_opt/(?P<pk>\d+)/$',      vc.AddPcOption.as_view(), name='add_option' ),
     url(r'^add_pc/$',                   vc.AddCompanyPcView.as_view(), name='add_pc'),
     url(r'^add_pc_option_for_all/(?P<pk>\d+)/$',    vc.AddPcOptionForAllView.as_view(), name='add_pc_option_for_all'),
+    url(r'^report_ques/$',              views.MainReportForQuestionsView.as_view(), name='report_ques'),
+    url(r'^report_pc_history/$',        views.MainReportForPcHistoryView.as_view(), name='report_pc_history'),
 
 
     #tehnikal
@@ -47,6 +49,12 @@ urlpatterns = patterns('',
     url(r'^ajax/get_pc_for_list/(?P<pk>\d+)/$',     vc.GetPcForPcList.as_view()),
     url(r'^ajax/get_options_for_add/(?P<pk>\d+)/$', vc.GetOptionsForAdd.as_view()),
     url(r'^ajax/get_company_for_pc_add/$',          vc.GetCompanyForPcAddView.as_view()),
+    url(r'^ajax/get_company_for_report_ques/$',     views.GetCompanyListForReportForQuesView.as_view()),
+    url(r'^ajax/get_users_for_report_ques/$',       views.GetUserListForReportForQuesView.as_view()),
+    url(r'^ajax/get_report_for_report_ques/(?P<company>\d+)/(?P<user>\d+)/$', views.GetReportListForReportForQuesView.as_view()),
+    url(r'^ajax/get_pc_for_report_pc_history/(?P<company>\d+)/$', views.GetPcListForReportPcHistoryView.as_view()),
+    url(r'^ajax/get_company_for_report_pc_history/$', views.GetCompanyListForReportForPcHistoryView.as_view()),
+    url(r'^ajax/get_report_pc_history/(?P<pc>\d+)/(?P<user>\d+)/(?P<company>\d+)/$', views.GetReportForPcHistoryView.as_view()),
 
 
 

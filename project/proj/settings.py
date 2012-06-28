@@ -2,8 +2,6 @@
 from proj.utils import utils
 # Django settings for proj project.
 
-#test comment
-
 HOSTER = False
 
 if HOSTER:
@@ -221,3 +219,5 @@ USER_MESS_FOR_ALL_COMPANY = 'all'
 
 #значение которое прибавляется к стандартнму id для идентификатора вопроса
 PLUS_SLUG_FIELD = 0
+
+GROUP_REPORT_ADMIN = 'reports'

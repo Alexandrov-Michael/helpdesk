@@ -12,7 +12,8 @@ from projForms import EditQuestionUser, EditQuestionAdmin, ChatForm
 from proj import settings
 from django.contrib.auth.models import Group
 from django.http import Http404
-from company.models import CompanyAdmins
+from company.models import CompanyAdmins, Company, CompanyPC, PcOptionListHistory
+from django.contrib.auth.models import User
 
 
 
@@ -24,10 +25,16 @@ class IndexView(TemplateView):
 
     template_name = 'main.html'
     company_group = settings.COMPANY_GROUP_NAME
+    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+            self.user_is_report_group = True
+        except Group.DoesNotExist:
+            pass
         return super(IndexView, self).dispatch(request, *args, **kwargs)
 
     def is_user_group_company(self):
@@ -41,6 +48,7 @@ class IndexView(TemplateView):
         user_is_company = self.is_user_group_company()
         context = super(IndexView, self).get_context_data(**kwargs)
         context['user_is_company'] = user_is_company
+        context['user_is_report']  = self.user_is_report_group
         return context
 
 
@@ -95,10 +103,16 @@ class QuesAdd(FormView):
     slug_plus = settings.PLUS_SLUG_FIELD
     all_company_user = settings.USER_MESS_FOR_ALL_COMPANY
     company_group = settings.COMPANY_GROUP_NAME
+    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+            self.user_is_report_group = True
+        except Group.DoesNotExist:
+            pass
         return super(QuesAdd, self).dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
@@ -162,6 +176,7 @@ class QuesAdd(FormView):
         user_is_company = self.is_user_group_company()
         context = super(QuesAdd, self).get_context_data(**kwargs)
         context['user_is_company'] = user_is_company
+        context['user_is_report']  = self.user_is_report_group
         return context
 
 
@@ -176,10 +191,16 @@ class QuesChatForm(FormView):
     pk_url_kwarg = 'pk'
     company_group = settings.COMPANY_GROUP_NAME
     error_msg = None
+    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+            self.user_is_report_group = True
+        except Group.DoesNotExist:
+            pass
         return super(QuesChatForm, self).dispatch(request, *args, **kwargs)
 
     def is_user_group_company(self):
@@ -196,6 +217,7 @@ class QuesChatForm(FormView):
             'msgs_set' : self.chat_msgs,
             'user_is_company': user_is_company,
             'error_msg' : self.error_msg,
+            'user_is_report': self.user_is_report_group,
         })
         return kwargs
 
@@ -395,3 +417,306 @@ class GetChatMessages(ListView):
         queryset = Chat.objects.filter(question = self.question)
         return queryset
 
+
+
+class MainReportForQuestionsView(TemplateView):
+    """
+    Представление для отчетов по вопросам
+    """
+    template_name = 'main_report_for_ques.html'
+    user_is_company_group = False
+    user_is_report_group = False
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            self.user_is_company_group = True
+            raise Http404
+        except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+                return super(MainReportForQuestionsView, self).dispatch(request, *args, **kwargs)
+            except Group.DoesNotExist:
+                raise Http404
+
+
+    def get_context_data(self, **kwargs):
+        context = super(MainReportForQuestionsView, self).get_context_data(**kwargs)
+        context['user_is_company'] = self.user_is_company_group
+        context['user_is_report']  = self.user_is_report_group
+        return context
+
+
+class GetCompanyListForReportForQuesView(ListView):
+    """
+    Аякс Представление для получения списка компаний для отчета по вопроса
+    """
+    model = Company
+    context_object_name = 'companys'
+    template_name = 'ajax_get_company_for_report_ques.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            raise Http404
+        except Group.DoesNotExist:
+            return super(GetCompanyListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+
+class GetUserListForReportForQuesView(ListView):
+    """
+    Аякс представление для получения списка сотрудников для отчета по вопросам
+    """
+    model = User
+    context_object_name = 'users'
+    template_name = 'ajax_get_users_for_report_for_ques.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            raise Http404
+        except Group.DoesNotExist:
+            return super(GetUserListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = User.objects.exclude(pk=1).exclude(groups__name = settings.COMPANY_GROUP_NAME).exclude(username = settings.USER_MESS_FOR_ALL_COMPANY)
+        return queryset
+
+
+class GetReportListForReportForQuesView(ListView):
+    """
+    Аякс представления для получения вопросов по заданным
+    фильтрам для отчета по вопросам
+    """
+    model = Questions
+    context_object_name = 'questions'
+    template_name = 'ajax_get_report_list_for_report_ques.html'
+    company_post_filter = 'company'
+    user_post_filter = 'user'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            raise Http404
+        except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                return super(GetReportListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+            except Group.DoesNotExist:
+                raise Http404
+
+    def get_filters(self):
+        self.company_filter = self.kwargs.get(self.company_post_filter, None)
+        self.user_filter = self.kwargs.get(self.user_post_filter, None)
+        if self.company_filter is not None:
+            if self.company_filter == '0':
+                self.company_filter = None
+        if self.user_filter is not None:
+            if self.user_filter == '0':
+                self.user_filter = None
+
+
+    def get(self, request, *args, **kwargs):
+        self.get_filters()
+        return super(GetReportListForReportForQuesView, self).get(request, *args, **kwargs)
+
+
+    def get_queryset(self):
+        queryset = None
+        if self.company_filter is not None:
+            try:
+                company = User.objects.get(pk = self.company_filter)
+            except User.DoesNotExist:
+                raise Http404
+            queryset = Questions.objects.filter(Q(user_from = company)|Q(user_to = company))
+        if self.user_filter is not None:
+            try:
+                user = User.objects.get(pk = self.user_filter)
+            except User.DoesNotExist:
+                raise Http404
+            if queryset is None:
+                queryset = Questions.objects.filter(Q(user_from = user)|Q(user_to = user))
+            else:
+                queryset = queryset.filter(Q(user_from = user)|Q(user_to = user))
+        if queryset is None:
+            raise Http404
+        self.non_check_ques = self.get_open_question(queryset)
+        return queryset
+
+    def get_open_question(self, queryset):
+        if not queryset:
+            return 0
+        check_count  = queryset.filter(Q(user_check = False)|Q(admin_check = False)).count()
+        return check_count
+
+
+    def get_context_data(self, **kwargs):
+        context = super(GetReportListForReportForQuesView, self).get_context_data(**kwargs)
+        context['non_check_ques'] = self.non_check_ques
+        return context
+
+
+class MainReportForPcHistoryView(TemplateView):
+    """
+    Представление для получения отчета по истории изменения хараетристик ПК
+    """
+    template_name = 'main_report_for_pc_history.html'
+    user_is_company_group = False
+    user_is_report_group = False
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            self.user_is_company_group = True
+            raise Http404
+        except Group.DoesNotExist:
+            try:
+                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
+                self.user_is_report_group = True
+                return super(MainReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+            except Group.DoesNotExist:
+                raise Http404
+
+
+    def get_context_data(self, **kwargs):
+        context = super(MainReportForPcHistoryView, self).get_context_data(**kwargs)
+        context['user_is_company'] = self.user_is_company_group
+        context['user_is_report']  = self.user_is_report_group
+        return context
+
+
+class GetPcListForReportPcHistoryView(ListView):
+    """
+    Аякс представление для получения списка пк в фирме
+    """
+    model = CompanyPC
+    context_object_name = 'pc_list'
+    template_name = 'ajax_get_pc_for_report_pc_history.html'
+    company_get_filter = 'company'
+
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            raise Http404
+        except Group.DoesNotExist:
+            return super(GetPcListForReportPcHistoryView, self).dispatch(request, *args, **kwargs)
+
+    def get_filter(self):
+        self.company_filter = self.kwargs.get(self.company_get_filter, None)
+        if not self.company_filter:
+            raise Http404
+
+    def get(self, request, *args, **kwargs):
+        self.get_filter()
+        return super(GetPcListForReportPcHistoryView, self).get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            company = Company.objects.get(pk = self.company_filter)
+        except Company.DoesNotExist:
+            raise Http404
+        queryset = CompanyPC.objects.filter(company = company)
+        return queryset
+
+
+class GetCompanyListForReportForPcHistoryView(ListView):
+    """
+    Аякс представление для получения скиска компаний в отчету о изменени характеристик
+    """
+    model = Company
+    context_object_name = 'companys'
+    template_name = 'ajax_get_company_for_report_pc_history.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            raise Http404
+        except Group.DoesNotExist:
+            return super(GetCompanyListForReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+
+
+class GetReportForPcHistoryView(ListView):
+    """
+    Аякс предсталвение для получения отчета по истории измененя характеристик пк
+    """
+    model = PcOptionListHistory
+    context_object_name = 'changes'
+    template_name = 'ajax_get_report_for_pc_history.html'
+    pc_get_filter = 'pc'
+    user_get_filter = 'user'
+    company_get_filter = 'company'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            raise Http404
+        except Group.DoesNotExist:
+            return super(GetReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+
+    def get_filters(self):
+        pc_filter = self.kwargs.get(self.pc_get_filter, None)
+        user_filter = self.kwargs.get(self.user_get_filter, None)
+        company_filter = self.kwargs.get(self.company_get_filter, None)
+        if pc_filter is None or user_filter is None or company_filter is None:
+            raise Http404
+        if pc_filter == '0':
+            self.pc = None
+        else:
+            try:
+                self.pc = CompanyPC.objects.get(pk = pc_filter)
+            except CompanyPC.DoesNotExist:
+                raise Http404
+        if user_filter == '0':
+            self.user_obj = None
+        else:
+            try:
+                self.user_obj = User.objects.get(pk = user_filter)
+            except User.DoesNotExist:
+                raise Http404
+        if company_filter == '0':
+            self.company = None
+        else:
+            try:
+                self.company = Company.objects.get(pk = company_filter)
+            except Company.DoesNotExist:
+                raise Http404
+
+
+    def get(self, request, *args, **kwargs):
+        self.get_filters()
+        return super(GetReportForPcHistoryView, self).get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = None
+        if self.pc is not None:
+            queryset = PcOptionListHistory.objects.filter(pc = self.pc)
+        if self.user_obj is not None:
+            if queryset is None:
+                queryset = PcOptionListHistory.objects.filter(user = self.user_obj)
+            else:
+                queryset = queryset.filter(user = self.user_obj)
+        if self.company is not None:
+            if queryset is None:
+                queryset = PcOptionListHistory.objects.filter(pc__company = self.company)
+            else:
+                queryset = queryset.filter(pc__company = self.company)
+        if queryset is None:
+            raise Http404
+        return queryset

@@ -40,6 +40,10 @@
                             <li><a href="{% url pc_list %}">Список ПК</a></li>
                             <li><a href="{% url add_pc %}">Добавить ПК</a></li>
                         {% endif %}
+                        {% if user_is_report %}
+                            <li><a href="{% url report_ques %}">Отчет по вопросам</a></li>
+                            <li><a href="{% url report_pc_history %}">Отчет по пк</a></li>
+                        {% endif %}
                     </ul>
                 {% endblock %}
             </div>
