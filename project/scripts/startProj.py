@@ -20,6 +20,6 @@ def run():
 
     admin = User.objects.get(pk=1)
     admin.first_name = u'Главный куратор'
-    admin.goups.add(reports_group)
+    admin.groups.add(reports_group)
     admin.save()
 
