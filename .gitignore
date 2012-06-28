@@ -2,3 +2,4 @@
 env
 dj_static
 .idea
+*.pyc
