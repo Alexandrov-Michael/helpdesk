@@ -2,6 +2,8 @@
 from proj.utils import utils
 # Django settings for proj project.
 
+#test comment
+
 HOSTER = False
 
 if HOSTER:
