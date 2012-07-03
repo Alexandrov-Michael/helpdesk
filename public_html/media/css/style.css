@@ -190,12 +190,17 @@ a.section:link, a.section:visited {
 }
 
 .check{
-    width: 10%;
+    width: 10px;
 }
 
+/*.dateCol{*/
+    /*width: 20%;*/
+/*}*/
+
 .dateCol{
-    width: 20%;
+    width: 120px;
 }
+
 
 .valueCol{
     width: 30%;

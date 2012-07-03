@@ -10,16 +10,16 @@
         <th>От кого</th>
         <th>Кому</th>
         <th class='check'>Закрыто отправителем</th>
-        <th>Дата закрытия отправителем</th>
+        <th>Дата закрытия отп.</th>
         <th class='check'>Закрыто получателем</th>
-        <th>Дата закрытия получателем</th>
+        <th>Дата закрытия пол.</th>
     </tr>
     </thead>
     <tbody id="mainTable">
     {% for ques in questions %}
         <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ ques.id }}">
             <td class='numbers'>{{ ques.slug }}</td>
-            <td class='dateCol'>{{ ques.date }}</td>
+            <td class='dateCol'>{{ ques.date|date:'H:i d/m/Y' }}</td>
             <td>
                 {{ ques.user_from.first_name }}
                 {% if ques.user_from.last_name %}
@@ -41,16 +41,16 @@
                                 {% else %}
                                     minus
                                 {% endif %}
-                            '>
+                             check'>
                 {% if ques.user_check %}
                     Закрыт
                 {% else %}
                     Открыт
                 {% endif %}
             </td>
-            <td>
+            <td class='dateCol'>
                 {% if ques.user_check_date %}
-                    {{ ques.user_check_date }}
+                    {{ ques.user_check_date|date:'H:i d/m/Y' }}
                 {% endif %}
             </td>
             <td class='
@@ -59,22 +59,22 @@
                                 {% else %}
                                     minus
                                 {% endif %}
-                            '>
+                             check'>
                 {% if ques.admin_check %}
                     Закрыт
                 {% else %}
                     Открыт
                 {% endif %}
             </td>
-            <td>
+            <td class='dateCol'>
                 {% if ques.admin_check_date %}
-                    {{ ques.admin_check_date }}
+                    {{ ques.admin_check_date|date:'H:i d/m/Y' }}
                 {% endif %}
             </td>
         </tr>
     {% empty %}
         <tr>
-            <td colspan="6">Вопросов нет</td>
+            <td colspan="8">Вопросов нет</td>
         </tr>
     {% endfor %}
     </tbody>

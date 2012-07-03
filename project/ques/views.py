@@ -296,12 +296,16 @@ class QuesChangeStatus(TemplateView):
         status   = self.get_status()
         if self.user == question.user_from:
             question.user_check = status
+            if status:
+                question.user_check_date = datetime.now()
+            else:
+                question.user_check_date = None
         if self.user == question.user_to:
-            question.admin_check=status
-        if status:
-            question.user_check_date = datetime.now()
-        else:
-            question.user_check_date = None
+            question.admin_check = status
+            if status:
+                question.admin_check_date = datetime.now()
+            else:
+                question.admin_check_date = None
         question.save()
         if not self.user == question.user_from and not self.user == question.user_to:
             raise Http404
