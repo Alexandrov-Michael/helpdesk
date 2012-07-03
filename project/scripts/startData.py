@@ -10,9 +10,12 @@ def run():
     group, created = Group.objects.get_or_create(name = settings.COMPANY_GROUP_NAME)
     mypass = u'user12345'
 
+    reports_group, created = Group.objects.get_or_create(name = settings.GROUP_REPORT_ADMIN)
+
     alexandrov = User(username = u'alexandrov', first_name = u'Михаил', last_name = u'Александров' )
     alexandrov.set_password(mypass)
     alexandrov.save()
+    alexandrov.groups.add(reports_group)
 
     ivanov = User(username = u'ivanov', first_name = u'Сергей', last_name = u'Иванов' )
     ivanov.set_password(mypass)
