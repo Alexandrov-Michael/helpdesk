@@ -10,8 +10,10 @@
             <th>От кого</th>
             <th>Кому</th>
             <th>Содержание вопроса</th>
-            <th class='check'>Закрыто получателем</th>
             <th class='check'>Закрыто отправителем</th>
+            <th>Дата закрытия отправителем</th>
+            <th class='check'>Закрыто получателем</th>
+            <th>Дата закрытия получателем</th>
         </tr>
         </thead>
         <tbody id="mainTable">
@@ -38,6 +40,24 @@
                     <div class='body_q'>{{ ques.body }}</div>
                 </td>
                 <td class='
+                                    {% if ques.user_check %}
+                                        plus
+                                    {% else %}
+                                        minus
+                                    {% endif %}
+                                '>
+                    {% if ques.user_check %}
+                        Закрыт
+                    {% else %}
+                        Открыт
+                    {% endif %}
+                </td>
+                <td>
+                    {% if ques.user_check_date %}
+                        {{ ques.user_check_date }}
+                    {% endif %}
+                </td>
+                <td class='
                                     {% if ques.admin_check %}
                                         plus
                                     {% else %}
@@ -50,17 +70,9 @@
                         Открыт
                     {% endif %}
                 </td>
-                <td class='
-                                    {% if ques.user_check %}
-                                        plus
-                                    {% else %}
-                                        minus
-                                    {% endif %}
-                                '>
-                    {% if ques.user_check %}
-                        Закрыт
-                    {% else %}
-                        Открыт
+                <td>
+                    {% if ques.admin_check_date %}
+                        {{ ques.admin_check_date }}
                     {% endif %}
                 </td>
             </tr>

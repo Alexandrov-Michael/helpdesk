@@ -13,17 +13,21 @@ class Questions(models.Model):
     date - дата создания
     body - тело вопроса
     user_check - пометка от пользователя что вопрос закрыт
+    user_check_date - дата закрытия вопроса
     admin_check - пометка от администратора что вопрос закрыт
+    admin_check_date - дата закртия вопроса
     """
-    user_from   = models.ForeignKey(com.User, verbose_name=u'От кого', related_name=u'rel_user_from')
-    pc_from     = models.ForeignKey(com.CompanyPC, verbose_name=u'От пользователя', related_name=u'rel_px_from', blank=True, null=True)
-    worker_from = models.TextField(u'ФИО', blank=True)
-    user_to     = models.ForeignKey(com.User, verbose_name=u'Кому', related_name=u'rel_user_to')
-    date        = models.DateTimeField(u'Дата создания', auto_now_add=True)
-    body        = models.TextField(u'Вопрос')
-    user_check  = models.BooleanField(u'Отметка пользователя')
-    admin_check = models.BooleanField(u'Отметка администратора')
-    slug        = models.PositiveIntegerField(u'Идентификатор', unique=True, null=True, blank=True )
+    user_from        = models.ForeignKey(com.User, verbose_name=u'От кого', related_name=u'rel_user_from')
+    pc_from          = models.ForeignKey(com.CompanyPC, verbose_name=u'От пользователя', related_name=u'rel_px_from', blank=True, null=True)
+    worker_from      = models.TextField(u'ФИО', blank=True)
+    user_to          = models.ForeignKey(com.User, verbose_name=u'Кому', related_name=u'rel_user_to')
+    date             = models.DateTimeField(u'Дата создания', auto_now_add=True)
+    body             = models.TextField(u'Вопрос')
+    user_check       = models.BooleanField(u'Отметка пользователя')
+    user_check_date  = models.DateTimeField(u'Дата закрытия вопроса отправителем', null=True, blank=True)
+    admin_check      = models.BooleanField(u'Отметка администратора')
+    admin_check_date = models.DateTimeField(u'Дата закрытия вопроса получателем', null=True, blank=True)
+    slug             = models.PositiveIntegerField(u'Идентификатор', unique=True, null=True, blank=True )
 
     def __unicode__(self):
         return u'%s : %s' % (self.slug, self.user_to)

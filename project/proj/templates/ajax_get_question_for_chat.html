@@ -46,6 +46,14 @@
         </td>
     </tr>
     <tr>
+        <th>Дата закрытия отправителем</th>
+        <td>
+            {% if question.user_check_date %}
+                {{ question.user_check_date }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
         <th>Закрыт получателем:</th>
         <td style='
                 {% if question.admin_check %}
@@ -58,6 +66,14 @@
                 Вопрос закрыт
             {% else %}
                 Вопрос открыт
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Дата закрытия получателем</th>
+        <td>
+            {% if question.admin_check_date %}
+                {{ question.admin_check_date }}
             {% endif %}
         </td>
     </tr>

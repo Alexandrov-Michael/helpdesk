@@ -14,6 +14,7 @@ from django.contrib.auth.models import Group
 from django.http import Http404
 from company.models import CompanyAdmins, Company, CompanyPC, PcOptionListHistory
 from django.contrib.auth.models import User
+from datetime import datetime
 
 
 
@@ -295,10 +296,13 @@ class QuesChangeStatus(TemplateView):
         status   = self.get_status()
         if self.user == question.user_from:
             question.user_check = status
-            question.save()
         if self.user == question.user_to:
             question.admin_check=status
-            question.save()
+        if status:
+            question.user_check_date = datetime.now()
+        else:
+            question.user_check_date = None
+        question.save()
         if not self.user == question.user_from and not self.user == question.user_to:
             raise Http404
         context = self.get_context_data(**kwargs)
