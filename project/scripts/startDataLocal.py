@@ -30,8 +30,11 @@ def run():
     panev.set_password(mypass)
     panev.save()
 
+    maslov = User(username= 'maslov', first_name = u'Алексей', last_name = u'Маслов')
+    maslov.set_password('megapass123')
+    maslov.save()
 
-    usersList = [ alexandrov, ivanov, petrov, sidorov, panev,]
+    usersList = [ alexandrov, ivanov, petrov, sidorov, panev, maslov]
 
     ferromet = User(username = u'ferromet', first_name = u'ООО ФЕРРОМЕТ')
     ferromet.set_password(mypass)
