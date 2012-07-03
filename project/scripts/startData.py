@@ -56,9 +56,14 @@ def run():
     sevsap.save()
     sevsap.groups.add(group)
 
+    test = User(username='test', first_name = u'ООО Приборы')
+    test.set_password('test12345')
+    test.save()
+    test.groups.add(group)
 
 
-    companyUserList = [ferromet, intersteel, rbk, sevsap,]
+
+    companyUserList = [ferromet, intersteel, rbk, sevsap, test]
 
 
     com_ferromet = Company( com_user = ferromet)
@@ -73,12 +78,16 @@ def run():
     com_sevsap = Company( com_user = sevsap)
     com_sevsap.save()
 
+    com_test = Company(com_user = test)
+    com_test.save()
+
 
     companyList = [
         com_ferromet,
         com_interseel,
         com_rbk,
-        com_sevsap
+        com_sevsap,
+        com_test
     ]
 
 
