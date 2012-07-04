@@ -43,8 +43,6 @@
             </div>
         </div><!--headerTop-->
         <div id='headerBot'>
-            <div class='messages'>
-            </div>
             <div id='menu'>
                 {% block menu %}
                     <ul>
@@ -69,6 +67,24 @@
     </div><!--header-->
     <div id='content'>
         {% block content %}
+            <div class='messages'>
+                {% if company_admins %}
+                    <h2>Список ваших кураторов</h2>
+                        <table class='admins_list'>
+                            <tbody>
+                            {% for item in company_admins %}
+                                <tr>
+                                    <td>{{ item.post.decription }}</td>
+                                    <td>
+                                        {{ item.username.first_name }} {{ item.username.last_name }}
+                                    </td>
+                                    <td>{{ item.username.profile.telefon }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                {% endif %}
+            </div>
         <h1>Список вопросов</h1>
         <div id='tableDivWrop'></div>
         {% endblock %}

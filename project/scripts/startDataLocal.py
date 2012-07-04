@@ -4,6 +4,7 @@ from company.models import Company, CompanyPC, Posts, CompanyAdmins, PcOptions, 
 from django.contrib.auth.models import User, Group
 from proj import settings
 from random import randrange
+from profiles.models import Profile
 
 def run():
 
@@ -36,6 +37,15 @@ def run():
     maslov = User(username= 'maslov', first_name = u'Алексей', last_name = u'Маслов')
     maslov.set_password('megapass123')
     maslov.save()
+
+
+
+    Profile(user=alexandrov, telefon='+7-911-234-44-55').save()
+    Profile(user=ivanov, telefon ='+7-921-355-34-34').save()
+    Profile(user=petrov, telefon= '+7-904-122-12-12').save()
+    Profile(user=sidorov, telefon='+7-812-211-44-44').save()
+    Profile(user=panev, telefon='+7-812-223-45-46').save()
+    Profile(user=maslov, telefon='+7-234-211-42-66').save()
 
     usersList = [ alexandrov, ivanov, petrov, sidorov, panev, maslov]
 
@@ -89,16 +99,16 @@ def run():
 
 
 
-    kurator = Posts(name=u'Куратор')
+    kurator = Posts(name=u'Куратор', decription=u'По главным вопросам')
     kurator.save()
 
-    gelezo = Posts(name=u'Железо')
+    gelezo = Posts(name=u'Железо', decription=u'По вопросам железа')
     gelezo.save()
 
-    admin1c = Posts(name=u'1с')
+    admin1c = Posts(name=u'1с', decription=u'По вопросам 1c')
     admin1c.save()
 
-    access = Posts(name=u'Аксес')
+    access = Posts(name=u'Аксес', decription=u'По вопросам Access')
     access.save()
 
 

@@ -47,6 +47,7 @@ class Posts(models.Model):
     name - наименование должности
     """
     name = models.CharField(u'Наименование', max_length=100)
+    decription = models.TextField(u'Описание')
 
     def __unicode__(self):
         return self.name

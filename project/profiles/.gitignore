@@ -1,0 +1,5 @@
+#ignore this files adn directory
+env
+dj_static
+.idea
+*.pyc

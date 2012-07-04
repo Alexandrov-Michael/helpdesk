@@ -27,6 +27,7 @@ class IndexView(TemplateView):
     template_name = 'main.html'
     company_group = settings.COMPANY_GROUP_NAME
     user_is_report_group = False
+    company_admins = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -41,6 +42,7 @@ class IndexView(TemplateView):
     def is_user_group_company(self):
         try:
             self.user.groups.all().get(name=self.company_group)
+            self.company_admins = CompanyAdmins.objects.filter(company__com_user=self.user).select_related('post__description', 'username__first_name', 'username__last_name', 'username__profile__telefon').order_by('post')
             return True
         except Group.DoesNotExist:
             return False
@@ -50,6 +52,7 @@ class IndexView(TemplateView):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['user_is_company'] = user_is_company
         context['user_is_report']  = self.user_is_report_group
+        context['company_admins'] = self.company_admins
         return context
 
 

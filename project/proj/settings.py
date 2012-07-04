@@ -127,6 +127,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'proj.urls'
@@ -166,7 +168,10 @@ INSTALLED_APPS = (
 
     'ques',
     'company',
+    'profiles',
 
+
+    'debug_toolbar',
 
 )
 
@@ -221,3 +226,7 @@ USER_MESS_FOR_ALL_COMPANY = 'all'
 PLUS_SLUG_FIELD = 0
 
 GROUP_REPORT_ADMIN = 'reports'
+
+
+if not HOSTER:
+    INTERNAL_IPS = ('127.0.0.1',)
