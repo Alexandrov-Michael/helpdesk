@@ -412,3 +412,7 @@ input[type="submit"], button{
     word-wrap: break-word;
     width: 500px;
 }
+
+#id_body{
+    width:500px;
+}
