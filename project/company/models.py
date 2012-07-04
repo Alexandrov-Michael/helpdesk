@@ -21,6 +21,24 @@ class Company(models.Model):
         verbose_name_plural = u'Компании'
 
 
+
+class Departments(models.Model):
+    """
+    Модель отделов в которых находить ПК
+    """
+    name = models.CharField(u'Наименование', max_length=100)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u'Отдел'
+        verbose_name_plural = u'Отделы'
+
+
+
+
+
 class CompanyPC(models.Model):
     """
     Модель компьютеров в фирме и ФИО пользователя,который за ним сидит
@@ -28,6 +46,7 @@ class CompanyPC(models.Model):
     name - ФИО пользователя, который сидит за данным компьютером
     """
     company   = models.ForeignKey(Company, verbose_name=u'Компания', related_name=u'rel_company')
+    departament = models.ForeignKey(Departments, verbose_name=u'Отдел', related_name='rel_dep')
     pc_nameId = models.PositiveIntegerField(u'ID', unique=True)
     pc_name   = models.TextField(u'hostname')
 

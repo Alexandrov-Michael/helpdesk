@@ -5,6 +5,7 @@
     <table class='listTable'>
         <thead>
         <tr>
+            <th>Отдел</th>
             <th>ID</th>
             <th>Host name</th>
         </tr>
@@ -12,6 +13,7 @@
         <tbody id="mainTable">
         {% for pc in pc_list %}
             <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ pc.id }}">
+                <td>{{ pc.departament }}</td>
                 <td>{{ pc.pc_nameId }}</td>
                 <td>{{ pc.pc_name }}</td>
         {% empty %}

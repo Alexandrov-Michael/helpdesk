@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from models import CompanyPC, Company, CompanyAdmins, PcOptionListHistory, PcOptionsList, PcOptions
+from models import CompanyPC, Company, CompanyAdmins, PcOptionListHistory, PcOptionsList, PcOptions, Departments
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView
@@ -560,6 +560,46 @@ class AddPcOptionForAllView(CreateView):
         context['user_is_company'] = False
         context['user_is_report']  = self.user_is_report_group
         return context
+
+
+
+class GetDepartamentForPcListView(ListView):
+    """
+    Представление для вывода отделов в компании
+    """
+    model = CompanyPC
+    context_object_name = 'comPcList'
+    template_name = 'ajax_get_departament_for_pc_list.html'
+    pk_url_kwarg  = 'pk'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            raise Http404
+        except Group.DoesNotExist:
+            return super(GetDepartamentForPcListView, self).dispatch(request, *args, **kwargs)
+
+    def get_pk(self):
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        if pk is not None:
+            return pk
+        else:
+            raise Http404
+
+    def get_queryset(self):
+        pk = self.get_pk()
+        try:
+            com_user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
+        try:
+            company = Company.objects.get(com_user=com_user)
+        except Company.DoesNotExist:
+            raise Http404
+        queryset = CompanyPC.objects.filter(company=company).order_by('departament.id').distinct('departament')
+        return queryset
 
 
 

@@ -55,6 +55,7 @@ urlpatterns = patterns('',
     url(r'^ajax/get_pc_for_report_pc_history/(?P<company>\d+)/$', views.GetPcListForReportPcHistoryView.as_view()),
     url(r'^ajax/get_company_for_report_pc_history/$', views.GetCompanyListForReportForPcHistoryView.as_view()),
     url(r'^ajax/get_report_pc_history/(?P<pc>\d+)/(?P<user>\d+)/(?P<company>\d+)/$', views.GetReportForPcHistoryView.as_view()),
+    url(r'^ajax/get_departament_for_pc_list/(?P<pk>\d+)/$', vc.GetDepartamentForPcListView.as_view()),
 
 
 

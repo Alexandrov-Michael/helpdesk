@@ -13,6 +13,10 @@
             <option value="0" selected="selected">---------</option>
         </select>
     </div>
+    <div id="choise_dep">
+        <p>Выберите отдел</p>
+        <select id='sel_choise_dep' name='name_sel_choise_dep' onchange=""></select>
+    </div>
     <div id='ajax_pc_list'></div>
 {% endblock %}
 
@@ -53,6 +57,7 @@
                 }).done(function(){
                             GetPcDetail();
                             HoverTr();
+                            GetDep();
                         });
             }else{
                     $('#ajax_pc_list').fadeOut().empty();
@@ -72,8 +77,25 @@
                         $('td', this).css( 'background','');
             });
         }
+        function HideDep(){
+            $('#choise_dep').hide();
+        }
+        function GetDep(){
+            $('#choise_dep').hide();
+            var id = $('#sel_choise_company').val();
+            $.ajax({
+                url:'/ajax/get_departament_for_pc_list/' + id + '/',
+                type: 'GET',
+                dataType:'html',
+                success: function(data){
+                    $('#sel_choise_dep').empty().append(data);
+                    $('#choise_dep').fadeIn();
+                }
+            })
+        }
         $(document).ready(function(){
             GetCompany();
+            HideDep();
         });
     </script>
 {% endblock %}

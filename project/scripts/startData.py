@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 __author__ = 'michael'
-from company.models import Company, CompanyPC, Posts, CompanyAdmins, PcOptions, PcOptionsList
+from company.models import Company, CompanyPC, Posts, CompanyAdmins, PcOptions, PcOptionsList, Departments
 from profiles.models import Profile
 from django.contrib.auth.models import User, Group
 from proj import settings
@@ -101,6 +101,23 @@ def run():
     com_test.save()
 
 
+    main_dep = Departments(name = u'Основной')
+    main_dep.save()
+    buh_dep = Departments(name = u'Бухгалтерия')
+    buh_dep.save()
+    dir_dep = Departments(name = u'Директорат')
+    dir_dep.save()
+    fin_dep = Departments(name = u'Финансисты')
+    fin_dep.save()
+
+
+    dep_list = [
+        main_dep,
+        buh_dep,
+        dir_dep,
+        fin_dep,
+    ]
+
     companyList = [
         com_ferromet,
         com_interseel,
@@ -153,7 +170,8 @@ def run():
         CompanyPC(
             company = companyList[com],
             pc_nameId = i,
-            pc_name = u'%s %s' % (companyList[com], host_names_list[randrange(0, len(host_names_list))] )
+            pc_name = u'%s %s' % (companyList[com], host_names_list[randrange(0, len(host_names_list))]),
+            departament = dep_list[randrange(0, len(dep_list))],
         ).save()
 
 
