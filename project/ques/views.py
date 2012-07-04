@@ -162,7 +162,9 @@ class QuesAdd(FormView):
                 body=body,
             )
         new_question.save()
-        new_question.slug = new_question.id + self.slug_plus
+        slug_first_part = self.user.username[:2]
+        slug_2_part = new_question.id + self.slug_plus
+        new_question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
         new_question.save()
         return super(QuesAdd, self).form_valid(form)
 

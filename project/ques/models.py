@@ -25,7 +25,7 @@ class Questions(models.Model):
     body             = models.TextField(u'Вопрос')
     user_check       = models.BooleanField(u'Отметка пользователя')
     user_check_date  = models.DateTimeField(u'Дата закрытия вопроса отправителем', null=True, blank=True)
-    slug             = models.PositiveIntegerField(u'Идентификатор', unique=True, null=True, blank=True )
+    slug             = models.CharField(u'Идентификатор', unique=True, null=True, blank=True, max_length=8 )
 
     def __unicode__(self):
         return u'%s : %s' % (self.slug, self.user_to)
