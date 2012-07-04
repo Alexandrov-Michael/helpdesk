@@ -79,7 +79,7 @@ class QuestionList(ListView):
     def get_open_question(self, queryset):
         if not queryset:
             return 0
-        check_count  = queryset.filter(Q(user_check = False)|Q(admin_check = False)).count()
+        check_count  = queryset.filter(Q(user_check = False)).count()
         return check_count
 
     @method_decorator(login_required)
@@ -294,18 +294,11 @@ class QuesChangeStatus(TemplateView):
     def post(self, request, *args, **kwargs):
         question = self.get_object()
         status   = self.get_status()
-        if self.user == question.user_from:
-            question.user_check = status
-            if status:
-                question.user_check_date = datetime.now()
-            else:
-                question.user_check_date = None
-        if self.user == question.user_to:
-            question.admin_check = status
-            if status:
-                question.admin_check_date = datetime.now()
-            else:
-                question.admin_check_date = None
+        question.user_check = status
+        if status:
+            question.user_check_date = datetime.now()
+        else:
+            question.user_check_date = None
         question.save()
         if not self.user == question.user_from and not self.user == question.user_to:
             raise Http404
@@ -356,10 +349,8 @@ class GetButtonForChat(TemplateView):
     """
     Представление аякс для получения кнопки изменения статуса вопроса
     """
-    template_name = None
+    template_name = 'ajax_get_but_for_chat_user.html'
     pk_url_kwarg  = 'pk'
-    template_for_user  = 'ajax_get_but_for_chat_user.html'
-    template_for_admin = 'ajax_get_but_for_chat_admin.html'
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -384,15 +375,6 @@ class GetButtonForChat(TemplateView):
     def get(self, request, *args, **kwargs):
         self.question  = self.get_object()
         return super(GetButtonForChat, self).get(request, *args, **kwargs)
-
-    def get_template_names(self):
-        if self.question.user_from == self.user:
-            template = self.template_for_user
-        elif self.question.user_to == self.user:
-            template = self.template_for_admin
-        else:
-            raise Http404
-        return template
 
     def get_context_data(self, **kwargs):
         kwargs.update({
@@ -563,7 +545,7 @@ class GetReportListForReportForQuesView(ListView):
     def get_open_question(self, queryset):
         if not queryset:
             return 0
-        check_count  = queryset.filter(Q(user_check = False)|Q(admin_check = False)).count()
+        check_count  = queryset.filter(Q(user_check = False)).count()
         return check_count
 
 

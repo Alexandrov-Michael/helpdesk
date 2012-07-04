@@ -9,7 +9,7 @@ class ChatInLine(admin.StackedInline):
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('slug', 'date', 'user_from', 'pc_from', 'user_to', 'user_check', 'admin_check' )
+    list_display = ('slug', 'date', 'user_from', 'pc_from', 'user_to', 'user_check' )
     list_display_links = ('slug', 'date', 'user_from', 'pc_from', 'user_to')
     inlines = [
         ChatInLine,

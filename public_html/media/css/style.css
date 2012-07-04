@@ -193,12 +193,9 @@ a.section:link, a.section:visited {
     width: 10px;
 }
 
-/*.dateCol{*/
-    /*width: 20%;*/
-/*}*/
-
 .dateCol{
-    width: 120px;
+    width: 60px;
+    text-align: center;
 }
 
 

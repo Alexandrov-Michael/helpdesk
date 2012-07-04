@@ -25,8 +25,6 @@ class Questions(models.Model):
     body             = models.TextField(u'Вопрос')
     user_check       = models.BooleanField(u'Отметка пользователя')
     user_check_date  = models.DateTimeField(u'Дата закрытия вопроса отправителем', null=True, blank=True)
-    admin_check      = models.BooleanField(u'Отметка администратора')
-    admin_check_date = models.DateTimeField(u'Дата закрытия вопроса получателем', null=True, blank=True)
     slug             = models.PositiveIntegerField(u'Идентификатор', unique=True, null=True, blank=True )
 
     def __unicode__(self):

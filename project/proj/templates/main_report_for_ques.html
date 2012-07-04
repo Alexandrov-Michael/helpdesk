@@ -34,6 +34,8 @@
                 }
             }).done(function(){
                         $('.div_choise_company').fadeIn();
+                        getDetailHover();
+                        GetQues();
                     });
         }
         function GetUserList(){
@@ -47,6 +49,8 @@
                 }
             }).done(function(){
                         $('.div_choise_user').fadeIn();
+                        getDetailHover();
+                        GetQues();
                     });
         }
         function GetReportForCompany(){
@@ -59,12 +63,31 @@
                 dataType: 'html',
                 success: function(data){
                     $('#report_list').empty().append(data).fadeIn();
+                    getDetailHover();
+                    GetQues();
                 }
+            });
+        }
+        function GetQues(){
+            $('tbody tr').click(function(){
+                var id = $(this).attr('id');
+                if(id){
+                    window.location = '/chat/' + id;
+                }
+            })
+        }
+        function getDetailHover(){
+            $('#mainTable tr').hover( function(){
+                $('td', this).css('background','#6699ff');
+            }, function(){
+                $('td', this).css( 'background','');
             });
         }
         $(document).ready(function(){
             GetCompanyList();
             GetUserList();
+            getDetailHover();
+            GetQues();
         });
     </script>
 {% endblock %}

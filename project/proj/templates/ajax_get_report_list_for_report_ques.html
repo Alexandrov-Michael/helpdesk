@@ -10,17 +10,15 @@
             <th>От кого</th>
             <th>Кому</th>
             <th>Содержание вопроса</th>
-            <th class='check'>Закрыто отп.</th>
-            <th>Дата закрытия отп.</th>
-            <th class='check'>Закрыто пол.</th>
-            <th>Дата закрытия пол.</th>
+            <th class='check'>Вопрос закрыт</th>
+            <th>Дата закрытия</th>
         </tr>
         </thead>
         <tbody id="mainTable">
         {% for ques in questions %}
             <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ ques.id }}">
                 <td >{{ ques.slug }}</td>
-                <td >{{ ques.date|date:'H:i d/m/Y' }}</td>
+                <td class='dateCol'>{{ ques.date|date:'H:i d/m/Y' }}</td>
                 <td>
                     {{ ques.user_from.first_name }}
                     {% if ques.user_from.last_name %}
@@ -37,7 +35,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <div class='body_q'>{{ ques.body }}</div>
+                    <div class='body_q'>{{ ques.body|truncatewords:15 }}</div>
                 </td>
                 <td class='
                                     {% if ques.user_check %}
@@ -52,27 +50,15 @@
                         Открыт
                     {% endif %}
                 </td>
-                <td>
+                <td class='dateCol
+                {% if ques.user_check %}
+                     plus
+                {% else %}
+                     minus
+                {% endif %}
+                '>
                     {% if ques.user_check_date %}
                         {{ ques.user_check_date|date:'H:i d/m/Y' }}
-                    {% endif %}
-                </td>
-                <td class='
-                                    {% if ques.admin_check %}
-                                        plus
-                                    {% else %}
-                                        minus
-                                    {% endif %}
-                                 check'>
-                    {% if ques.admin_check %}
-                        Закрыт
-                    {% else %}
-                        Открыт
-                    {% endif %}
-                </td>
-                <td>
-                    {% if ques.admin_check_date %}
-                        {{ ques.admin_check_date|date:'H:i d/m/Y' }}
                     {% endif %}
                 </td>
             </tr>
