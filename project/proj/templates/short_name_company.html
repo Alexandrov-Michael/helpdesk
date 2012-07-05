@@ -1,0 +1,49 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Список сокращений для компании
+{% endblock %}
+
+{% block content %}
+    <h1>Список сокращений к вопросам для компаний</h1>
+    <div id="tableDiv">
+        <div id="preTableTop">
+            <p>Количество компаний {{ paginator.count }}</p>
+        </div>
+        <table class='listTable'>
+            <thead>
+            <tr>
+                <th>Сокращение в вопросе</th>
+                <th>Название компании</th>
+            </tr>
+            </thead>
+            <tbody id="mainTable">
+            {% for item in companys %}
+                <tr class='{% cycle 'firstTd' 'secondTd' %}'>
+                    <td>{{ item.com_user.username|slice:":2" }}</td>
+                    <td>{{ item.com_user.first_name }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">Компаний нет</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p id='paginator'>&nbsp;
+            {% if paginator.num_pages > 1 %}
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">&larr; Предыдущая &nbsp;</a>
+                {% endif %}
+                <span class="current_page">Страница {{ page_obj.number }} из {{ paginator.num_pages }}.</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">&nbsp; Следующая &rarr;</a>
+                {% endif %}
+            {% endif %}
+        </p>
+    </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

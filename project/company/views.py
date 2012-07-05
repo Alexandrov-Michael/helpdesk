@@ -184,10 +184,10 @@ class PcList(TemplateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = self.company_group)
+        self.is_company = self.is_user_group_company()
+        if self.is_company:
             raise Http404
-        except Group.DoesNotExist:
+        else:
             try:
                 self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
                 self.user_is_report_group = True
@@ -196,9 +196,8 @@ class PcList(TemplateView):
             return super(PcList, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        user_is_company = self.is_user_group_company()
         context = super(PcList, self).get_context_data(**kwargs)
-        context['user_is_company'] = user_is_company
+        context['user_is_company'] = self.is_company
         context['user_is_report']  = self.user_is_report_group
         return context
 
@@ -222,7 +221,8 @@ class GetPcForPcList(ListView):
     template_name = 'ajax_get_pc_for_list.html'
     model = CompanyPC
     context_object_name = 'pc_list'
-    pk_url_kwarg  = 'pk'
+    company_url_kwarg  = 'company'
+    dep_url_kwarg = 'dep'
     company_group = settings.COMPANY_GROUP_NAME
     paginate_by = 40
 
@@ -235,19 +235,39 @@ class GetPcForPcList(ListView):
         except Group.DoesNotExist:
             return super(GetPcForPcList, self).dispatch(request, *args, **kwargs)
 
+    def get_user_kwargs(self):
+        company_user_pk = self.kwargs.get(self.company_url_kwarg, None)
+        dep_pk = self.kwargs.get(self.dep_url_kwarg, None)
+        if company_user_pk is None or dep_pk is None:
+            raise Http404
+        if company_user_pk == '0':
+            company_user_pk = None
+        if dep_pk == '0':
+            dep_pk = None
+        return [company_user_pk, dep_pk]
+
 
     def get_queryset(self):
-        pk = self.kwargs.get(self.pk_url_kwarg, None)
-        if pk is not None:
+        company_user_pk, dep_pk = self.get_user_kwargs()
+        queryset = None
+        if company_user_pk:
             try:
-                company = Company.objects.get(com_user=pk)
-            except Company.DoesNotExist:
+                com_user = User.objects.select_related('company').get(pk = company_user_pk)
+            except User.DoesNotExist:
                 raise Http404
-            queryset = CompanyPC.objects.filter(company=company)
-            return queryset
-        else:
+            queryset = CompanyPC.objects.filter(company=com_user.company)
+        if dep_pk:
+            try:
+                dep = Departments.objects.get(pk = dep_pk)
+            except Departments.DoesNotExist:
+                raise Http404
+            if queryset:
+                queryset = queryset.filter(departament = dep)
+            else:
+                queryset = CompanyPC.objects.filter(departament = dep)
+        if queryset is None:
             raise Http404
-
+        return queryset
 
 class PcDetail(ListView):
     """
@@ -603,4 +623,26 @@ class GetDepartamentForPcListView(ListView):
 
 
 
+
+class ShortCompanyNameListView(ListView):
+    """
+    Представление для получения списка сокращений по вопросам для компаний
+    """
+    model = Company
+    context_object_name = 'companys'
+    template_name = 'short_name_company.html'
+    paginate_by = 40
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        try:
+            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+            raise Http404
+        except Group.DoesNotExist:
+            return super(ShortCompanyNameListView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Company.objects.select_related('com_user__username', 'com_user__first_name').all()
+        return queryset
 

@@ -7,15 +7,15 @@
 {% block content %}
     <h1>Список компьютеров в ваших компаниях</h1>
     <div id="choise_company">
-        <p class="p_error" id="p_choise_msg">Выберите пожалуйста компанию</p>
         <p id="message">Если список компаний пуст, то вы не обслуживаете ни одну компанию</p>
-        <select id='sel_choise_company' name='name_sel_choise_company' onchange="GetPcList()">
+        <p>Выберите компанию</p>
+        <select id='sel_choise_company' name='name_sel_choise_company' onchange="GetPcListForCompany()">
             <option value="0" selected="selected">---------</option>
         </select>
     </div>
     <div id="choise_dep">
         <p>Выберите отдел</p>
-        <select id='sel_choise_dep' name='name_sel_choise_dep' onchange=""></select>
+        <select id='sel_choise_dep' name='name_sel_choise_dep' onchange="GetPcListForDep()"></select>
     </div>
     <div id='ajax_pc_list'></div>
 {% endblock %}
@@ -38,17 +38,20 @@
         }
         function GetOptionsLen(){
             if($('#sel_choise_company option').length<2){
-                $('#p_choise_msg').fadeOut();
                 $('#message').fadeIn();
             }
         }
-        function GetPcList(){
-            var value = $('#sel_choise_company').val()
-            if(value != 0){
+        function GetPcListForCompany(){
+            var com = $('#sel_choise_company').val();
+            var dep = $('#sel_choise_dep').val();
+            if(! dep ){
+                dep = 0;
+            }
+            if(com != 0){
                 $('#p_choise_msg').fadeOut();
                 $('#ajax_pc_list').hide();
                 $.ajax({
-                    url: '/ajax/get_pc_for_list/'+value+'/',
+                    url: '/ajax/get_pc_for_list/'+com+'/' + dep + '/',
                     type: 'GET',
                     dataType: 'html',
                     success: function(data){
@@ -61,7 +64,31 @@
                         });
             }else{
                     $('#ajax_pc_list').fadeOut().empty();
-                    $('#choise_company p').fadeIn();
+                    $('#choise_dep').fadeOut();
+            }
+        }
+        function GetPcListForDep(){
+            var com = $('#sel_choise_company').val();
+            var dep = $('#sel_choise_dep').val();
+            if(! dep ){
+                dep = 0;
+            }
+            if(com != 0){
+                $('#p_choise_msg').fadeOut();
+                $('#ajax_pc_list').hide();
+                $.ajax({
+                    url: '/ajax/get_pc_for_list/'+com+'/' + dep + '/',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(data){
+                        $('#ajax_pc_list').empty().append(data).fadeIn();
+                    }
+                }).done(function(){
+                            GetPcDetail();
+                            HoverTr();
+                        });
+            }else{
+                $('#ajax_pc_list').fadeOut().empty();
             }
         }
         function GetPcDetail(){
@@ -81,7 +108,6 @@
             $('#choise_dep').hide();
         }
         function GetDep(){
-            $('#choise_dep').hide();
             var id = $('#sel_choise_company').val();
             $.ajax({
                 url:'/ajax/get_departament_for_pc_list/' + id + '/',

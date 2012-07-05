@@ -49,6 +49,7 @@
                         <li><a href="/">Главная</a></li>
                         <li><a href="/add_q/">Задать вопрос</a></li>
                         {% if not user_is_company %}
+                            <li><a href="{% url short_company_name %}">Сокращение компаний</a></li>
                             <li><a href="{% url pc_list %}">Список ПК</a></li>
                             <li><a href="{% url add_pc %}">Добавить ПК</a></li>
                         {% endif %}

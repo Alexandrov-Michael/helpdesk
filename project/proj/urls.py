@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^add_pc_option_for_all/(?P<pk>\d+)/$',    vc.AddPcOptionForAllView.as_view(), name='add_pc_option_for_all'),
     url(r'^report_ques/$',              views.MainReportForQuestionsView.as_view(), name='report_ques'),
     url(r'^report_pc_history/$',        views.MainReportForPcHistoryView.as_view(), name='report_pc_history'),
+    url(r'^short_company_name/$',       vc.ShortCompanyNameListView.as_view(), name='short_company_name'),
 
 
     #tehnikal
@@ -38,24 +39,24 @@ urlpatterns = patterns('',
 
 
     #ajax views
-    url(r'^ajax/get_pc_from/$',                     vc.GetPcFrom.as_view()),
-    url(r'^ajax/get_user_to/$',                     vc.GetUserTo.as_view()),
-    url(r'^ajax/get_company_to/$',                  vc.GetCompanyTo.as_view()),
-    url(r'^ajax/get_ques/(?P<pk>\d+)/$',            views.GetQuestionForChat.as_view()),
-    url(r'^ajax/get_but/(?P<pk>\d+)/$',             views.GetButtonForChat.as_view()),
-    url(r'^ajax/get_chat_mess/(?P<pk>\d+)/$',       views.GetChatMessages.as_view()),
-    url(r'^ajax/get_index_ques/$',                  views.QuestionList.as_view()),
-    url(r'^ajax/get_company_for_pc_list/$',         vc.GetCompanyForPcList.as_view()),
-    url(r'^ajax/get_pc_for_list/(?P<pk>\d+)/$',     vc.GetPcForPcList.as_view()),
-    url(r'^ajax/get_options_for_add/(?P<pk>\d+)/$', vc.GetOptionsForAdd.as_view()),
-    url(r'^ajax/get_company_for_pc_add/$',          vc.GetCompanyForPcAddView.as_view()),
-    url(r'^ajax/get_company_for_report_ques/$',     views.GetCompanyListForReportForQuesView.as_view()),
-    url(r'^ajax/get_users_for_report_ques/$',       views.GetUserListForReportForQuesView.as_view()),
+    url(r'^ajax/get_pc_from/$',                                     vc.GetPcFrom.as_view()),
+    url(r'^ajax/get_user_to/$',                                     vc.GetUserTo.as_view()),
+    url(r'^ajax/get_company_to/$',                                  vc.GetCompanyTo.as_view()),
+    url(r'^ajax/get_ques/(?P<pk>\d+)/$',                            views.GetQuestionForChat.as_view()),
+    url(r'^ajax/get_but/(?P<pk>\d+)/$',                             views.GetButtonForChat.as_view()),
+    url(r'^ajax/get_chat_mess/(?P<pk>\d+)/$',                       views.GetChatMessages.as_view()),
+    url(r'^ajax/get_index_ques/$',                                  views.QuestionList.as_view()),
+    url(r'^ajax/get_company_for_pc_list/$',                         vc.GetCompanyForPcList.as_view()),
+    url(r'^ajax/get_pc_for_list/(?P<company>\d+)/(?P<dep>\d+)/$',   vc.GetPcForPcList.as_view()),
+    url(r'^ajax/get_options_for_add/(?P<pk>\d+)/$',                 vc.GetOptionsForAdd.as_view()),
+    url(r'^ajax/get_company_for_pc_add/$',                          vc.GetCompanyForPcAddView.as_view()),
+    url(r'^ajax/get_company_for_report_ques/$',                     views.GetCompanyListForReportForQuesView.as_view()),
+    url(r'^ajax/get_users_for_report_ques/$',                       views.GetUserListForReportForQuesView.as_view()),
     url(r'^ajax/get_report_for_report_ques/(?P<company>\d+)/(?P<user>\d+)/$', views.GetReportListForReportForQuesView.as_view()),
-    url(r'^ajax/get_pc_for_report_pc_history/(?P<company>\d+)/$', views.GetPcListForReportPcHistoryView.as_view()),
-    url(r'^ajax/get_company_for_report_pc_history/$', views.GetCompanyListForReportForPcHistoryView.as_view()),
+    url(r'^ajax/get_pc_for_report_pc_history/(?P<company>\d+)/$',   views.GetPcListForReportPcHistoryView.as_view()),
+    url(r'^ajax/get_company_for_report_pc_history/$',               views.GetCompanyListForReportForPcHistoryView.as_view()),
     url(r'^ajax/get_report_pc_history/(?P<pc>\d+)/(?P<user>\d+)/(?P<company>\d+)/$', views.GetReportForPcHistoryView.as_view()),
-    url(r'^ajax/get_departament_for_pc_list/(?P<pk>\d+)/$', vc.GetDepartamentForPcListView.as_view()),
+    url(r'^ajax/get_departament_for_pc_list/(?P<pk>\d+)/$',         vc.GetDepartamentForPcListView.as_view()),
 
 
 

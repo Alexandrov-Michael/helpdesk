@@ -312,11 +312,21 @@ a.section:link, a.section:visited {
 }
 
 #choise_company{
-    margin: 10px 0 10px 0;
+    margin: 10px 10px 10px 0;
+    float: left;
+}
+
+#choise_dep{
+    float:left;
+    margin: 10px 0 0 0;
 }
 
 #pc_detail_parent{
     margin: 10px;
+}
+
+#ajax_pc_list{
+    margin: 60px 0 0 0;
 }
 
 #table_pc_parent th{

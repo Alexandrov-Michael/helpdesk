@@ -11,7 +11,7 @@ class Company(models.Model):
     com_user - логин для компании, чтобы могли входить пользователи, один на всю фирму
     info - дополнительная информация о компании
     """
-    com_user = models.OneToOneField(User, verbose_name=u'Логин')
+    com_user = models.OneToOneField(User, verbose_name=u'Логин', related_name='company')
 
     def __unicode__(self):
         return self.com_user.first_name
@@ -45,7 +45,7 @@ class CompanyPC(models.Model):
     company - наименование компании в которой стоит компьютер
     name - ФИО пользователя, который сидит за данным компьютером
     """
-    company   = models.ForeignKey(Company, verbose_name=u'Компания', related_name=u'rel_company')
+    company   = models.ForeignKey(Company, verbose_name=u'Компания', related_name=u'company_pc')
     departament = models.ForeignKey(Departments, verbose_name=u'Отдел', related_name='rel_dep')
     pc_nameId = models.PositiveIntegerField(u'ID', unique=True)
     pc_name   = models.TextField(u'hostname')
