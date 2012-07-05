@@ -29,7 +29,27 @@
     </script>
 </head>
 <body>
-<!--[if lte IE 6]><div><p>Вы используете старый браузер</p></div><![endif]-->
+<!--[if lte IE 6]>
+<div id="ieDiv">
+    <p>Вы используете устаревший браузер, пожалуйста скачайте современный:</p>
+    <table>
+        <tbody>
+            <tr>
+                <td>Mozilla Firefox</td>
+                <td>Google Chrome</td>
+                <td>Opera</td>
+                <td>Internet Exploer 9</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.mozilla.org/ru/firefox/new/"><img src="{{ MEDIA_URL }}img/firefox.png" width="150px" height="150px" /></a></td>
+                <td><a href="https://www.google.com/chrome/"><img src="{{ MEDIA_URL }}img/chrome.png"  width="150px" height="150px" /></a></td>
+                <td><a href="http://ru.opera.com/browser/"><img src="{{ MEDIA_URL }}img/opera.png" width="150px" height="150px" /></a></td>
+                <td><a href="http://windows.microsoft.com/ru-RU/internet-explorer/downloads/ie/" ><img src="{{ MEDIA_URL }}img/ie.png" width="150px" height="150px" /></a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<![endif]-->
 <div id='wropper'>
     <div id='header'>
         <div id='headerTop'>

@@ -432,3 +432,30 @@ input[type="submit"], button{
 #id_body{
     width:500px;
 }
+
+#ieDiv{
+    background: #d7d7d7;
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    text-align: center;
+    z-index: 999;
+    opacity: 0.90;
+}
+
+#ieDiv p{
+    color: red;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+#ieDiv table{
+    margin: auto;
+    color: #000000;
+    font-size: 20px;
+}
+
+#ieDiv table td{
+    padding: 0 20px 0 0;
+}
