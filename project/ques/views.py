@@ -23,37 +23,30 @@ class IndexView(TemplateView):
     """
     Представление для страртовой страницы, использует шаблон main
     в котором через аякс подхватывается список вопросов данного пользователя
+
+    optimized 20120705
     """
 
     template_name = 'main.html'
-    company_group = settings.COMPANY_GROUP_NAME
-    user_is_report_group = False
     company_admins = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
-            self.user_is_report_group = True
-        except Group.DoesNotExist:
-            pass
+        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
         return super(IndexView, self).dispatch(request, *args, **kwargs)
 
-    def is_user_group_company(self):
-        try:
-            self.user.groups.all().get(name=self.company_group)
-            self.company_admins = CompanyAdmins.objects.filter(company__com_user=self.user).select_related('post__description', 'username__first_name', 'username__last_name', 'username__profile__telefon').order_by('post')
-            return True
-        except Group.DoesNotExist:
+    def get_company_admins(self):
+        if self.user.profile.is_company:
+            queryset = CompanyAdmins.objects.filter(company__com_user=self.user).select_related('post__description', 'username__first_name', 'username__last_name', 'username__profile__telefon').order_by('post')
+            return queryset
+        else:
             return False
 
     def get_context_data(self, **kwargs):
-        user_is_company = self.is_user_group_company()
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['user_is_company'] = user_is_company
-        context['user_is_report']  = self.user_is_report_group
-        context['company_admins'] = self.company_admins
+        context['user_is_company'] = self.user.profile.is_company
+        context['user_is_report']  = self.user.profile.is_report
+        context['company_admins'] = self.get_company_admins()
         return context
 
 
@@ -68,6 +61,9 @@ class QuestionList(ListView):
     template_name - шаблон
     get_queryset - получаем список объектов для каждого пользователя
     dispatch - проверяем пользователя зарегестрированан ли
+
+
+    optimized 20120705
     """
 
     model = Questions
@@ -76,7 +72,7 @@ class QuestionList(ListView):
     template_name = u'ajax_get_index_ques.html'
 
     def get_queryset(self):
-        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user))
+        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user)).select_related('user_to__first_name', 'pc_from')
         self.non_check_ques = self.get_open_question(queryset)
         return queryset
 
@@ -101,26 +97,22 @@ class QuestionList(ListView):
 class QuesAdd(FormView):
     """
     Представление формы для добавления вопроса
+
+    optimized 20120705
     """
     form_class = None
     success_url = '/'
     template_name = None
     slug_plus = settings.PLUS_SLUG_FIELD
     all_company_user = settings.USER_MESS_FOR_ALL_COMPANY
-    company_group = settings.COMPANY_GROUP_NAME
-    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.is_user_company = self.is_user_group_company()
-        if not self.is_user_company:
-            self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
-            self.user_is_report_group = True
+        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
         return super(QuesAdd, self).dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
-        if self.is_user_company:
+        if self.user.profile.is_company:
             self.form_class = EditQuestionUser
             self.template_name = u'add_q.html'
         else:
@@ -131,7 +123,7 @@ class QuesAdd(FormView):
     def form_valid(self, form):
         body       = form.cleaned_data['body']
         user_to    = form.cleaned_data['user_to']
-        if self.is_user_company:
+        if self.user.profile.is_company:
             user_from   = form.cleaned_data['user_from']
             worker_from = form.cleaned_data['worker_from']
             new_question = Questions(
@@ -148,7 +140,7 @@ class QuesAdd(FormView):
             ).save()
         else:
             if user_to.username == self.all_company_user:
-                comps = CompanyAdmins.objects.filter(username=self.user).order_by('company.id').distinct('company')
+                comps = CompanyAdmins.objects.select_related('company__com_user').filter(username=self.user).order_by('company.id').distinct('company')
                 if comps:
                     for one_comp in comps:
                         new_question = Questions(
@@ -174,18 +166,10 @@ class QuesAdd(FormView):
         new_question.save()
         return super(QuesAdd, self).form_valid(form)
 
-    def is_user_group_company(self):
-        try:
-            self.user.groups.all().get(name=self.company_group)
-            return True
-        except Group.DoesNotExist:
-            return False
-
     def get_context_data(self, **kwargs):
-        user_is_company = self.is_user_company
         context = super(QuesAdd, self).get_context_data(**kwargs)
-        context['user_is_company'] = user_is_company
-        context['user_is_report']  = self.user_is_report_group
+        context['user_is_company'] = self.user.profile.is_company
+        context['user_is_report']  = self.user.profile.is_report
         return context
 
 
