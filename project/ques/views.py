@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-from django.core.mail import send_mail
 
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -16,6 +15,7 @@ from django.http import Http404
 from company.models import CompanyAdmins, Company, CompanyPC, PcOptionListHistory
 from django.contrib.auth.models import User
 from datetime import datetime
+from ques.models import Emails
 
 
 
@@ -141,11 +141,11 @@ class QuesAdd(FormView):
                 user_to=user_to,
                 body=body,
             )
-            subj = u'Сообщение от %s' % (self.user.first_name,)
-            me = 'help@fregatsoft.com'
-            to = [user_to.email]
-            msg = body
-            send_mail(subj,msg,me,to)
+            Emails(
+                mail_to = user_to.email,
+                subject = u'Сообщение от %s' % (self.user.first_name,),
+                body = body
+            ).save()
         else:
             if user_to.username == self.all_company_user:
                 comps = CompanyAdmins.objects.filter(username=self.user).order_by('company.id').distinct('company')

@@ -62,3 +62,16 @@ class Chat(models.Model):
         ordering = ['date']
         verbose_name = u'Сообщение чата'
         verbose_name_plural = u'Сообщения чата'
+
+
+class Emails(models.Model):
+    """
+    Модель для отправки почтовых сообщений
+    """
+    mail_to = models.EmailField()
+    subject = models.CharField(max_length=60)
+    body    = models.TextField()
+    sended  = models.BooleanField()
+
+    def __unicode__(self):
+        return self.subject

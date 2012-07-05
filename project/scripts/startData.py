@@ -17,6 +17,7 @@ def run():
 
     alexandrov = User(username = u'alexandrov', first_name = u'Михаил', last_name = u'Александров' )
     alexandrov.set_password(mypass)
+    alexandrov.email = 'al@ferromet.ru'
     alexandrov.save()
     alexandrov.groups.add(reports_group)
 
@@ -148,7 +149,9 @@ def run():
     postsList = [kurator, gelezo, admin1c, access]
 
     for i in range(0,20):
-            CompanyAdmins(username=usersList[randrange(0, len(usersList))], company=companyList[randrange(0,len(companyList))], post=postsList[randrange(0, len(postsList))]).save()
+        CompanyAdmins(username=usersList[randrange(0, len(usersList))], company=companyList[randrange(0,len(companyList))], post=postsList[randrange(0, len(postsList))]).save()
+
+    CompanyAdmins(username=alexandrov, company = com_ferromet, post = kurator).save()
 
 
     proccesor   = PcOptions(name = u'Процессор')
