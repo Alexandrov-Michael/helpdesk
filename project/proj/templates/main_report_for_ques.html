@@ -77,10 +77,19 @@
             })
         }
         function getDetailHover(){
+            var colorminus;
+            var colorplus;
             $('#mainTable tr').hover( function(){
+                colorminus = $(this).find('td.minus').css('background-color');
+                colorplus = $(this).find('td.plus').css('background-color');
                 $('td', this).css('background','#6699ff');
             }, function(){
                 $('td', this).css( 'background','');
+                if(colorminus){
+                    $(this).find('td.minus').css('background', colorminus);
+                }else{
+                    $(this).find('td.plus').css('background', colorplus);
+                }
             });
         }
         $(document).ready(function(){
