@@ -1,5 +1,5 @@
 {% for item in companys %}
-    <option value="{{ item.company.com_user.id }}">{{ item.company }}</option>
+    <option value="{{ item.company.com_user.id }}">{{ item.company.com_user.first_name }}</option>
 {% endfor %}
 {% if not block_for_all %}
 <option value="{{ all.id }}">{{ all.first_name }}</option>
