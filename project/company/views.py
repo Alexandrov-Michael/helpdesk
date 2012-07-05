@@ -22,12 +22,7 @@ class GetPcFrom(ListView):
     template_name = u'ajax_pc_from.html'
 
     def get_queryset(self):
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
-            com      = Company.objects.get(com_user=self.user)
-            queryset = CompanyPC.objects.filter(company=com)
-        except Group.DoesNotExist, Company.DoesNotExist:
-            queryset = Company.objects.none()
+        queryset = CompanyPC.objects.filter(company__com_user = self.user)
         return queryset
 
     @method_decorator(login_required)
@@ -58,8 +53,7 @@ class GetUserTo(ListView):
         try:
             self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
             self.user_group = settings.COMPANY_GROUP_NAME
-            com = Company.objects.get(com_user=self.user)
-            queryset = CompanyAdmins.objects.filter(company = com).order_by('username.id').distinct('username')
+            queryset = CompanyAdmins.objects.filter(company__com_user = self.user).order_by('username.id').distinct('username')
         except Group.DoesNotExist:
             queryset = User.objects.exclude(groups__name = settings.COMPANY_GROUP_NAME).exclude(username = settings.USER_MESS_FOR_ALL_COMPANY).exclude(username=self.user.username)
             self.user_group = None

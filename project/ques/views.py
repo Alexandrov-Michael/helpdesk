@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from django.core.mail import send_mail
 
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -112,19 +113,17 @@ class QuesAdd(FormView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
+        self.is_user_company = self.is_user_group_company()
+        if not self.is_user_company:
             self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
             self.user_is_report_group = True
-        except Group.DoesNotExist:
-            pass
         return super(QuesAdd, self).dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+        if self.is_user_company:
             self.form_class = EditQuestionUser
             self.template_name = u'add_q.html'
-        except Group.DoesNotExist:
+        else:
             self.form_class = EditQuestionAdmin
             self.template_name = u'add_q_admin.html'
         return self.form_class
@@ -132,8 +131,7 @@ class QuesAdd(FormView):
     def form_valid(self, form):
         body       = form.cleaned_data['body']
         user_to    = form.cleaned_data['user_to']
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+        if self.is_user_company:
             user_from   = form.cleaned_data['user_from']
             worker_from = form.cleaned_data['worker_from']
             new_question = Questions(
@@ -143,7 +141,12 @@ class QuesAdd(FormView):
                 user_to=user_to,
                 body=body,
             )
-        except Group.DoesNotExist:
+            subj = u'Сообщение от %s' % (self.user.first_name,)
+            me = 'help@fregatsoft.com'
+            to = [user_to.email]
+            msg = body
+            send_mail(subj,msg,me,to)
+        else:
             if user_to.username == self.all_company_user:
                 comps = CompanyAdmins.objects.filter(username=self.user).order_by('company.id').distinct('company')
                 if comps:
@@ -179,7 +182,7 @@ class QuesAdd(FormView):
             return False
 
     def get_context_data(self, **kwargs):
-        user_is_company = self.is_user_group_company()
+        user_is_company = self.is_user_company
         context = super(QuesAdd, self).get_context_data(**kwargs)
         context['user_is_company'] = user_is_company
         context['user_is_report']  = self.user_is_report_group
