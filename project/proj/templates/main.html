@@ -127,13 +127,19 @@
             })
         }
         function getDetailHover(){
-                var color;
+                var colorminus;
+                var colorplus;
             $('#mainTable tr').hover( function(){
-                color = $('.check', this).css('background')
+                colorminus = $(this).find('td.minus').css('background-color');
+                colorplus = $(this).find('td.plus').css('background-color');
                 $('td', this).css('background','#6699ff');
             }, function(){
                 $('td', this).css( 'background','');
-                $('.check', this).css('background', color);
+                if(colorminus){
+                    $(this).find('td.minus').css('background', colorminus);
+                }else{
+                    $(this).find('td.plus').css('background', colorplus);
+                }
             });
         }
         function GetIndexQuestion(){

@@ -182,11 +182,11 @@ a.section:link, a.section:visited {
 }
 
 .plus{
-    background: #C8FFCB;
+    background-color: #C8FFCB;
 }
 
 .minus{
-    background: yellow;
+    background-color: yellow;
 }
 
 .check{
