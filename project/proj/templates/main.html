@@ -29,7 +29,7 @@
     </script>
 </head>
 <body>
-<!--[if lte IE 6]>
+<!--[if lte IE 7]>
 <div id="ieDiv">
     <p>Вы используете устаревший браузер, пожалуйста скачайте современный:</p>
     <table>
@@ -127,10 +127,13 @@
             })
         }
         function getDetailHover(){
+                var color;
             $('#mainTable tr').hover( function(){
+                color = $('.check', this).css('background')
                 $('td', this).css('background','#6699ff');
             }, function(){
                 $('td', this).css( 'background','');
+                $('.check', this).css('background', color);
             });
         }
         function GetIndexQuestion(){
