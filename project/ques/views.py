@@ -16,6 +16,7 @@ from company.models import CompanyAdmins, Company, CompanyPC, PcOptionListHistor
 from django.contrib.auth.models import User
 from datetime import datetime
 from ques.models import Emails
+from profiles.models import Profile
 
 
 
@@ -24,7 +25,7 @@ class IndexView(TemplateView):
     Представление для страртовой страницы, использует шаблон main
     в котором через аякс подхватывается список вопросов данного пользователя
 
-    optimized 20120705
+    optimized 20120706
     """
 
     template_name = 'main.html'
@@ -32,11 +33,12 @@ class IndexView(TemplateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
         return super(IndexView, self).dispatch(request, *args, **kwargs)
 
     def get_company_admins(self):
-        if self.user.profile.is_company:
+        if self.user_profile.is_company:
             queryset = CompanyAdmins.objects.filter(company__com_user=self.user).select_related('post__description', 'username__first_name', 'username__last_name', 'username__profile__telefon').order_by('post')
             return queryset
         else:
@@ -44,8 +46,8 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user.profile.is_company
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
         context['company_admins'] = self.get_company_admins()
         return context
 
@@ -98,7 +100,7 @@ class QuesAdd(FormView):
     """
     Представление формы для добавления вопроса
 
-    optimized 20120705
+    optimized 20120706
     """
     form_class = None
     success_url = '/'
@@ -108,11 +110,12 @@ class QuesAdd(FormView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
         return super(QuesAdd, self).dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
-        if self.user.profile.is_company:
+        if self.user_profile.is_company:
             self.form_class = EditQuestionUser
             self.template_name = u'add_q.html'
         else:
@@ -123,7 +126,7 @@ class QuesAdd(FormView):
     def form_valid(self, form):
         body       = form.cleaned_data['body']
         user_to    = form.cleaned_data['user_to']
-        if self.user.profile.is_company:
+        if self.user_profile.is_company:
             user_from   = form.cleaned_data['user_from']
             worker_from = form.cleaned_data['worker_from']
             new_question = Questions(
@@ -168,8 +171,8 @@ class QuesAdd(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(QuesAdd, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user.profile.is_company
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
         return context
 
 
@@ -177,40 +180,28 @@ class QuesChatForm(FormView):
     """
     Представление формы для чата в обсуждении вопроса
 
+
+    optimized 20120706
     """
     form_class = ChatForm
     success_url = None
     template_name = 'ques_chat_form.html'
     pk_url_kwarg = 'pk'
-    company_group = settings.COMPANY_GROUP_NAME
     error_msg = None
-    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
-            self.user_is_report_group = True
-        except Group.DoesNotExist:
-            pass
+        self.user_profile = Profile.objects.get(user=self.user)
         return super(QuesChatForm, self).dispatch(request, *args, **kwargs)
 
-    def is_user_group_company(self):
-        try:
-            self.user.groups.all().get(name=self.company_group)
-            return True
-        except Group.DoesNotExist:
-            return False
-
     def get_context_data(self, **kwargs):
-        user_is_company = self.is_user_group_company()
         kwargs.update({
             'question' : self.question,
             'msgs_set' : self.chat_msgs,
-            'user_is_company': user_is_company,
+            'user_is_company': self.user_profile.is_company,
             'error_msg' : self.error_msg,
-            'user_is_report': self.user_is_report_group,
+            'user_is_report': self.user_profile.is_report,
         })
         return kwargs
 
@@ -326,6 +317,8 @@ class QuesChangeStatus(TemplateView):
 class GetQuestionForChat(DetailView):
     """
     Представление аякс для получения вопроса на странице чата
+
+    optimized 20120706
     """
     template_name = 'ajax_get_question_for_chat.html'
     model = Questions
@@ -335,6 +328,10 @@ class GetQuestionForChat(DetailView):
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
         return super(GetQuestionForChat, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Questions.objects.select_related('user_from__first_name', 'pc_from', 'user_to__first_name').all()
+        return queryset
 
 
 class GetButtonForChat(TemplateView):
@@ -378,6 +375,8 @@ class GetButtonForChat(TemplateView):
 class GetChatMessages(ListView):
     """
     Представление аякс для получения сообщений в чате
+
+    optimized 20120706
     """
     model = Chat
     context_object_name = 'msgs_set'
@@ -396,7 +395,7 @@ class GetChatMessages(ListView):
         return super(GetChatMessages, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = Chat.objects.filter(question = self.question)
+        queryset = Chat.objects.select_related('question__user_from__first_name', 'question__pc_from').filter(question = self.question)
         return queryset
 
 
@@ -404,37 +403,33 @@ class GetChatMessages(ListView):
 class MainReportForQuestionsView(TemplateView):
     """
     Представление для отчетов по вопросам
+
+    optimized 20120706
     """
     template_name = 'main_report_for_ques.html'
-    user_is_company_group = False
-    user_is_report_group = False
+
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
-            self.user_is_company_group = True
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company or not self.user_profile.is_report:
             raise Http404
-        except Group.DoesNotExist:
-            try:
-                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
-                self.user_is_report_group = True
-                return super(MainReportForQuestionsView, self).dispatch(request, *args, **kwargs)
-            except Group.DoesNotExist:
-                raise Http404
+        return super(MainReportForQuestionsView, self).dispatch(request, *args, **kwargs)
 
 
     def get_context_data(self, **kwargs):
         context = super(MainReportForQuestionsView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_is_company_group
-        context['user_is_report']  = self.user_is_report_group
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
         return context
 
 
 class GetCompanyListForReportForQuesView(ListView):
     """
     Аякс Представление для получения списка компаний для отчета по вопроса
+
+    optimized 20120706
     """
     model = Company
     context_object_name = 'companys'
@@ -443,15 +438,20 @@ class GetCompanyListForReportForQuesView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
-        except Group.DoesNotExist:
-            return super(GetCompanyListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+        return super(GetCompanyListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Company.objects.select_related('com_user__first_name').all()
+        return queryset
 
 class GetUserListForReportForQuesView(ListView):
     """
     Аякс представление для получения списка сотрудников для отчета по вопросам
+
+    optimized 20120706
     """
     model = User
     context_object_name = 'users'
@@ -460,11 +460,10 @@ class GetUserListForReportForQuesView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
-        except Group.DoesNotExist:
-            return super(GetUserListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+        return super(GetUserListForReportForQuesView, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = User.objects.exclude(pk=1).exclude(groups__name = settings.COMPANY_GROUP_NAME).exclude(username = settings.USER_MESS_FOR_ALL_COMPANY)
@@ -486,15 +485,11 @@ class GetReportListForReportForQuesView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company or not self.user_profile.is_report:
             raise Http404
-        except Group.DoesNotExist:
-            try:
-                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
-                return super(GetReportListForReportForQuesView, self).dispatch(request, *args, **kwargs)
-            except Group.DoesNotExist:
-                raise Http404
+        return super(GetReportListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+
 
     def get_filters(self):
         self.company_filter = self.kwargs.get(self.company_post_filter, None)
