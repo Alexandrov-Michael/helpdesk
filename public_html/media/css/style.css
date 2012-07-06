@@ -375,7 +375,7 @@ input[type="submit"], button{
 }
 
 #tableForm td{
-    padding: 0 0 5px 5px;
+    padding: 0 0 0 5px;
 }
 
 #change_pc_option{
@@ -465,5 +465,5 @@ input[type="submit"], button{
 }
 
 #id_for_all{
-    margin: 7px 0 0 0;
+    margin: 3px 0 0 0;
 }
