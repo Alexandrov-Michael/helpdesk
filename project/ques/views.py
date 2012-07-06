@@ -74,7 +74,7 @@ class QuestionList(ListView):
     template_name = u'ajax_get_index_ques.html'
 
     def get_queryset(self):
-        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user)).select_related('user_to__first_name', 'pc_from')
+        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user)).select_related('user_to__first_name', 'pc_from', 'user_from__first_name')
         self.non_check_ques = self.get_open_question(queryset)
         return queryset
 
@@ -106,7 +106,6 @@ class QuesAdd(FormView):
     success_url = '/'
     template_name = None
     slug_plus = settings.PLUS_SLUG_FIELD
-    all_company_user = settings.USER_MESS_FOR_ALL_COMPANY
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -126,6 +125,11 @@ class QuesAdd(FormView):
     def form_valid(self, form):
         body       = form.cleaned_data['body']
         user_to    = form.cleaned_data['user_to']
+        for_all    = form.cleaned_data['for_all']
+        if not for_all and not user_to:
+            return super(QuesAdd, self).form_invalid(form)
+        if for_all and user_to:
+            return super(QuesAdd, self).form_invalid(form)
         if self.user_profile.is_company:
             user_from   = form.cleaned_data['user_from']
             worker_from = form.cleaned_data['worker_from']
@@ -142,7 +146,7 @@ class QuesAdd(FormView):
                 body = body
             ).save()
         else:
-            if user_to.username == self.all_company_user:
+            if for_all:
                 comps = CompanyAdmins.objects.select_related('company__com_user').filter(username=self.user).order_by('company.id').distinct('company')
                 if comps:
                     for one_comp in comps:
@@ -152,7 +156,9 @@ class QuesAdd(FormView):
                             body=body
                         )
                         new_question.save()
-                        new_question.slug = new_question.id + self.slug_plus
+                        slug_first_part = self.user.username[:2]
+                        slug_2_part = new_question.id + self.slug_plus
+                        new_question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
                         new_question.save()
                     return super(QuesAdd, self).form_valid(form)
                 else:
@@ -466,7 +472,7 @@ class GetUserListForReportForQuesView(ListView):
         return super(GetUserListForReportForQuesView, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = User.objects.exclude(pk=1).exclude(groups__name = settings.COMPANY_GROUP_NAME).exclude(username = settings.USER_MESS_FOR_ALL_COMPANY)
+        queryset = User.objects.exclude(pk=1).exclude(profile__is_company = True)
         return queryset
 
 
@@ -474,6 +480,8 @@ class GetReportListForReportForQuesView(ListView):
     """
     Аякс представления для получения вопросов по заданным
     фильтрам для отчета по вопросам
+
+    optimized 20120706
     """
     model = Questions
     context_object_name = 'questions'
@@ -514,14 +522,14 @@ class GetReportListForReportForQuesView(ListView):
                 company = User.objects.get(pk = self.company_filter)
             except User.DoesNotExist:
                 raise Http404
-            queryset = Questions.objects.filter(Q(user_from = company)|Q(user_to = company))
+            queryset = Questions.objects.select_related('user_from__first_name', 'pc_from__pc_nameId', 'pc_from__pc_name', 'user_to__first_name').filter(Q(user_from = company)|Q(user_to = company))
         if self.user_filter is not None:
             try:
                 user = User.objects.get(pk = self.user_filter)
             except User.DoesNotExist:
                 raise Http404
             if queryset is None:
-                queryset = Questions.objects.filter(Q(user_from = user)|Q(user_to = user))
+                queryset = Questions.objects.select_related('user_from__first_name', 'pc_from__pc_nameId', 'pc_from__pc_name', 'user_to__first_name').filter(Q(user_from = user)|Q(user_to = user))
             else:
                 queryset = queryset.filter(Q(user_from = user)|Q(user_to = user))
         if queryset is None:
@@ -545,37 +553,32 @@ class GetReportListForReportForQuesView(ListView):
 class MainReportForPcHistoryView(TemplateView):
     """
     Представление для получения отчета по истории изменения хараетристик ПК
+
+    optimized 20120706
     """
     template_name = 'main_report_for_pc_history.html'
-    user_is_company_group = False
-    user_is_report_group = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
-            self.user_is_company_group = True
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company or not self.user_profile.is_report:
             raise Http404
-        except Group.DoesNotExist:
-            try:
-                self.user.groups.all().get(name = settings.GROUP_REPORT_ADMIN)
-                self.user_is_report_group = True
-                return super(MainReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
-            except Group.DoesNotExist:
-                raise Http404
+        return super(MainReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
 
 
     def get_context_data(self, **kwargs):
         context = super(MainReportForPcHistoryView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_is_company_group
-        context['user_is_report']  = self.user_is_report_group
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
         return context
 
 
 class GetPcListForReportPcHistoryView(ListView):
     """
     Аякс представление для получения списка пк в фирме
+
+    optimized 20120706
     """
     model = CompanyPC
     context_object_name = 'pc_list'
@@ -586,11 +589,10 @@ class GetPcListForReportPcHistoryView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
-        except Group.DoesNotExist:
-            return super(GetPcListForReportPcHistoryView, self).dispatch(request, *args, **kwargs)
+        return super(GetPcListForReportPcHistoryView, self).dispatch(request, *args, **kwargs)
 
     def get_filter(self):
         self.company_filter = self.kwargs.get(self.company_get_filter, None)
@@ -606,13 +608,15 @@ class GetPcListForReportPcHistoryView(ListView):
             company = Company.objects.get(pk = self.company_filter)
         except Company.DoesNotExist:
             raise Http404
-        queryset = CompanyPC.objects.filter(company = company)
+        queryset = CompanyPC.objects.filter(company = company).select_related('pc_nameId', 'pc_name')
         return queryset
 
 
 class GetCompanyListForReportForPcHistoryView(ListView):
     """
     Аякс представление для получения скиска компаний в отчету о изменени характеристик
+
+    optimized 20120706
     """
     model = Company
     context_object_name = 'companys'
@@ -621,16 +625,21 @@ class GetCompanyListForReportForPcHistoryView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
-        except Group.DoesNotExist:
-            return super(GetCompanyListForReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+        return super(GetCompanyListForReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Company.objects.select_related('com_user__first_name').all()
+        return queryset
 
 
 class GetReportForPcHistoryView(ListView):
     """
     Аякс предсталвение для получения отчета по истории измененя характеристик пк
+
+    optimized 20120706
     """
     model = PcOptionListHistory
     context_object_name = 'changes'
@@ -643,11 +652,10 @@ class GetReportForPcHistoryView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        try:
-            self.user.groups.all().get(name = settings.COMPANY_GROUP_NAME)
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
-        except Group.DoesNotExist:
-            return super(GetReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+        return super(GetReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
 
     def get_filters(self):
         pc_filter = self.kwargs.get(self.pc_get_filter, None)

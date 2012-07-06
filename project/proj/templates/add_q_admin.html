@@ -40,8 +40,29 @@
                     GetCompanyTo();
                 });
     }
+    function ChangeForAllCheckBox(){
+        $('#id_for_all').click(function(){
+            if(this.checked){
+                $('#id_user_to').attr("disabled","disabled");
+                $('#id_user_to').val('0');
+            }else{
+                $('#id_user_to').removeAttr("disabled");
+            }
+        });
+    }
+    function CheckBoxForAll(){
+        var value = $('#id_for_all').prop("checked");
+        if(value){
+            $('#id_user_to').attr("disabled","disabled");
+            $('#id_user_to').val('0');
+        }else{
+            $('#id_user_to').removeAttr("disabled");
+        }
+    }
     $(document).ready(function(){
         GetUserTo();
+        ChangeForAllCheckBox();
+        CheckBoxForAll()
     });
     </script>
 {% endblock %}

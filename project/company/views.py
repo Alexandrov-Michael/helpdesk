@@ -5,11 +5,11 @@ from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.contrib.auth.models import Group, User
-from proj import settings
+from django.contrib.auth.models import User
 from Forms import ChangePcOptionForm, AddPcOptionForPCForm, AddCompanyPcForm, AddPcOptionsForm
 from django.http import Http404
 from django.core.urlresolvers import reverse
+from profiles.models import Profile
 
 
 class GetPcFrom(ListView):
@@ -59,7 +59,7 @@ class GetUserTo(ListView):
         if self.user.profile.is_company:
             queryset = CompanyAdmins.objects.select_related('username__id', 'username__first_name', 'username__last_name', 'post__id', 'post__name').filter(company__com_user = self.user).order_by('username.id').distinct('username')
         else:
-            queryset = User.objects.exclude(groups__name = settings.COMPANY_GROUP_NAME).exclude(username = settings.USER_MESS_FOR_ALL_COMPANY).exclude(username=self.user.username)
+            queryset = User.objects.exclude(profile__is_company = True).exclude(username=self.user.username)
         return queryset
 
 
@@ -77,37 +77,21 @@ class GetCompanyTo(ListView):
 
     optimized 20120705
     """
-    model = User
+    model = CompanyAdmins
     context_object_name = u'companys'
     template_name = u'ajax_get_company_for_admin.html'
-    user_for_all_company_choese = settings.USER_MESS_FOR_ALL_COMPANY
-    block_for_all = False
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk = request.user.id)
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user.profile.is_company:
+            raise Http404
         return super(GetCompanyTo, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        if self.user.profile.is_company:
-            raise Http404
-        else:
-            queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
-            if not queryset:
-                self.block_for_all = True
+        queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
         return queryset
-
-    def get_context_data(self, **kwargs):
-        all_company = self.get_choese_for_all_company()
-        context = super(GetCompanyTo, self).get_context_data(**kwargs)
-        context['all'] = all_company
-        context['block_for_all'] = self.block_for_all
-        return context
-
-
-    def get_choese_for_all_company(self):
-        choese_all_user, created = User.objects.get_or_create(username=self.user_for_all_company_choese)
-        return choese_all_user
 
 
 class ChangePcOption(UpdateView):

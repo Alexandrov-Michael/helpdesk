@@ -211,16 +211,8 @@ LOGIN_REDIRECT_URL = u'/'
 
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
-#группа для фирм которые обслуживаем
-COMPANY_GROUP_NAME = 'company'
-
-#ПОЛЬЗОВАТЕЛЬ для отправки сообщений всем компаниям залогиненного администратора
-USER_MESS_FOR_ALL_COMPANY = 'all'
-
 #значение которое прибавляется к стандартнму id для идентификатора вопроса
 PLUS_SLUG_FIELD = 0
-
-GROUP_REPORT_ADMIN = 'reports'
 
 
 if not HOSTER:

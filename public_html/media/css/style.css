@@ -374,6 +374,10 @@ input[type="submit"], button{
     margin: 0 0 10px 0;
 }
 
+#tableForm td{
+    padding: 0 0 5px 5px;
+}
+
 #change_pc_option{
     padding: 7px;
 }
@@ -458,4 +462,8 @@ input[type="submit"], button{
 
 #ieDiv table td{
     padding: 0 20px 0 0;
+}
+
+#id_for_all{
+    margin: 7px 0 0 0;
 }

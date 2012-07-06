@@ -169,6 +169,36 @@
                         GetQues();
                     });
         }
+        function GetPeginatorNext(){
+            $('#tableDiv').hide();
+            var page = $('#next').attr('href');
+            $.ajax({
+                url: '/ajax/get_index_ques/'+page,
+                type: 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#tableDivWrop').empty().append(data).fadeIn();
+                }
+            }).done(function(){
+                        getDetailHover();
+                        GetQues();
+                    });
+        }
+        function GetPeginatorPrev(){
+            $('#tableDiv').hide();
+            var page = $('#prev').attr('href');
+            $.ajax({
+                url: '/ajax/get_index_ques/'+page,
+                type: 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#tableDivWrop').empty().append(data).fadeIn();
+                }
+            }).done(function(){
+                        getDetailHover();
+                        GetQues();
+                    });
+        }
         $(document).ready(function(){
             GetIndexQuestion();
             setInterval('GetIndexQuestionNoHide()', 60000);

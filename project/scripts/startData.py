@@ -8,78 +8,74 @@ from random import randrange
 
 def run():
 
-
-
-    group, created = Group.objects.get_or_create(name = settings.COMPANY_GROUP_NAME)
     mypass = u'user12345'
 
-    reports_group, created = Group.objects.get_or_create(name = settings.GROUP_REPORT_ADMIN)
 
     alexandrov = User(username = u'alexandrov', first_name = u'Михаил', last_name = u'Александров' )
     alexandrov.set_password(mypass)
     alexandrov.email = 'al@ferromet.ru'
     alexandrov.save()
-    alexandrov.groups.add(reports_group)
+
+    alexandrov_profile = Profile(user=alexandrov, is_report = True, is_company=False, telefon='+7-911-234-44-55')
+    alexandrov_profile.save()
 
 
     ivanov = User(username = u'ivanov', first_name = u'Сергей', last_name = u'Иванов' )
     ivanov.set_password(mypass)
     ivanov.save()
 
+
+    ivanov_profile = Profile(user=ivanov, is_company=False, telefon ='+7-921-355-34-34')
+    ivanov_profile.save()
+
     petrov = User(username = u'petrov', first_name = u'Павел', last_name = u'Петров' )
     petrov.set_password(mypass)
     petrov.save()
 
-    sidorov = User(username = u'sidorov', first_name = u'Иван', last_name = u'Сидоров')
-    sidorov.set_password(mypass)
-    sidorov.save()
+    petrov_profile = Profile(user=petrov, is_company=False, telefon= '+7-904-122-12-12')
+    petrov_profile.save()
 
-    panev = User(username = u'panev', first_name = u'Александр', last_name = u'Панев')
-    panev.set_password(mypass)
-    panev.save()
 
     maslov = User(username= 'maslov', first_name = u'Алексей', last_name = u'Маслов')
     maslov.set_password('megapass123')
     maslov.save()
 
-    Profile(user=alexandrov, telefon='+7-911-234-44-55').save()
-    Profile(user=ivanov, telefon ='+7-921-355-34-34').save()
-    Profile(user=petrov, telefon= '+7-904-122-12-12').save()
-    Profile(user=sidorov, telefon='+7-812-211-44-44').save()
-    Profile(user=panev, telefon='+7-812-223-45-46').save()
-    Profile(user=maslov, telefon='+7-234-211-42-66').save()
+    maslov_profile = Profile(user=maslov, is_company=False, telefon='+7-812-211-44-44')
+    maslov_profile.save()
 
 
 
 
 
 
-    usersList = [ alexandrov, ivanov, petrov, sidorov, panev, maslov]
+
+    usersList = [ alexandrov, ivanov, petrov, maslov]
 
     ferromet = User(username = u'ferromet', first_name = u'ООО ФЕРРОМЕТ')
     ferromet.set_password(mypass)
     ferromet.save()
-    ferromet.groups.add(group)
 
     intersteel = User(username = u'intersteel', first_name = u'ООО ИНТЕРСТАЛЬ' )
     intersteel.set_password(mypass)
     intersteel.save()
-    intersteel.groups.add(group)
 
     rbk = User(username = u'rbk', first_name = u'ООО РБК' )
     rbk.set_password(mypass)
     rbk.save()
-    rbk.groups.add(group)
 
     sevsap = User(username = u'sevzap', first_name = u'ООО СЕВЗАП')
     sevsap.set_password(mypass)
     sevsap.save()
-    sevsap.groups.add(group)
 
     test = User(username='test', first_name = u'ООО Приборы')
     test.set_password('test12345')
     test.save()
-    test.groups.add(group)
+
+    Profile(user=ferromet).save()
+    Profile(user=intersteel).save()
+    Profile(user=rbk).save()
+    Profile(user=sevsap).save()
+    Profile(user=test).save()
 
 
 

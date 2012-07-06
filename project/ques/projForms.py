@@ -25,8 +25,9 @@ class EditQuestionAdmin(forms.Form):
     Форма для добавления вопроса для админов
     """
     #будет браться через ajax
-    user_to    = forms.ModelChoiceField(queryset=User.objects.all(), label=u'Кому')
-    body      = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
+    for_all = forms.BooleanField(label=u'Для всех ваших компаний', required=False)
+    user_to = forms.ModelChoiceField(queryset=User.objects.all(), label=u'Кому', required=False)
+    body    = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
 
 
 class ChatForm(forms.Form):
