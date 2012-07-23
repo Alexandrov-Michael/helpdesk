@@ -13,7 +13,7 @@ def run():
     admin = User.objects.get(pk=1)
     admin.first_name = u'Главный куратор'
     admin.save()
-    admin_profile = Profile(user=admin, is_company=False, is_report=True, telefon = '+1222333')
+    admin_profile = Profile(user=admin, is_company=False, is_report=True, is_super_user=True, telefon = '+1222333')
     admin_profile.save()
 
 

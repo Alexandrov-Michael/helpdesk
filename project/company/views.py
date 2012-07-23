@@ -20,9 +20,7 @@ from profiles.models import Profile
 
 class GetPcFrom(ListView):
     """
-    Предсталвение которое доет список селектов для аякса, обязательно должна пресудствовать группа company
-    если пользователь в ней то приедосталяется список ПК в этой компании, если пользователь не компания,
-    то список пуст
+    Предсталвение которое доет список селектов для аякса список пк для отпраки вопроса
 
 
     optimized 20120705
@@ -416,7 +414,10 @@ class GetCompanyTo(ListView):
         return super(GetCompanyTo, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
+        if self.user_profile.is_super_user:
+            queryset = CompanyAdmins.objects.select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
+        else:
+            queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
         return queryset
 
 
@@ -531,13 +532,17 @@ class GetCompanyForPcAddView(ListView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(GetCompanyForPcAddView, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = CompanyAdmins.objects.select_related('company__id', 'company__com_user__first_name').filter(username = self.user).order_by('company.id').distinct('company')
+        if self.user_profile.is_super_user:
+            queryset = CompanyAdmins.objects.select_related('company__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
+        else:
+            queryset = CompanyAdmins.objects.select_related('company__id', 'company__com_user__first_name').filter(username = self.user).order_by('company.id').distinct('company')
         return queryset
 
 

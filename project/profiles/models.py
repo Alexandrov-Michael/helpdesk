@@ -6,10 +6,11 @@ class Profile(models.Model):
     """
     Профайл пользователя
     """
-    user        = models.OneToOneField(User, verbose_name=u'Пользователь', related_name='profile')
-    is_company  = models.BooleanField(u'Это компания', default=True)
-    is_report   = models.BooleanField(u'Доступ к отчетам')
-    telefon     = models.CharField(u'Телефон', max_length=18, blank=True)
+    user            = models.OneToOneField(User, verbose_name=u'Пользователь', related_name='profile')
+    is_company      = models.BooleanField(u'Это компания?', default=True)
+    is_report       = models.BooleanField(u'Доступ к отчетам?')
+    is_super_user   = models.BooleanField(u'Это супер пользователь?')
+    telefon         = models.CharField(u'Телефон', max_length=18, blank=True)
 
     def __unicode__(self):
         return self.user.first_name

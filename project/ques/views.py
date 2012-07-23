@@ -148,7 +148,10 @@ class QuesAdd(FormView):
             ).save()
         else:
             if for_all:
-                comps = CompanyAdmins.objects.select_related('company__com_user').filter(username=self.user).order_by('company.id').distinct('company')
+                if self.user_profile.is_super_user:
+                    comps = CompanyAdmins.objects.select_related('company__com_user').order_by('company.id').distinct('company')
+                else:
+                    comps = CompanyAdmins.objects.select_related('company__com_user').filter(username=self.user).order_by('company.id').distinct('company')
                 if comps:
                     for one_comp in comps:
                         new_question = Questions(
