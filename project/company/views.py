@@ -315,6 +315,12 @@ class ShortCompanyNameListView(ListView):
         queryset = Company.objects.select_related('com_user__username', 'com_user__first_name').all()
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super(ShortCompanyNameListView, self).get_context_data(**kwargs)
+        context['user_is_company'] = False
+        context['user_is_report']  = self.user.profile.is_report
+        return context
+
 
 class AddPcOptionForAllView(CreateView):
     """

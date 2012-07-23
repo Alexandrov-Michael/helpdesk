@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Добавить отдел
+{% endblock %}
+
+{% block content %}
+    <h1>Добавление отдела в компании</h1>
+    <div id='question' class='borderLine'>
+        <form action="{% url add_dep %}" method="POST">{% csrf_token %}
+            <table id='tableForm'>
+                {{ form.as_table }}
+            </table>
+            <input type="submit" value="Добавить" />
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
