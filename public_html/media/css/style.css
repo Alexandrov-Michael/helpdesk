@@ -215,6 +215,9 @@ a.section:link, a.section:visited {
 #mainTable tr:hover{
     cursor: pointer;
 }
+#mainTable.nopointer tr:hover{
+    cursor: default;
+}
 
 /* edit questions */
 

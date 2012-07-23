@@ -17,7 +17,7 @@
                 <th>Название компании</th>
             </tr>
             </thead>
-            <tbody id="mainTable">
+            <tbody id="mainTable" class='nopointer'>
             {% for item in companys %}
                 <tr class='{% cycle 'firstTd' 'secondTd' %}'>
                     <td>{{ item.com_user.username|slice:":2" }}</td>
