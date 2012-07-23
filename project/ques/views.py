@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from projForms import EditQuestionUser, EditQuestionAdmin, ChatForm
 from proj import settings
-from django.contrib.auth.models import Group
 from django.http import Http404
 from company.models import CompanyAdmins, Company, CompanyPC, PcOptionListHistory
 from django.contrib.auth.models import User

@@ -44,3 +44,16 @@ class AddDepartamentForm(forms.ModelForm):
         widgets = {
             'name': forms.Textarea(attrs={'cols': 50, 'rows': 5}),
             }
+
+
+class CreateUserForm(forms.Form):
+    """
+    Форма для создания пользователя
+    """
+    login           = forms.CharField(label=u'Логин')
+#    password        = forms
+    first_name      = forms.CharField(label=u'Имя')
+    last_name       = forms.CharField(label=u'Фамилия')
+    is_super_user   = forms.BooleanField(label=u'Суперпользователь')
+    is_report       = forms.BooleanField(label=u'Доступ к отчетам')
+    telefon         = forms.CharField(label=u'Телефон')
