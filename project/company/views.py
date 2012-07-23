@@ -366,6 +366,29 @@ class AddPcOptionForAllView(CreateView):
 ##################################################################################
 
 
+class GetCompanyTo(ListView):
+    """
+    представление которое возвращает список компаний которых данный админ курирует аякс
+
+    optimized 20120705
+    """
+    model = CompanyAdmins
+    context_object_name = u'companys'
+    template_name = u'ajax_get_company_for_admin.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user.profile.is_company:
+            raise Http404
+        return super(GetCompanyTo, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
+        return queryset
+
+
 class GetCompanyForPcList(GetCompanyTo):
     """
     Аякс предсталвение для отображения доступных компаний насдуется от списка из создания вопроса
@@ -521,14 +544,15 @@ class GetDepartamentForPcListView(ListView):
         queryset = CompanyPC.objects.filter(company=com_user.company.id).select_related('departament__id', 'departament__name').order_by('departament.id').distinct('departament')
         return queryset
 
-    class GetUserTo(ListView):
-        """
-        Представление возвращает список кому отправлять вопрос для аякса
-        если это пользователь который состоит в группе company то возвращает
-        админов данной компании, если это админ то показывает всех админов
 
-        optimized 20120705
-        """
+class GetUserTo(ListView):
+    """
+    Представление возвращает список кому отправлять вопрос для аякса
+    если это пользователь который состоит в группе company то возвращает
+    админов данной компании, если это админ то показывает всех админов
+
+    optimized 20120705
+    """
     model = User
     context_object_name = u'users'
     template_name = None
@@ -556,24 +580,3 @@ class GetDepartamentForPcListView(ListView):
         return template
 
 
-class GetCompanyTo(ListView):
-    """
-    представление которое возвращает список компаний которых данный админ курирует аякс
-
-    optimized 20120705
-    """
-    model = CompanyAdmins
-    context_object_name = u'companys'
-    template_name = u'ajax_get_company_for_admin.html'
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user.profile.is_company:
-            raise Http404
-        return super(GetCompanyTo, self).dispatch(request, *args, **kwargs)
-
-    def get_queryset(self):
-        queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
-        return queryset
