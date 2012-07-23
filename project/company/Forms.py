@@ -2,7 +2,7 @@
 __author__ = 'michael'
 
 from django import forms
-from models import PcOptionsList, PcOptions, CompanyPC
+from models import PcOptionsList, PcOptions, CompanyPC, Departments
 
 class ChangePcOptionForm(forms.ModelForm):
     """
@@ -33,3 +33,14 @@ class AddPcOptionsForm(forms.ModelForm):
     """
     class Meta:
         model = PcOptions
+
+
+class AddDepartamentForm(forms.ModelForm):
+    """
+    Форма для добавления отдела
+    """
+    class Meta:
+        model = Departments
+        widgets = {
+            'name': forms.Textarea(attrs={'cols': 50, 'rows': 5}),
+            }

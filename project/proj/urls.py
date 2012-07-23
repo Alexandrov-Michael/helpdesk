@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^report_ques/$',              views.MainReportForQuestionsView.as_view(), name='report_ques'),
     url(r'^report_pc_history/$',        views.MainReportForPcHistoryView.as_view(), name='report_pc_history'),
     url(r'^short_company_name/$',       vc.ShortCompanyNameListView.as_view(), name='short_company_name'),
+    url(r'^add_dep/$',                  vc.AddDepartamentView.as_view(), name='add_dep'),
 
 
     #tehnikal

@@ -6,7 +6,7 @@ from django.views.generic.base import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
-from Forms import ChangePcOptionForm, AddPcOptionForPCForm, AddCompanyPcForm, AddPcOptionsForm
+from Forms import ChangePcOptionForm, AddPcOptionForPCForm, AddCompanyPcForm, AddPcOptionsForm, AddDepartamentForm
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from profiles.models import Profile
@@ -355,7 +355,32 @@ class AddPcOptionForAllView(CreateView):
         return context
 
 
+class AddDepartamentView(CreateView):
+    """
+    Представление для добавления вида отдела
+    """
+    form_class = AddDepartamentForm
+    template_name = 'add_departament.html'
+    success_url = '/'
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Проверка юзера на наличие статуса компании
+        """
+        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
+        if self.user.profile.is_company:
+            raise Http404
+        return super(AddDepartamentView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+        Передаю в шаблон переменные для отображения меню
+        """
+        context = super(AddDepartamentView, self).get_context_data(**kwargs)
+        context['user_is_company'] = False
+        context['user_is_report']  = self.user.profile.is_report
+        return context
 
 
 
