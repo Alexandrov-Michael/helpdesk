@@ -23,6 +23,7 @@
 {% block script %}
     <script>
         function GetCompany(){
+            $('#loading').fadeIn();
             $('#message').hide();
             $('#sel_choise_company').hide();
             $.ajax({
@@ -34,6 +35,7 @@
                 }
             }).done(function(){
                         GetOptionsLen();
+                        $('#loading').fadeOut();
                     });
         }
         function GetOptionsLen(){
@@ -42,6 +44,7 @@
             }
         }
         function GetPcListForCompany(){
+            $('#loading').fadeIn();
             var com = $('#sel_choise_company').val();
             var dep = $('#sel_choise_dep').val();
             if(! dep ){
@@ -61,13 +64,16 @@
                             GetPcDetail();
                             HoverTr();
                             GetDep();
+                            $('#loading').fadeOut();
                         });
             }else{
                     $('#ajax_pc_list').fadeOut().empty();
                     $('#choise_dep').fadeOut();
+                    $('#loading').fadeOut();
             }
         }
         function GetPcListForDep(){
+            $('#loading').fadeIn();
             var com = $('#sel_choise_company').val();
             var dep = $('#sel_choise_dep').val();
             if(! dep ){
@@ -86,9 +92,11 @@
                 }).done(function(){
                             GetPcDetail();
                             HoverTr();
+                            $('#loading').fadeOut();
                         });
             }else{
                 $('#ajax_pc_list').fadeOut().empty();
+                $('#loading').fadeOut();
             }
         }
         function GetPcDetail(){
@@ -108,6 +116,7 @@
             $('#choise_dep').hide();
         }
         function GetDep(){
+            $('#loading').fadeIn();
             var id = $('#sel_choise_company').val();
             $.ajax({
                 url:'/ajax/get_departament_for_pc_list/' + id + '/',
@@ -116,6 +125,7 @@
                 success: function(data){
                     $('#sel_choise_dep').empty().append(data);
                     $('#choise_dep').fadeIn();
+                    $('#loading').fadeOut();
                 }
             })
         }

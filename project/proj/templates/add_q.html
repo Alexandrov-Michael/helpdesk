@@ -23,6 +23,7 @@
 {% block script %}
     <script>
     function GetPcFrom(){
+        $('#loading').fadeIn();
         $('#id_user_from').hide();
                     $.ajax({
                         url: '/ajax/get_pc_from/',
@@ -30,9 +31,11 @@
                         type:'GET'
                     }).done(function(data){
                                 $('#id_user_from').empty().append(data).fadeIn();
+                                $('#loading').fadeOut();
               });
     }
     function GetUserTo(){
+        $('#loading').fadeIn();
         $('#id_user_to').hide();
         $.ajax({
             url: '/ajax/get_user_to/',
@@ -40,6 +43,7 @@
             type:'GET'
         }).done(function(data){
                     $('#id_user_to').empty().append(data).fadeIn();
+                    $('#loading').fadeOut();
                 });
     }
     $(document).ready(function(){

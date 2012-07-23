@@ -154,8 +154,6 @@ a.section:link, a.section:visited {
     border-collapse: collapse;
     width: 100%;
 }
-
-
 .listTable th, .listTable td{
     padding: 5px;
 }
@@ -197,11 +195,9 @@ a.section:link, a.section:visited {
 .minus{
     background-color: yellow;
 }
-
 .check{
     width: 10px;
 }
-
 .dateCol{
     width: 60px;
     text-align: center;
@@ -378,7 +374,10 @@ input[type="submit"], button{
     color: black;
     padding: 3px 5px;
 }
-
+input[type="submit"], button:active{
+    position: relative;
+    top:1px;
+}
 #tableForm{
     margin: 0 0 10px 0;
 }
@@ -489,4 +488,14 @@ input[type="submit"], button{
 
 .menu_item_parent{
     position: relative;
+}
+#loading{
+    background: url("../img/loading.gif") no-repeat;
+    width: 35px;
+    height: 35px;
+    display: none;
+}
+#loading_wrop{
+    width: 35px;
+    height: 35px;
 }

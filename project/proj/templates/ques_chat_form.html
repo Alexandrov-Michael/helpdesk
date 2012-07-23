@@ -52,32 +52,39 @@
     <script>
         function ChangeStatus(){
                 var st = $('.quesBut').attr('id');
+                $('#loading').fadeIn();
                 $.post('/change_status/{{ question.id }}/', { status : st, csrfmiddlewaretoken: '{{ csrf_token }}' }).done(
                         function(){
                             GetQuestionNoHide();
                             GetButtonsNoHide();
+                            $('#loading').fadeOut()
                         });
         }
         function GetQuestion(){
             $('#question').hide();
+            $('#loading').fadeIn();
             $.ajax({
                 url: '/ajax/get_ques/{{ question.id }}/',
                 type: 'GET',
                 dataType: 'html'
             }).done(function(data){
                         $('#question').empty().append(data).fadeIn();
+                        $('#loading').fadeOut();
                     })
         }
         function GetQuestionNoHide(){
+            $('#loading').fadeIn();
             $.ajax({
                 url: '/ajax/get_ques/{{ question.id }}/',
                 type: 'GET',
                 dataType: 'html'
             }).done(function(data){
                         $('#question').empty().append(data);
+                        $('#loading').fadeOut();
                     })
         }
         function GetButtons(){
+            $('#loading').fadeIn();
             $('.q_but').hide();
             $.ajax({
                url: '/ajax/get_but/{{ question.id }}/',
@@ -85,34 +92,41 @@
                dataType: 'html'
             }).done(function(data){
                         $('.q_but').empty().append(data).fadeIn();
+                        $('#loading').fadeOut();
                     });
         }
         function GetButtonsNoHide(){
+            $('#loading').fadeIn();
             $.ajax({
                 url: '/ajax/get_but/{{ question.id }}/',
                 type: "GET",
                 dataType: 'html'
             }).done(function(data){
                         $('.q_but').empty().append(data);
+                        $('#loading').fadeOut();
                     });
         }
         function GetChat(){
             $('#messBlock').hide();
+            $('#loading').fadeIn();
             $.ajax({
                 url:'/ajax/get_chat_mess/{{ question.id }}/',
                 type: 'GET',
                 dataType: 'html'
             }).done(function(data){
                         $('#messBlock').empty().append(data).fadeIn();
+                        $('#loading').fadeOut();
                     });
         }
         function GetChatNoHide(){
+            $('#loading').fadeIn();
             $.ajax({
                 url:'/ajax/get_chat_mess/{{ question.id }}/',
                 type: 'GET',
                 dataType: 'html'
             }).done(function(data){
                         $('#messBlock').empty().append(data);
+                        $('#loading').fadeOut();
                     });
         }
         function GetPcInfo(){

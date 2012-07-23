@@ -93,6 +93,9 @@
         </div><!--headerBot-->
     </div><!--header-->
     <div id='content'>
+    <div id="loading_wrop">
+        <div id="loading"></div>
+    </div>
         {% block content %}
             <div class='messages'>
                 {% if company_admins %}
@@ -149,6 +152,7 @@
         }
         function GetIndexQuestion(){
             $('#tableDiv').hide();
+            $('#loading').fadeIn();
             $.ajax({
                 url: '/ajax/get_index_ques/',
                 type: 'GET',
@@ -159,9 +163,11 @@
             }).done(function(){
                         getDetailHover();
                         GetQues();
+                        $('#loading').fadeOut();
                     });
         }
         function GetIndexQuestionNoHide(){
+            $('#loading').fadeIn();
             $.ajax({
                 url: '/ajax/get_index_ques/',
                 type: 'GET',
@@ -172,6 +178,7 @@
             }).done(function(){
                         getDetailHover();
                         GetQues();
+                        $('#loading').fadeOut();
                     });
         }
         function GetPeginatorNext(){

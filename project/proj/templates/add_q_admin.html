@@ -20,15 +20,18 @@
 {% block script %}
     <script>
     function GetCompanyTo(){
+        $('#loading').fadeIn();
                     $.ajax({
                         url: '/ajax/get_company_to/',
                         dataType: 'html',
                         type:'GET'
                     }).done(function(data){
                                 $('#id_user_to').append(data).fadeIn();
+                                $('#loading').fadeOut();
               });
     }
     function GetUserTo(){
+        $('#loading').fadeIn();
         $('#id_user_to').hide();
         $.ajax({
             url: '/ajax/get_user_to/',
@@ -38,6 +41,7 @@
                     $('#id_user_to').empty().append(data);
                 }).done(function(){
                     GetCompanyTo();
+                    $('#loading').fadeOut();
                 });
     }
     function ChangeForAllCheckBox(){
