@@ -62,17 +62,22 @@
             $('#report_list').hide();
             var company = $('#sel_choise_company').val();
             var user = $('#sel_choise_user').val()
+            if(user==0 && company==0){
+                $('#report_list').empty();
+                $('#loading').fadeOut();
+            }else{
             $.ajax({
                 url: '/ajax/get_report_for_report_ques/' + company + '/' + user +'/',
                 type : 'GET',
                 dataType: 'html',
                 success: function(data){
                     $('#report_list').empty().append(data).fadeIn();
+                    $('#loading').fadeOut();
                     getDetailHover();
                     GetQues();
-                    $('#loading').fadeOut();
                 }
             });
+            }
         }
         function GetQues(){
             $('tbody tr').click(function(){
