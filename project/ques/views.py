@@ -20,6 +20,10 @@ from profiles.models import Profile
 
 
 
+##################################################################################
+### Static views ###
+##################################################################################
+
 class IndexView(TemplateView):
     """
     Представление для страртовой страницы, использует шаблон main
@@ -50,8 +54,6 @@ class IndexView(TemplateView):
         context['user_is_report']  = self.user_profile.is_report
         context['company_admins'] = self.get_company_admins()
         return context
-
-
 
 
 class QuestionList(ListView):
@@ -93,7 +95,6 @@ class QuestionList(ListView):
         context = super(QuestionList, self).get_context_data(**kwargs)
         context['non_check_ques'] = self.non_check_ques
         return context
-
 
 
 class QuesAdd(FormView):
@@ -261,7 +262,6 @@ class QuesChatForm(FormView):
         return url
 
 
-
 class QuesChangeStatus(TemplateView):
     """
     Представление аякс для изменения статуса вопроса
@@ -318,6 +318,64 @@ class QuesChangeStatus(TemplateView):
             raise Http404
 
 
+class MainReportForQuestionsView(TemplateView):
+    """
+    Представление для отчетов по вопросам
+
+    optimized 20120706
+    """
+    template_name = 'main_report_for_ques.html'
+
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company or not self.user_profile.is_report:
+            raise Http404
+        return super(MainReportForQuestionsView, self).dispatch(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(MainReportForQuestionsView, self).get_context_data(**kwargs)
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
+        return context
+
+
+
+##################################################################################
+
+
+class MainReportForPcHistoryView(TemplateView):
+    """
+    Представление для получения отчета по истории изменения хараетристик ПК
+
+    optimized 20120706
+    """
+    template_name = 'main_report_for_pc_history.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company or not self.user_profile.is_report:
+            raise Http404
+        return super(MainReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(MainReportForPcHistoryView, self).get_context_data(**kwargs)
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
+        return context
+
+
+
+
+##################################################################################
+### Ajax views ###
+##################################################################################
 
 
 class GetQuestionForChat(DetailView):
@@ -405,32 +463,6 @@ class GetChatMessages(ListView):
         return queryset
 
 
-
-class MainReportForQuestionsView(TemplateView):
-    """
-    Представление для отчетов по вопросам
-
-    optimized 20120706
-    """
-    template_name = 'main_report_for_ques.html'
-
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company or not self.user_profile.is_report:
-            raise Http404
-        return super(MainReportForQuestionsView, self).dispatch(request, *args, **kwargs)
-
-
-    def get_context_data(self, **kwargs):
-        context = super(MainReportForQuestionsView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        return context
-
-
 class GetCompanyListForReportForQuesView(ListView):
     """
     Аякс Представление для получения списка компаний для отчета по вопроса
@@ -452,6 +484,7 @@ class GetCompanyListForReportForQuesView(ListView):
     def get_queryset(self):
         queryset = Company.objects.select_related('com_user__first_name').all()
         return queryset
+
 
 class GetUserListForReportForQuesView(ListView):
     """
@@ -547,30 +580,6 @@ class GetReportListForReportForQuesView(ListView):
     def get_context_data(self, **kwargs):
         context = super(GetReportListForReportForQuesView, self).get_context_data(**kwargs)
         context['non_check_ques'] = self.non_check_ques
-        return context
-
-
-class MainReportForPcHistoryView(TemplateView):
-    """
-    Представление для получения отчета по истории изменения хараетристик ПК
-
-    optimized 20120706
-    """
-    template_name = 'main_report_for_pc_history.html'
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company or not self.user_profile.is_report:
-            raise Http404
-        return super(MainReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
-
-
-    def get_context_data(self, **kwargs):
-        context = super(MainReportForPcHistoryView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
         return context
 
 
