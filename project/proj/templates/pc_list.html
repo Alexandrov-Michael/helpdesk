@@ -119,6 +119,58 @@
                 }
             })
         }
+        function GetPeginatorNext(){
+            $('#tableDiv').hide();
+            var page = $('#next').attr('href');
+            var com = $('#sel_choise_company').val();
+            var dep = $('#sel_choise_dep').val();
+            if(! dep ){
+                dep = 0;
+            }
+            if(com != 0){
+                $('#p_choise_msg').fadeOut();
+                $('#ajax_pc_list').hide();
+                $.ajax({
+                    url: '/ajax/get_pc_for_list/'+com+'/' + dep + '/'+page,
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(data){
+                        $('#ajax_pc_list').empty().append(data).fadeIn();
+                    }
+                }).done(function(){
+                            GetPcDetail();
+                            HoverTr();
+                        });
+            }else{
+                $('#ajax_pc_list').fadeOut().empty();
+            }
+        }
+        function GetPeginatorPrev(){
+            $('#tableDiv').hide();
+            var page = $('#prev').attr('href');
+            var com = $('#sel_choise_company').val();
+            var dep = $('#sel_choise_dep').val();
+            if(! dep ){
+                dep = 0;
+            }
+            if(com != 0){
+                $('#p_choise_msg').fadeOut();
+                $('#ajax_pc_list').hide();
+                $.ajax({
+                    url: '/ajax/get_pc_for_list/'+com+'/' + dep + '/'+page,
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(data){
+                        $('#ajax_pc_list').empty().append(data).fadeIn();
+                    }
+                }).done(function(){
+                            GetPcDetail();
+                            HoverTr();
+                        });
+            }else{
+                $('#ajax_pc_list').fadeOut().empty();
+            }
+        }
         $(document).ready(function(){
             GetCompany();
             HideDep();

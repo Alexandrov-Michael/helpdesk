@@ -98,6 +98,60 @@
             });
         }
     }
+    function GetPeginatorNext(){
+        $('#tableDiv').hide();
+        var page = $('#next').attr('href');
+        var pc;
+        var company = $('#sel_choise_company').val();
+        if(company == '0'){
+            pc = '0';
+        }else{
+            pc = $('#sel_choise_pc').val();
+            if(! pc){
+                pc = '0'
+            }
+        }
+        var user = $('#sel_choise_user').val();
+        if(company == '0' && user == '0'){
+            $('#report_list').empty();
+        }else{
+            $.ajax({
+                url: '/ajax/get_report_pc_history/'+pc+'/'+user+'/'+company+'/'+page,
+                type: 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#report_list').empty().append(data).fadeIn();
+                }
+            });
+        }
+    }
+    function GetPeginatorPrev(){
+        $('#tableDiv').hide();
+        var page = $('#prev').attr('href');
+        var pc;
+        var company = $('#sel_choise_company').val();
+        if(company == '0'){
+            pc = '0';
+        }else{
+            pc = $('#sel_choise_pc').val();
+            if(! pc){
+                pc = '0'
+            }
+        }
+        var user = $('#sel_choise_user').val();
+        if(company == '0' && user == '0'){
+            $('#report_list').empty();
+        }else{
+            $.ajax({
+                url: '/ajax/get_report_pc_history/'+pc+'/'+user+'/'+company+'/'+page,
+                type: 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#report_list').empty().append(data).fadeIn();
+                }
+            });
+        }
+    }
     $(document).ready(function(){
         HidePcList();
         GetCompanyList();

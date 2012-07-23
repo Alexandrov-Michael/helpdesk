@@ -72,11 +72,11 @@
     <p id='paginator'>&nbsp;
         {% if paginator.num_pages > 1 %}
             {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}">&larr; Предыдущая &nbsp;</a>
+                <a href="?page={{ page_obj.previous_page_number }}" id="prev"  onclick="GetPeginatorPrev(); return false;">&larr; Предыдущая &nbsp;</a>
             {% endif %}
             <span class="current_page">Страница {{ page_obj.number }} из {{ paginator.num_pages }}.</span>
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">&nbsp; Следующая &rarr;</a>
+                <a href="?page={{ page_obj.next_page_number }}" id="next" onclick="GetPeginatorNext(); return false;">&nbsp; Следующая &rarr;</a>
             {% endif %}
         {% endif %}
     </p>

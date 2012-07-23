@@ -92,6 +92,38 @@
                 }
             });
         }
+        function GetPeginatorNext(){
+            $('#tableDiv').hide();
+            var page = $('#next').attr('href');
+            var company = $('#sel_choise_company').val();
+            var user = $('#sel_choise_user').val()
+            $.ajax({
+                url: '/ajax/get_report_for_report_ques/' + company + '/' + user +'/'+page,
+                type : 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#report_list').empty().append(data).fadeIn();
+                    getDetailHover();
+                    GetQues();
+                }
+            });
+        }
+        function GetPeginatorPrev(){
+            $('#tableDiv').hide();
+            var page = $('#prev').attr('href');
+            var company = $('#sel_choise_company').val();
+            var user = $('#sel_choise_user').val()
+            $.ajax({
+                url: '/ajax/get_report_for_report_ques/' + company + '/' + user +'/'+page,
+                type : 'GET',
+                dataType: 'html',
+                success: function(data){
+                    $('#report_list').empty().append(data).fadeIn();
+                    getDetailHover();
+                    GetQues();
+                }
+            });
+        }
         $(document).ready(function(){
             GetCompanyList();
             GetUserList();
