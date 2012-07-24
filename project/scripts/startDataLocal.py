@@ -3,8 +3,8 @@ __author__ = 'michael'
 
 from django.contrib.auth.models import User
 
-
 def run():
+
 
     mypass = u'123'
 
