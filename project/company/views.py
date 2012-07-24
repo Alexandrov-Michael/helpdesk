@@ -219,7 +219,7 @@ class AddCompanyPcView(CreateView):
 
 
     def get_success_url(self):
-        url = reverse('/pc_detail', args=[self.object.id])
+        url = reverse('pc_detail', args=[self.object.id])
         return url
 
     def get_context_data(self, **kwargs):
