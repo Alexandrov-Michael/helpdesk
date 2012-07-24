@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Добавить нового пользоватлея
+{% endblock %}
+
+{% block content %}
+    <h1>Добавление нового сотрудника</h1>
+    <div class='red_error'>
+        <p>
+            {% if error_msg %}
+                {{ error_msg }}
+            {% endif %}
+        </p>
+    </div>
+        <div id='question' class='borderLine'>
+            <form action="{% url add_user %}" method="POST">{% csrf_token %}
+                <table id='tableForm'>
+                    {{ form.as_table }}
+                </table>
+                <input type="submit" value="Создать" />
+            </form>
+        </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

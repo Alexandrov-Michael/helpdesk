@@ -50,12 +50,14 @@ class CreateUserForm(forms.Form):
     """
     Форма для создания пользователя
     """
-    login           = forms.CharField(label=u'Логин')
-#    password        = forms
-    first_name      = forms.CharField(label=u'Имя')
-    last_name       = forms.CharField(label=u'Фамилия')
-    is_super_user   = forms.BooleanField(label=u'Суперпользователь')
-    is_report       = forms.BooleanField(label=u'Доступ к отчетам')
+    login           = forms.CharField(label=u'Логин', max_length=30)
+    password1       = forms.CharField(widget=forms.PasswordInput(), label=u'Пароль', max_length=128)
+    password2       = forms.CharField(widget=forms.PasswordInput(), label=u'Подтверждение пароля', max_length=128)
+    email           = forms.EmailField()
+    first_name      = forms.CharField(label=u'Имя', max_length=30)
+    last_name       = forms.CharField(label=u'Фамилия', max_length=30)
+    is_super_user   = forms.BooleanField(label=u'Суперпользователь', required=False)
+    is_report       = forms.BooleanField(label=u'Доступ к отчетам', required=False)
     telefon         = forms.CharField(label=u'Телефон')
 
 

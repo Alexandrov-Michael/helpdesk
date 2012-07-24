@@ -8,6 +8,7 @@ admin.autodiscover()
 from proj import settings
 from ques import views
 from company import views as vc
+from profiles import views as vp
 
 urlpatterns = patterns('',
 
@@ -33,6 +34,8 @@ urlpatterns = patterns('',
     url(r'^short_company_name/$',       vc.ShortCompanyNameListView.as_view(), name='short_company_name'),
     url(r'^add_dep/$',                  vc.AddDepartamentView.as_view(), name='add_dep'),
     url(r'^add_file_for_pc/(?P<pk>\d+)/$', vc.AddFileForPcView.as_view(), name='file_for_pc'),
+    url(r'^add_user/$',                 vp.CreateUserView.as_view(), name='add_user'),
+    url(r'^user_list/$',                vp.UserListView.as_view(), name='user_list'),
 
 
     #tehnikal

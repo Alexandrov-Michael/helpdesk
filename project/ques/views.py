@@ -54,48 +54,11 @@ class IndexView(TemplateView):
         context['user_is_company'] = self.user_profile.is_company
         context['user_is_report']  = self.user_profile.is_report
         context['company_admins'] = self.get_company_admins()
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
-class QuestionList(ListView):
-    """
-    Представление для списка вопросов, для каждого пользователя
-    model - модель на основе которой составляется список
-    paginate_by - количество объектов на странице
-    context_object_name - переменная в шаблоне
-    template_name - шаблон
-    get_queryset - получаем список объектов для каждого пользователя
-    dispatch - проверяем пользователя зарегестрированан ли
 
-
-    optimized 20120705
-    """
-
-    model = Questions
-    paginate_by = 20
-    context_object_name = u'questions'
-    template_name = u'ajax_get_index_ques.html'
-
-    def get_queryset(self):
-        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user)).select_related('user_to__first_name', 'pc_from', 'user_from__first_name')
-        self.non_check_ques = self.get_open_question(queryset)
-        return queryset
-
-    def get_open_question(self, queryset):
-        if not queryset:
-            return 0
-        check_count  = queryset.filter(Q(user_check = False)).count()
-        return check_count
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        return super(QuestionList, self).dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(QuestionList, self).get_context_data(**kwargs)
-        context['non_check_ques'] = self.non_check_ques
-        return context
 
 
 class QuesAdd(FormView):
@@ -184,6 +147,7 @@ class QuesAdd(FormView):
         context = super(QuesAdd, self).get_context_data(**kwargs)
         context['user_is_company'] = self.user_profile.is_company
         context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -214,6 +178,7 @@ class QuesChatForm(FormView):
             'error_msg' : self.error_msg,
             'user_is_report': self.user_profile.is_report,
         })
+        kwargs['user_is_super']  = self.user_profile.is_super_user
         return kwargs
 
 
@@ -268,6 +233,71 @@ class QuesChatForm(FormView):
     def get_success_url(self):
         url = self.question.get_absolute_url()
         return url
+
+
+
+
+class MainReportForQuestionsView(TemplateView):
+    """
+    Представление для отчетов по вопросам
+
+    optimized 20120706
+    """
+    template_name = 'main_report_for_ques.html'
+
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company or not self.user_profile.is_report:
+            raise Http404
+        return super(MainReportForQuestionsView, self).dispatch(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(MainReportForQuestionsView, self).get_context_data(**kwargs)
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
+        return context
+
+
+
+##################################################################################
+
+
+class MainReportForPcHistoryView(TemplateView):
+    """
+    Представление для получения отчета по истории изменения хараетристик ПК
+
+    optimized 20120706
+    """
+    template_name = 'main_report_for_pc_history.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company or not self.user_profile.is_report:
+            raise Http404
+        return super(MainReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(MainReportForPcHistoryView, self).get_context_data(**kwargs)
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
+        return context
+
+
+
+
+##################################################################################
+### Ajax views ###
+##################################################################################
+
 
 
 class QuesChangeStatus(TemplateView):
@@ -326,64 +356,49 @@ class QuesChangeStatus(TemplateView):
             raise Http404
 
 
-class MainReportForQuestionsView(TemplateView):
-    """
-    Представление для отчетов по вопросам
 
-    optimized 20120706
-    """
-    template_name = 'main_report_for_ques.html'
 
+class QuestionList(ListView):
+    """
+    Представление для списка вопросов, для каждого пользователя
+    model - модель на основе которой составляется список
+    paginate_by - количество объектов на странице
+    context_object_name - переменная в шаблоне
+    template_name - шаблон
+    get_queryset - получаем список объектов для каждого пользователя
+    dispatch - проверяем пользователя зарегестрированан ли
+
+
+    optimized 20120705
+    """
+
+    model = Questions
+    paginate_by = 20
+    context_object_name = u'questions'
+    template_name = u'ajax_get_index_ques.html'
+
+    def get_queryset(self):
+        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user)).select_related('user_to__first_name', 'pc_from', 'user_from__first_name')
+        self.non_check_ques = self.get_open_question(queryset)
+        return queryset
+
+    def get_open_question(self, queryset):
+        if not queryset:
+            return 0
+        check_count  = queryset.filter(Q(user_check = False)).count()
+        return check_count
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company or not self.user_profile.is_report:
-            raise Http404
-        return super(MainReportForQuestionsView, self).dispatch(request, *args, **kwargs)
-
+        return super(QuestionList, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(MainReportForQuestionsView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
+        context = super(QuestionList, self).get_context_data(**kwargs)
+        context['non_check_ques'] = self.non_check_ques
         return context
 
 
-
-##################################################################################
-
-
-class MainReportForPcHistoryView(TemplateView):
-    """
-    Представление для получения отчета по истории изменения хараетристик ПК
-
-    optimized 20120706
-    """
-    template_name = 'main_report_for_pc_history.html'
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company or not self.user_profile.is_report:
-            raise Http404
-        return super(MainReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
-
-
-    def get_context_data(self, **kwargs):
-        context = super(MainReportForPcHistoryView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        return context
-
-
-
-
-##################################################################################
-### Ajax views ###
-##################################################################################
 
 
 class GetQuestionForChat(DetailView):

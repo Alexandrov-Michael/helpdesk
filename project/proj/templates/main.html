@@ -70,12 +70,22 @@
                         <li><a href="/">Главная</a></li>
                         <li><a href="/add_q/">Задать вопрос</a></li>
                         {% if not user_is_company %}
-                            <li><a href="{% url short_company_name %}">Сокращение компаний</a></li>
-                            <li><a href="{% url pc_list %}">Список ПК</a></li>
+                            <li class='menu_item_parent'><a href="#">Списки</a>
+                                <ul class="hide_menu">
+                                    <li><a href="{% url pc_list %}">Компьютеры</a></li>
+                                    <li><a href="{% url short_company_name %}">Сокращения</a></li>
+                                    {% if user_is_super %}
+                                        <li><a href="{% url user_list %}">Сотрудники</a></li>
+                                    {% endif %}
+                                </ul>
+                            </li>
                             <li class='menu_item_parent'><a href="#">Добавить</a>
                                 <ul class="hide_menu">
                                     <li><a href="{% url add_pc %}">Компьютер</a></li>
                                     <li><a href="{% url add_dep %}">Отдел</a></li>
+                                    {% if user_is_super %}
+                                        <li><a href="{% url add_user %}">Сотрудника</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
                         {% endif %}

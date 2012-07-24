@@ -1,0 +1,67 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Список сотрудников
+{% endblock %}
+
+{% block content %}
+    <h1>Список сотрудников</h1>
+    <div id="tableDiv">
+        <div id="preTableTop">
+            <p>Количество сотрудников {{ paginator.count }}</p>
+        </div>
+        <table class='listTable'>
+            <thead>
+            <tr>
+                <th>Логин</th>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Email</th>
+                <th>Суперпользователь</th>
+                <th>Доступ к отчетам</th>
+            </tr>
+            </thead>
+            <tbody id="mainTable" class='nopointer'>
+            {% for item in users %}
+                <tr class='{% cycle 'firstTd' 'secondTd' %}'>
+                    <td>{{ item.username }}</td>
+                    <td>{{ item.last_name }}</td>
+                    <td>{{ item.first_name }}</td>
+                    <td>{{ item.profile.telefon }}</td>
+                    <td>{{ item.email }}</td>
+                    {% if item.profile.is_super_user %}
+                        <td class='plus'>Да</td>
+                    {% else %}
+                        <td class='minus'>Нет</td>
+                    {% endif %}
+                    {% if item.profile.is_report %}
+                        <td class='plus'>Да</td>
+                    {% else %}
+                        <td class='minus'>Нет</td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">Нет сотрудников</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p id='paginator'>&nbsp;
+            {% if paginator.num_pages > 1 %}
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">&larr; Предыдущая &nbsp;</a>
+                {% endif %}
+                <span class="current_page">Страница {{ page_obj.number }} из {{ paginator.num_pages }}.</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">&nbsp; Следующая &rarr;</a>
+                {% endif %}
+            {% endif %}
+        </p>
+    </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

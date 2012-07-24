@@ -26,25 +26,7 @@ def test(request):
 
 
 
-class GetPcFrom(ListView):
-    """
-    Предсталвение которое доет список селектов для аякса список пк для отпраки вопроса
 
-
-    optimized 20120705
-    """
-    model = CompanyPC
-    context_object_name = u'pc'
-    template_name = u'ajax_pc_from.html'
-
-    def get_queryset(self):
-        queryset = CompanyPC.objects.filter(company__com_user = self.user)
-        return queryset
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        return super(GetPcFrom, self).dispatch(request, *args, **kwargs)
 
 
 class PcDetail(ListView):
@@ -88,6 +70,7 @@ class PcDetail(ListView):
         context['pc'] = self.pc
         context['user_is_company'] = False
         context['user_is_report']  = self.user.profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -104,8 +87,9 @@ class AddPcOption(FormView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(AddPcOption, self).dispatch(request, *args, **kwargs)
 
@@ -154,7 +138,8 @@ class AddPcOption(FormView):
         context = super(AddPcOption, self).get_context_data(**kwargs)
         context['pc_pk'] = self.get_pk()
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -171,8 +156,9 @@ class PcOptionHistoryView(ListView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user.id
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(PcOptionHistoryView, self).dispatch(request, *args, **kwargs)
 
@@ -196,7 +182,8 @@ class PcOptionHistoryView(ListView):
         context = super(PcOptionHistoryView, self).get_context_data(**kwargs)
         context['pc'] = self.pc
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -212,8 +199,9 @@ class AddCompanyPcView(CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user.id
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(AddCompanyPcView, self).dispatch(request, *args, **kwargs)
 
@@ -225,7 +213,8 @@ class AddCompanyPcView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(AddCompanyPcView, self).get_context_data(**kwargs)
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -242,8 +231,9 @@ class ChangePcOption(UpdateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company', 'profile__is_report').get(pk = request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user.id
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(ChangePcOption, self).dispatch(request, *args, **kwargs)
 
@@ -261,7 +251,8 @@ class ChangePcOption(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(ChangePcOption, self).get_context_data(**kwargs)
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
     def form_valid(self, form):
@@ -287,15 +278,17 @@ class PcList(TemplateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company', 'profile__is_report').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user.id
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(PcList, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(PcList, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user.profile.is_company
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -312,8 +305,9 @@ class ShortCompanyNameListView(ListView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user.id
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(ShortCompanyNameListView, self).dispatch(request, *args, **kwargs)
 
@@ -324,7 +318,8 @@ class ShortCompanyNameListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ShortCompanyNameListView, self).get_context_data(**kwargs)
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -341,8 +336,9 @@ class AddPcOptionForAllView(CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user.id
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(AddPcOptionForAllView, self).dispatch(request, *args, **kwargs)
 
@@ -363,7 +359,8 @@ class AddPcOptionForAllView(CreateView):
         context = super(AddPcOptionForAllView, self).get_context_data(**kwargs)
         context['pc_pk'] = self.pk
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -380,8 +377,9 @@ class AddDepartamentView(CreateView):
         """
         Проверка юзера на наличие статуса компании
         """
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user.id
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(AddDepartamentView, self).dispatch(request, *args, **kwargs)
 
@@ -391,7 +389,8 @@ class AddDepartamentView(CreateView):
         """
         context = super(AddDepartamentView, self).get_context_data(**kwargs)
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -443,7 +442,8 @@ class AddFileForPcView(FormView):
         context = super(AddFileForPcView, self).get_context_data(**kwargs)
         context['pc_pk'] = self.get_pk()
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
         return context
 
 
@@ -452,6 +452,27 @@ class AddFileForPcView(FormView):
 ### Ajax views ###
 ##################################################################################
 
+
+
+class GetPcFrom(ListView):
+    """
+    Предсталвение которое доет список селектов для аякса список пк для отпраки вопроса
+
+
+    optimized 20120705
+    """
+    model = CompanyPC
+    context_object_name = u'pc'
+    template_name = u'ajax_pc_from.html'
+
+    def get_queryset(self):
+        queryset = CompanyPC.objects.filter(company__com_user = self.user)
+        return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        return super(GetPcFrom, self).dispatch(request, *args, **kwargs)
 
 class GetCompanyTo(ListView):
     """
