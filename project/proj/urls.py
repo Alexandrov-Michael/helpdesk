@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     url(r'^report_pc_history/$',        views.MainReportForPcHistoryView.as_view(), name='report_pc_history'),
     url(r'^short_company_name/$',       vc.ShortCompanyNameListView.as_view(), name='short_company_name'),
     url(r'^add_dep/$',                  vc.AddDepartamentView.as_view(), name='add_dep'),
+    url(r'^add_file_for_pc/(?P<pk>\d+)/$', vc.AddFileForPcView.as_view(), name='file_for_pc'),
 
 
     #tehnikal
@@ -65,6 +66,9 @@ urlpatterns = patterns('',
     url(r'^change_status/(?P<pk>\d+)/$', views.QuesChangeStatus.as_view()),
 
 
+
+    #tests
+    url('^test/$', vc.test),
 )
 
 

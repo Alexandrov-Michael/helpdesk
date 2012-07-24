@@ -100,19 +100,15 @@
             <div class='messages'>
                 {% if company_admins %}
                     <h2>Список ваших кураторов</h2>
-                        <table class='admins_list'>
-                            <tbody>
+                        <div class='admins_list'>
+                            <ul>
                             {% for item in company_admins %}
-                                <tr>
-                                    <td>{{ item.post.decription }}</td>
-                                    <td>
-                                        {{ item.username.first_name }} {{ item.username.last_name }}
-                                    </td>
-                                    <td>{{ item.username.profile.telefon }}</td>
-                                </tr>
+                                <li>
+                                    <a href="/add_q/?user={{ item.username.id }}">{{ item.post.decription }} - {{ item.username.first_name }} {{ item.username.last_name }} - {{ item.username.profile.telefon }}</a>
+                                </li>
                             {% endfor %}
-                            </tbody>
-                        </table>
+                            </ul>
+                        </div>
                 {% endif %}
             </div>
         <h1>Список вопросов</h1>
@@ -211,6 +207,7 @@
                         GetQues();
                     });
         }
+
         $(document).ready(function(){
             GetIndexQuestion();
             setInterval('GetIndexQuestionNoHide()', 60000);

@@ -2,6 +2,8 @@
 from django.db import models
 
 from company import models as com
+from django.contrib.contenttypes import generic
+from files.models import Files
 
 
 class Questions(models.Model):
@@ -26,6 +28,7 @@ class Questions(models.Model):
     user_check       = models.BooleanField(u'Отметка пользователя')
     user_check_date  = models.DateTimeField(u'Дата закрытия вопроса отправителем', null=True, blank=True)
     slug             = models.CharField(u'Идентификатор', unique=True, null=True, blank=True, max_length=8 )
+
 
     def __unicode__(self):
         return u'%s : %s' % (self.slug, self.user_to)
@@ -53,6 +56,7 @@ class Chat(models.Model):
     admin_name = models.ForeignKey(com.User, verbose_name=u'От получателя', related_name=u'rel_admin_name', blank=True, null=True)
     date       = models.DateTimeField(u'Дата создания', auto_now_add=True)
     body       = models.TextField(u'Сообщение')
+    files      = generic.GenericRelation(Files)
 
     def __unicode__(self):
         return u'%s' % (self.date, )

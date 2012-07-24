@@ -24,5 +24,13 @@
             {% endif %}
         </div>
         <p><div class='q_body'>{{ mes.body }}</div></p>
+        <div id="files" >
+            {%   if mes.files.all %}
+                Прикрепленный файл:
+                {% for item in mes.files.all %}
+                    <a href="{{ item.file.url }}">имя:{{ item.name }},  размер:{{ item.size|filesizeformat }}</a>
+                {% endfor %}
+            {% endif %}
+        </div>
     </div>
 {% endfor %}

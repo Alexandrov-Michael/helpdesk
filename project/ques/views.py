@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from datetime import datetime
 from ques.models import Emails
 from profiles.models import Profile
+from files.models import Files
+
 
 
 
@@ -252,11 +254,15 @@ class QuesChatForm(FormView):
             self.error_msg = u'Вы не можете добавлять коментарии не ко своим вопросам'
             return self.form_invalid(form)
         body = form.cleaned_data['body']
+        file = form.cleaned_data['file']
         if self.sender:
             new_msg = Chat(question=self.question, body=body)
         else:
             new_msg = Chat(question=self.question, body=body, admin_name = self.user)
         new_msg.save()
+        if file:
+            new_file = Files(content_object=new_msg, file=file, name=file.name, size=file.size)
+            new_file.save()
         return super(QuesChatForm, self).form_valid(form)
 
     def get_success_url(self):

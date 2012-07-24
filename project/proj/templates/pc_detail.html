@@ -30,6 +30,19 @@
     <div id="div_history_but">
         <button onclick="GetHistory()" id="{{ pc.id }}" type="button" class='but_history_but'>Посмотреть историю изменений</button>
     </div>
+    <div>
+        <button onclick="AddFile()" id="{{ pc.id }}" type="button" class='but_file_add'>Добавить файл</button>
+    </div>
+    {% if pc.files.all %}
+        <div id="file_list">
+            <span>Прикрепленные файлы:</span>
+            <ol>
+                {% for item in pc.files.all %}
+                    <li><a href="{{ item.file.url }}">имя:{{ item.name }},  размер:{{ item.size|filesizeformat }},  дата заливки:{{ item.date }}</a></li>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endif %}
     <div id='tableDiv'>
         <div id="preTableTop">
             <p>Количество характеристик {{ paginator.count }}</p>
@@ -92,6 +105,10 @@
         function GetHistory(){
             var id = $('.but_history_but').attr('id');
             window.location = '/pc_history/' + id + '/';
+        }
+        function AddFile(){
+            var id = $('.but_file_add').attr('id');
+            window.location = '/add_file_for_pc/'+id+'/';
         }
         $(document).ready(function(){
             GetOption();

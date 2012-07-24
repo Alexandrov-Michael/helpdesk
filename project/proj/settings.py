@@ -180,6 +180,7 @@ INSTALLED_APPS = (
     'ques',
     'company',
     'profiles',
+    'files',
 
 )
 

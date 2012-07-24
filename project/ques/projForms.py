@@ -36,4 +36,5 @@ class ChatForm(forms.Form):
     """
 
     body = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 5}), label=u'Сообщение')
+    file = forms.FileField(max_length=100, allow_empty_file=False, label=u'Прикрепить файл', required=False)
 

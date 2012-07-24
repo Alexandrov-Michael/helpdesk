@@ -6,11 +6,19 @@ from django.views.generic.base import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
-from Forms import ChangePcOptionForm, AddPcOptionForPCForm, AddCompanyPcForm, AddPcOptionsForm, AddDepartamentForm
+from Forms import ChangePcOptionForm, AddPcOptionForPCForm, AddCompanyPcForm, AddPcOptionsForm, AddDepartamentForm, AddFileForm
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from profiles.models import Profile
+from files.models import Files
 
+
+
+
+
+from django.shortcuts import render
+def test(request):
+    return render(request, 'ok.html', locals())
 
 ##################################################################################
 #### Static views ####
@@ -387,6 +395,56 @@ class AddDepartamentView(CreateView):
         return context
 
 
+class AddFileForPcView(FormView):
+    """
+    Представление для добавления файла к ПК
+    """
+    form_class      = AddFileForm
+    template_name   = 'add_file_to_pc.html'
+    success_url     = None
+    pk_url_kwarg    = 'pk'
+
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
+            raise Http404
+        return super(AddFileForPcView, self).dispatch(request, *args, **kwargs)
+
+    def get_pk(self):
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        if pk is not None:
+            return pk
+        else:
+            raise Http404
+
+    def get_parent_obj(self):
+        pk = self.get_pk()
+        try:
+            obj = CompanyPC.objects.get(pk=pk)
+        except CompanyPC.DoesNotExist:
+            raise Http404
+        return obj
+
+    def form_valid(self, form):
+        self.pc = self.get_parent_obj()
+        file = form.cleaned_data['file']
+        new_file = Files(content_object=self.pc, name=file.name, file=file, size=file.size)
+        new_file.save()
+        return super(AddFileForPcView, self).form_valid(form)
+
+    def get_success_url(self):
+        url = reverse('pc_detail', args=[self.pc.id])
+        return url
+
+    def get_context_data(self, **kwargs):
+        context = super(AddFileForPcView, self).get_context_data(**kwargs)
+        context['pc_pk'] = self.get_pk()
+        context['user_is_company'] = False
+        context['user_is_report']  = self.user.profile.is_report
+        return context
 
 
 

@@ -40,15 +40,39 @@
         $.ajax({
             url: '/ajax/get_user_to/',
             dataType: 'html',
-            type:'GET'
-        }).done(function(data){
-                    $('#id_user_to').empty().append(data).fadeIn();
-                    $('#loading').fadeOut();
-                });
+            type:'GET',
+            success:function(data){
+                $('#id_user_to').empty().append(data);
+                $('#id_user_to').fadeIn();
+                $('#loading').fadeOut();
+                GetUserToFromGET();
+            }
+        });
+    }
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    function GetUserToFromGET(){
+        var userToGet = getUrlVars()['user'];
+        if(userToGet)
+        {
+            $('#id_user_to option').removeAttr('selected');
+            $("#id_user_to option[value='5']").attr('selected', 'selected');
+        }
     }
     $(document).ready(function(){
         GetPcFrom();
         GetUserTo();
+
     });
     </script>
 {% endblock %}

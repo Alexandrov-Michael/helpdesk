@@ -2,7 +2,8 @@
 from django.db import models
 
 from django.contrib.auth.models import User
-
+from django.contrib.contenttypes import generic
+from files.models import Files
 
 
 class Company(models.Model):
@@ -45,10 +46,11 @@ class CompanyPC(models.Model):
     company - наименование компании в которой стоит компьютер
     name - ФИО пользователя, который сидит за данным компьютером
     """
-    company   = models.ForeignKey(Company, verbose_name=u'Компания', related_name=u'company_pc')
+    company     = models.ForeignKey(Company, verbose_name=u'Компания', related_name=u'company_pc')
     departament = models.ForeignKey(Departments, verbose_name=u'Отдел', related_name='rel_dep')
-    pc_nameId = models.PositiveIntegerField(u'ID', unique=True)
-    pc_name   = models.TextField(u'hostname')
+    pc_nameId   = models.PositiveIntegerField(u'ID', unique=True)
+    pc_name     = models.TextField(u'hostname')
+    files       = generic.GenericRelation(Files)
 
     def __unicode__(self):
         return u'%s %s' % (self.pc_nameId, self.pc_name,)

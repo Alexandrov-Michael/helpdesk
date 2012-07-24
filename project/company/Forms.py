@@ -57,3 +57,10 @@ class CreateUserForm(forms.Form):
     is_super_user   = forms.BooleanField(label=u'Суперпользователь')
     is_report       = forms.BooleanField(label=u'Доступ к отчетам')
     telefon         = forms.CharField(label=u'Телефон')
+
+
+class AddFileForm(forms.Form):
+    """
+    Форма добавления файла
+    """
+    file = forms.FileField(max_length=100, allow_empty_file=False)

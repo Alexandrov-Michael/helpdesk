@@ -247,8 +247,18 @@ a.section:link, a.section:visited {
     font-size: 15px;
     color: #ff727e;
 }
-.admins_list td{
+.admins_list a{
+    color: #ff727e;
+}
+.admins_list a:hover{
+    text-decoration: underline;
+    color: blue;
+}
+.admins_list li{
     padding: 0 7px 0 0;
+}
+.admins_list ul{
+    margin: 0 0 0 10px;
 }
 
 .oneMsg{
@@ -501,4 +511,22 @@ input[type="submit"], button:active{
 #loading_wrop{
     width: 35px;
     height: 35px;
+}
+#files{
+    margin: 5px 0 0 0;
+}
+.but_file_add{
+    margin: 5px 0 5px 10px;
+}
+#file_list{
+    margin: 5px 0 15px 10px;
+}
+#file_list ol{
+    margin: 5px 0 0 20px;
+}
+#file_list span{
+    font-weight: bold;
+}
+#file_list li{
+    margin: 5px 0 0 0;
 }

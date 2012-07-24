@@ -1,1 +1,37 @@
-OK
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
+
+</head>
+<body>
+    <form action="" method="POST">
+        <select id="select">
+            <option value="0">val 0</option>
+            <option value="1" selected="selected">val 1</option>
+            <option value="2">val 2</option>
+            <option value="3">val 3</option>
+        </select>
+        <input type="submit">
+    </form>
+
+    <script type="text/javascript">
+        function SelectChange()
+        {
+            $('#select').fadeOut();
+            $('#select option').removeAttr('selected');
+            $("#select option[value='13']").attr('selected', 'selected');
+            $('#select').fadeIn();
+        }
+        function AddOption()
+        {
+            $('#select').empty().append('<option value="0">val 0</option><option value="11" selected="selected">val 11</option><option value="12">val 12</option><option value="13">val 13</option>')
+        }
+        $(document).ready(function(){
+            AddOption();
+            SelectChange();
+        })
+    </script>
+</body>
+</html>
