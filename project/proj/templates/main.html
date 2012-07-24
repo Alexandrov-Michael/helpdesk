@@ -14,12 +14,23 @@
     {% block head_script %}
     {% endblock %}
     <script type="text/javascript">
+        var menuItem;
         function HideMenuHide(){
             $('.hide_menu').hide();
         }
         function ClicItemMenu(){
             $('#menu ul li').click(function(){
-                $('ul', this).toggle();
+                var id = $(this).attr('id')
+                if(menuItem == id)
+                {
+                    $('ul', this).toggle();
+                    menuItem = $(this).attr('id');
+                }else
+                {
+                    HideMenuHide();
+                    $('ul', this).toggle();
+                    menuItem = $(this).attr('id');
+                }
             });
         }
         $(document).ready(function(){
@@ -70,7 +81,7 @@
                         <li><a href="/">Главная</a></li>
                         <li><a href="/add_q/">Задать вопрос</a></li>
                         {% if not user_is_company %}
-                            <li class='menu_item_parent'><a href="#">Списки</a>
+                            <li class='menu_item_parent' id="menu_item_1"><a href="#">Списки</a>
                                 <ul class="hide_menu">
                                     <li><a href="{% url pc_list %}">Компьютеры</a></li>
                                     <li><a href="{% url short_company_name %}">Сокращения</a></li>
@@ -79,7 +90,7 @@
                                     {% endif %}
                                 </ul>
                             </li>
-                            <li class='menu_item_parent'><a href="#">Добавить</a>
+                            <li class='menu_item_parent' id="menu_item_2"><a href="#">Добавить</a>
                                 <ul class="hide_menu">
                                     <li><a href="{% url add_pc %}">Компьютер</a></li>
                                     <li><a href="{% url add_dep %}">Отдел</a></li>
@@ -90,7 +101,7 @@
                             </li>
                         {% endif %}
                         {% if user_is_report %}
-                            <li class='menu_item_parent'><a href="#">Отчеты</a>
+                            <li class='menu_item_parent' id="menu_item_3"><a href="#">Отчеты</a>
                                 <ul class='hide_menu'>
                                     <li><a href="{% url report_ques %}">Отчет по вопросам</a></li>
                                     <li><a href="{% url report_pc_history %}">Отчет по пк</a></li>
