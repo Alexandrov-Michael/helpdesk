@@ -394,6 +394,9 @@ input[type="submit"], button:active{
 #tableForm{
     margin: 0 0 10px 0;
 }
+#tableForm.user_add th{
+    text-align: right;
+}
 
 #tableForm td{
     padding: 0 0 0 5px;
