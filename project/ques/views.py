@@ -127,11 +127,6 @@ class QuesAdd(FormView):
     def form_valid(self, form):
         body       = form.cleaned_data['body']
         user_to    = form.cleaned_data['user_to']
-        for_all    = form.cleaned_data['for_all']
-        if not for_all and not user_to:
-            return super(QuesAdd, self).form_invalid(form)
-        if for_all and user_to:
-            return super(QuesAdd, self).form_invalid(form)
         if self.user_profile.is_company:
             user_from   = form.cleaned_data['user_from']
             worker_from = form.cleaned_data['worker_from']
@@ -148,6 +143,11 @@ class QuesAdd(FormView):
                 body = body
             ).save()
         else:
+            for_all    = form.cleaned_data['for_all']
+            if not for_all and not user_to:
+                return super(QuesAdd, self).form_invalid(form)
+            if for_all and user_to:
+                return super(QuesAdd, self).form_invalid(form)
             if for_all:
                 if self.user_profile.is_super_user:
                     comps = CompanyAdmins.objects.select_related('company__com_user').order_by('company.id').distinct('company')

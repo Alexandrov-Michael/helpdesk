@@ -65,14 +65,12 @@
         var userToGet = getUrlVars()['user'];
         if(userToGet)
         {
-            $('#id_user_to option').removeAttr('selected');
-            $("#id_user_to option[value='"+userToGet+"']").attr('selected', 'selected');
+            $("#id_user_to").val(userToGet);
         }
     }
     $(document).ready(function(){
         GetPcFrom();
         GetUserTo();
-
     });
     </script>
 {% endblock %}
