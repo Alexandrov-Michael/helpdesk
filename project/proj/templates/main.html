@@ -87,6 +87,7 @@
                                     <li><a href="{% url short_company_name %}">Сокращения</a></li>
                                     {% if user_is_super %}
                                         <li><a href="{% url user_list %}">Сотрудники</a></li>
+                                        <li><a href="{% url company_list %}">Компании</a></li>
                                     {% endif %}
                                 </ul>
                             </li>
@@ -96,6 +97,7 @@
                                     <li><a href="{% url add_dep %}">Отдел</a></li>
                                     {% if user_is_super %}
                                         <li><a href="{% url add_user %}">Сотрудника</a></li>
+                                        <li><a href="{% url add_company %}">Компанию</a></li>
                                     {% endif %}
                                 </ul>
                             </li>

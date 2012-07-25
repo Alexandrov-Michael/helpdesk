@@ -56,9 +56,10 @@ class CreateUserForm(forms.Form):
     email           = forms.EmailField()
     first_name      = forms.CharField(label=u'Имя', max_length=30)
     last_name       = forms.CharField(label=u'Фамилия', max_length=30)
+    telefon         = forms.CharField(label=u'Телефон', max_length=18)
     is_super_user   = forms.BooleanField(label=u'Суперпользователь', required=False)
     is_report       = forms.BooleanField(label=u'Доступ к отчетам', required=False)
-    telefon         = forms.CharField(label=u'Телефон')
+
 
 
 class AddFileForm(forms.Form):
@@ -66,3 +67,13 @@ class AddFileForm(forms.Form):
     Форма добавления файла
     """
     file = forms.FileField(max_length=100, allow_empty_file=False)
+
+
+class CreateCompanyForm(forms.Form):
+    """
+    Форма для создания компании
+    """
+    login           = forms.CharField(label=u'Логин', max_length=30)
+    password1       = forms.CharField(widget=forms.PasswordInput(), label=u'Пароль', max_length=128)
+    password2       = forms.CharField(widget=forms.PasswordInput(), label=u'Подтверждение пароля', max_length=128)
+    first_name      = forms.CharField(label=u'Наименование', max_length=30)

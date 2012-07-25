@@ -36,6 +36,8 @@ urlpatterns = patterns('',
     url(r'^add_file_for_pc/(?P<pk>\d+)/$', vc.AddFileForPcView.as_view(), name='file_for_pc'),
     url(r'^add_user/$',                 vp.CreateUserView.as_view(), name='add_user'),
     url(r'^user_list/$',                vp.UserListView.as_view(), name='user_list'),
+    url(r'^company_list/$',             vp.CompanyListView.as_view(), name='company_list'),
+    url(r'^add_company/$',              vp.CreateCompanyView.as_view(), name='add_company'),
 
 
     #tehnikal
