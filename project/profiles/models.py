@@ -11,6 +11,7 @@ class Profile(models.Model):
     is_report       = models.BooleanField(u'Доступ к отчетам?')
     is_super_user   = models.BooleanField(u'Это супер пользователь?')
     telefon         = models.CharField(u'Телефон', max_length=18, blank=True)
+    image           = models.ImageField(upload_to='profile_img',blank=True, null=True)
 
     def __unicode__(self):
         return self.user.first_name

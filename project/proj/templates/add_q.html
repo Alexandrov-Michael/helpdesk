@@ -8,6 +8,12 @@
 {% block content %}
     <h1>Задать вопроса</h1>
     <div id='question' class='borderLine'>
+        <div id="face_wrop">
+            <p>Фотография выбранного куратора</p>
+            <div id="admin_face">
+                <img src="{{ MEDIA_URL }}img/fregat_logo.png" width="70" height="70">
+            </div>
+        </div>
         <div class="note">
             <p>Представтесь пожалуйста</p>
         </div>
@@ -46,6 +52,7 @@
                 $('#id_user_to').fadeIn();
                 $('#loading').fadeOut();
                 GetUserToFromGET();
+                GetUserToImgStart();
             }
         });
     }
@@ -68,9 +75,57 @@
             $("#id_user_to").val(userToGet);
         }
     }
+    function GetUserToImg()
+    {
+        $('#id_user_to').change(function(){
+            $('#admin_face').css('background', 'url() transparent');
+            $('#admin_face img').fadeOut();
+            var id = $(this).val();
+            if(id!=0){
+                $.ajax({
+                    url: '/ajax/get_profile_src_img/'+id+'/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data){
+                        if(data.img_src)
+                        {
+                            $('#admin_face img').attr('src', data.img_src);
+                        }else{
+                            $('#admin_face img').attr('src', "{{ MEDIA_URL }}img/fregat_logo.png");
+                        }
+                        $('#admin_face img').fadeIn();
+                    }
+                });
+            }
+        });
+    }
+    function GetUserToImgStart()
+    {
+        $('#admin_face img').fadeOut();
+        var id = $('#id_user_to').val();
+        if(id!=0)
+        {
+            $.ajax({
+                        url: '/ajax/get_profile_src_img/'+id+'/',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data){
+                            if(data.img_src)
+                            {
+                                $('#admin_face').css('background', '');
+                                $('#admin_face img').attr('src', data.img_src);
+                            }else{
+                                $('#admin_face img').attr('src', "{{ MEDIA_URL }}img/fregat_logo.png");
+                            }
+                            $('#admin_face img').fadeIn();
+                        }
+                    });
+        }
+    }
     $(document).ready(function(){
         GetPcFrom();
         GetUserTo();
+        GetUserToImg();
     });
     </script>
 {% endblock %}

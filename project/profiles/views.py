@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from models import Profile
 from django.views.generic.edit import FormView
+from django.views.generic.base import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import Http404
@@ -10,7 +11,15 @@ from django.db.models.base import ValidationError
 from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse
 from company.models import Posts, Company, CompanyAdmins
+from django.utils import simplejson
+from django.http import HttpResponse
 
+
+
+
+##############################################################
+### Static views
+##############################################################
 
 class CreateUserView(FormView):
     """
@@ -557,3 +566,56 @@ class AddCompanyAdminsForCompanyView(FormView):
         context['user_is_report']  = self.user_profile.is_report
         context['user_is_super']  = self.user_profile.is_super_user
         return context
+
+
+
+##############################################################
+### Ajax views
+##############################################################
+
+
+class GetProfileImgView(View):
+    """
+    Ajax для получения адреса картинки из профиля
+    """
+    pk_url_kwarg = 'pk'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        return super(GetProfileImgView, self).dispatch(request, *args, **kwargs)
+
+    def get_pk(self):
+        pk = self.kwargs.pop(self.pk_url_kwarg, None)
+        if pk is not None:
+            return pk
+        else:
+            raise Http404
+
+    def get_object(self, pk):
+        try:
+            odj = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
+        return odj
+
+    def render_to_response(self, context, **response_kwargs):
+        json = simplejson.dumps(context)
+        return HttpResponse(json, mimetype='application/json', **response_kwargs)
+
+    def get_context_data(self, **kwargs):
+        pk = self.get_pk()
+        user = self.get_object(pk)
+        user_profile = Profile.objects.get(user=user)
+        if user_profile.image:
+            img = user_profile.image.url
+        else:
+            img = False
+        return {
+            'img_src' : img,
+        }
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)

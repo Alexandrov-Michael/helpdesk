@@ -264,9 +264,6 @@ class MainReportForQuestionsView(TemplateView):
 
 
 
-##################################################################################
-
-
 class MainReportForPcHistoryView(TemplateView):
     """
     Представление для получения отчета по истории изменения хараетристик ПК
@@ -417,7 +414,7 @@ class GetQuestionForChat(DetailView):
         return super(GetQuestionForChat, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = Questions.objects.select_related('user_from__first_name', 'pc_from', 'user_to__first_name').all()
+        queryset = Questions.objects.select_related('user_from__first_name', 'pc_from', 'user_to__first_name', 'user_to__profile').all()
         return queryset
 
 

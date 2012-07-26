@@ -112,6 +112,11 @@
                         {% endif %}
                     </ul>
                 {% endblock %}
+                <div id="admin_face_main">
+                    {% if user.profile.image %}
+                        <img src="{{user.profile.image.url }}" width="70" height="70">
+                    {% endif %}
+                </div>
             </div>
         </div><!--headerBot-->
     </div><!--header-->

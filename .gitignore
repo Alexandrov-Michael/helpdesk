@@ -4,3 +4,4 @@ dj_static
 .idea
 *.pyc
 public_html/media/files
+public_html/media/profile_img
