@@ -54,6 +54,7 @@ class CreateUserView(FormView):
         is_super_user   = form.cleaned_data['is_super_user']
         is_report       = form.cleaned_data['is_report']
         telefon         = form.cleaned_data['telefon']
+        image           = form.cleaned_data['image']
         if password1 != password2:
             return super(CreateUserView, self).form_invalid(form)
         new_user = User(
@@ -75,6 +76,7 @@ class CreateUserView(FormView):
             is_report=is_report,
             is_super_user=is_super_user,
             telefon=telefon,
+            image=image,
         )
         new_profile.save()
         return super(CreateUserView,self).form_valid(form)
@@ -158,6 +160,7 @@ class CreateCompanyView(FormView):
         password1       = form.cleaned_data['password1']
         password2       = form.cleaned_data['password2']
         first_name      = form.cleaned_data['first_name']
+        image           = form.cleaned_data['image']
         if password1 != password2:
             return super(CreateCompanyView, self).form_invalid(form)
         new_user = User(
@@ -176,6 +179,7 @@ class CreateCompanyView(FormView):
             is_company=True,
             is_report=False,
             is_super_user=False,
+            image=image,
         )
         new_profile.save()
         new_company = Company(com_user=new_user)

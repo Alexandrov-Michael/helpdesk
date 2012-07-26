@@ -100,6 +100,7 @@ class CreateUserForm(forms.Form):
     telefon         = forms.CharField(label=u'Телефон', max_length=18)
     is_super_user   = forms.BooleanField(label=u'Суперпользователь', required=False)
     is_report       = forms.BooleanField(label=u'Доступ к отчетам', required=False)
+    image           = forms.ImageField(required=False, label=u'изображение')
 
 
 
@@ -118,6 +119,7 @@ class CreateCompanyForm(forms.Form):
     password1       = forms.CharField(widget=forms.PasswordInput(), label=u'Пароль', max_length=128)
     password2       = forms.CharField(widget=forms.PasswordInput(), label=u'Подтверждение пароля', max_length=128)
     first_name      = forms.CharField(label=u'Наименование', max_length=30)
+    image           = forms.ImageField(required=False, label=u'изображение')
 
 
 
