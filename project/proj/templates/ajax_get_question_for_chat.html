@@ -3,6 +3,8 @@
     <div id="admin_face_visilble">
         {% if question.user_to.profile.image %}
             <img src="{{ question.user_to.profile.image.url }}" width="70" height="70">
+        {% else %}
+            <img src="{{ MEDIA_URL }}img/fregat_logo.png" width="70" height="70">
         {% endif %}
     </div>
 </div>

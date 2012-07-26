@@ -559,7 +559,6 @@ input[type="submit"]:active, button:active{
 #admin_face_visilble{
     width: 70px;
     height: 70px;
-    background: #cccccc;
     margin:5px auto 10px;
     border: 1px solid grey;
 }
