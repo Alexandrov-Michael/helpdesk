@@ -50,8 +50,9 @@ class PcDetail(ListView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.user = User.objects.select_related('profile__is_company').get(pk=request.user.id)
-        if self.user.profile.is_company:
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_company:
             raise Http404
         return super(PcDetail, self).dispatch(request, *args, **kwargs)
 
@@ -75,7 +76,7 @@ class PcDetail(ListView):
         context = super(PcDetail, self).get_context_data(**kwargs)
         context['pc'] = self.pc
         context['user_is_company'] = False
-        context['user_is_report']  = self.user.profile.is_report
+        context['user_is_report']  = self.user_profile.is_report
         context['user_is_super']  = self.user_profile.is_super_user
         return context
 
