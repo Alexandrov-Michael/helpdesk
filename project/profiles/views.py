@@ -178,6 +178,8 @@ class CreateCompanyView(FormView):
             is_super_user=False,
         )
         new_profile.save()
+        new_company = Company(com_user=new_user)
+        new_company.save()
         return super(CreateCompanyView,self).form_valid(form)
 
 
