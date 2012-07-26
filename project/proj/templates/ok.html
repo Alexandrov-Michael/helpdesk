@@ -6,16 +6,46 @@
 
 </head>
 <body>
-    <form action="" method="POST">
-        <select id="select">
-            <option value="0">val 0</option>
-            <option value="1" selected="selected">val 1</option>
-            <option value="2">val 2</option>
-            <option value="3">val 3</option>
-        </select>
+    <form action="" method="POST" name='form_1'>{% csrf_token %}
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>kurator</th>
+                    <th>gelezo</th>
+                    <th>1c</th>
+                    <th>access</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+
+                <tr>
+                    <td><label for="id_checkbox_company_1" >company 1</label></td>
+                    <td><input id="id_checkbox_company_1" type="checkbox" name='checkbox_company_-_1_-_kurator'></td>
+                    <td><input type="checkbox" name='checkbox_-_company_1_-_gelezo'></td>
+                    <td><input type="checkbox" name='checkbox_-_company_1_-_1c'></td>
+                    <td><input type="checkbox" name='checkbox_-_company_1_-_access'></td>
+                </tr>
+
+
+
+
+                <tr>
+                    <td><label for="id_checkbox_company_2" >company 2</label></td>
+                    <td><input id="id_checkbox_company_2" type="checkbox" name='checkbox_company_2_kurator'></td>
+                    <td><input type="checkbox" name='checkbox_company_2_gelezo'></td>
+                    <td><input type="checkbox" name='checkbox_company_2_1c'></td>
+                    <td><input type="checkbox" name='checkbox_company_2_access'></td>
+                </tr>
+
+
+
+            </tbody>
+        </table>
         <input type="submit">
     </form>
-
     <script type="text/javascript">
         function SelectChange()
         {

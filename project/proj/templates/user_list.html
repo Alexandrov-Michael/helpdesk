@@ -22,9 +22,9 @@
                 <th>Доступ к отчетам</th>
             </tr>
             </thead>
-            <tbody id="mainTable" class='nopointer'>
+            <tbody id="mainTable" >
             {% for item in users %}
-                <tr class='{% cycle 'firstTd' 'secondTd' %}'>
+                <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ item.id }}">
                     <td>{{ item.username }}</td>
                     <td>{{ item.last_name }}</td>
                     <td>{{ item.first_name }}</td>
@@ -63,5 +63,36 @@
 {% endblock %}
 
 {% block script %}
-
+    <script type="text/javascript">
+        function getDetailHover()
+        {
+            var colorminus;
+            var colorplus;
+            $('#mainTable tr').hover( function(){
+                colorminus = $(this).find('td.minus').css('background-color');
+                colorplus = $(this).find('td.plus').css('background-color');
+                $('td', this).css('background','#6699ff');
+            }, function(){
+                $('td', this).css( 'background','');
+                if(colorminus){
+                    $(this).find('td.minus').css('background', colorminus);
+                }else{
+                    $(this).find('td.plus').css('background', colorplus);
+                }
+            });
+        }
+        function GetUserCompanyAdmins()
+        {
+            $('tbody tr').click(function(){
+                var id = $(this).attr('id');
+                if(id){
+                    window.location = '/companyadmins_for_user/' + id + '/';
+                }
+            })
+        }
+        $(document).ready(function(){
+            getDetailHover();
+            GetUserCompanyAdmins();
+        });
+    </script>
 {% endblock %}

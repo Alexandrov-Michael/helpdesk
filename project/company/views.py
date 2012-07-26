@@ -18,6 +18,12 @@ from files.models import Files
 
 from django.shortcuts import render
 def test(request):
+    admin = User.objects.get(pk=1)
+    query = CompanyAdmins.objects.select_related().filter(username=admin)
+    fer = Company.objects.get(com_user__username='ferromet')
+    rbk = Company.objects.get(com_user__username='rbk')
+    q1 = query.filter(company=fer)
+    q2 = query.filter(company=rbk)
     return render(request, 'ok.html', locals())
 
 ##################################################################################

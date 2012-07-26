@@ -533,3 +533,13 @@ input[type="submit"], button:active{
 #file_list li{
     margin: 5px 0 0 0;
 }
+.content_inner{
+    margin: 10px 0 0;
+    padding: 7px;
+}
+.but{
+    margin: 15px 0 15px;
+}
+.input_td{
+    text-align: center;
+}

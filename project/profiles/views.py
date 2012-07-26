@@ -4,11 +4,12 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import Http404
-from company.Forms import CreateUserForm, CreateCompanyForm
+from company.Forms import CreateUserForm, CreateCompanyForm, AddCompanyAdminsForUserForm
 from django.contrib.auth.models import User
 from django.db.models.base import ValidationError
 from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse
+from company.models import Posts, Company, CompanyAdmins
 
 
 class CreateUserView(FormView):
@@ -178,3 +179,189 @@ class CreateCompanyView(FormView):
         context['user_is_super']  = self.user_profile.is_super_user
         context['error_msg']  = self.error_msg
         return context
+
+
+class AddCompanyAdminsForUserView(FormView):
+    """
+    Форма для добавления кураторства у сотрудников
+
+
+    доделать выбор пользователя
+    """
+    form_class = AddCompanyAdminsForUserForm
+    success_url = None
+    template_name = 'add_companyadmins_for_user.html'
+    pk_url_kwarg = 'pk'
+
+    def get_pk(self):
+        self.pk = self.kwargs.pop(self.pk_url_kwarg, None)
+        if self.pk is not None:
+            return self.pk
+        else:
+            raise Http404
+
+    def get_object(self):
+        try:
+            user = User.objects.get(pk=self.pk)
+        except User.DoesNotExist:
+            raise Http404
+        return user
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_super_user:
+            return super(AddCompanyAdminsForUserView, self).dispatch(request, *args, **kwargs)
+        else:
+            raise Http404
+
+
+    def get_form_kwargs(self):
+        kwargs = {'initial': self.get_initial()}
+        if self.request.method in ('POST', 'PUT'):
+            kwargs.update({
+                'data': self.request.POST,
+                'files': self.request.FILES,
+                })
+        user_companyadmins = CompanyAdmins.objects.filter(username=self.user_to).select_related('company', 'post')
+        companys = user_companyadmins.order_by('company.id').distinct('company')
+        user_posts = {}
+        if companys:
+            for one_com in companys:
+                posts = user_companyadmins.filter(company=one_com.company)
+                user_posts[one_com.company.id] = []
+                for one_post in posts:
+                    user_posts[one_com.company.id].append(one_post.post.id)
+        kwargs['companys'] = self.get_companys()
+        kwargs['user_posts'] = user_posts
+        return kwargs
+
+    def get_posts(self):
+        posts = Posts.objects.all().order_by('id')
+        return posts
+
+    def get_companys(self):
+        companys = Company.objects.all().select_related()
+        return companys
+
+    def get_success_url(self):
+        url = reverse('companyadmins_for_user', args=[self.pk])
+        return url
+
+    def form_valid(self, form):
+        CompanyAdmins.objects.filter(username=self.user_to).delete()
+        for field_name, field_value in form.cleaned_data.iteritems():
+            company = Company.objects.get(pk=field_name)
+            if len(field_value) > 1:
+                for one_value in field_value:
+                    post = Posts.objects.get(pk=one_value)
+                    new_companyadmins= CompanyAdmins(
+                        username=self.user_to,
+                        company=company,
+                        post=post,
+                    )
+                    new_companyadmins.save()
+            else:
+                if field_value:
+                    post = Posts.objects.get(pk=field_value[0])
+                    new_companyadmins= CompanyAdmins(
+                        username=self.user_to,
+                        company=company,
+                        post=post,
+                    )
+                    new_companyadmins.save()
+        return super(AddCompanyAdminsForUserView, self).form_valid(form)
+
+    def get(self, request, *args, **kwargs):
+        self.get_pk()
+        self.user_to = self.get_object()
+        return super(AddCompanyAdminsForUserView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.get_pk()
+        self.user_to = self.get_object()
+        return super(AddCompanyAdminsForUserView, self).post(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(AddCompanyAdminsForUserView, self).get_context_data(**kwargs)
+        context['pk']=self.pk
+        context['user_to'] = self.user_to
+        context['posts'] = self.get_posts()
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
+        return context
+
+
+class CompanyAdminsForUserListView(ListView):
+    """
+    представление для списка компаний в которых работает сотрудник
+    """
+
+    template_name = 'companyadmins_list_for_user.html'
+    model = CompanyAdmins
+    context_object_name = 'companyAdmins'
+    pk_url_kwarg = 'pk'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.user_profile = Profile.objects.get(user=self.user)
+        if self.user_profile.is_super_user:
+            return super(CompanyAdminsForUserListView, self).dispatch(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def get_context_data(self, **kwargs):
+        context = super(CompanyAdminsForUserListView, self).get_context_data(**kwargs)
+        context['user_is_company'] = self.user_profile.is_company
+        context['user_is_report']  = self.user_profile.is_report
+        context['user_is_super']  = self.user_profile.is_super_user
+        context['posts'] = self.get_posts()
+        context['table'] = self.table
+        context['user_to'] = self.user_to
+        return context
+
+    def get_pk(self):
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        if pk is not None:
+            return pk
+        else:
+            raise Http404
+
+    def get_object(self):
+        try:
+            user = User.objects.get(pk=self.pk)
+        except User.DoesNotExist:
+            raise Http404
+        return user
+
+    def get_queryset(self):
+        self.pk = self.get_pk()
+        self.user_to = self.get_object()
+        self.init_posts()
+        queryset = CompanyAdmins.objects.select_related().filter(username=self.user_to)
+        if not queryset:
+            return queryset
+        companys = queryset.order_by('company.id').distinct('company').select_related('company', 'post', 'company__com_user__first_name')
+        for one_com in companys:
+            user_posts = queryset.filter(company=one_com.company)
+            posts_for_company = self.posts_dict.copy()
+            for one_post in user_posts:
+                posts_for_company[one_post.post.id] = True
+            self.table[one_com.company.com_user.first_name]= posts_for_company
+        return queryset
+
+
+
+    def get_posts(self):
+        posts = Posts.objects.all().order_by('id')
+        return posts
+
+    def init_posts(self):
+        self.table = {}
+        self.posts_dict = {}
+        posts = Posts.objects.all().order_by('id')
+        for item in posts:
+            self.posts_dict[item.id] = False
