@@ -78,7 +78,7 @@ urlpatterns = patterns('',
 
 
     #tests
-    url('^test/$', vc.test, name='test'),
+    url('^test/$', vc.test.as_view(), name='test'),
 )
 
 

@@ -17,6 +17,7 @@ from datetime import datetime
 from ques.models import Emails
 from profiles.models import Profile
 from files.models import Files
+from proj.utils.mixin import UpdateContextDataMixin, GetOdjectMixin, LoginRequiredMixin, SummMixen
 
 
 
@@ -25,7 +26,7 @@ from files.models import Files
 ### Static views ###
 ##################################################################################
 
-class IndexView(TemplateView):
+class IndexView(LoginRequiredMixin, UpdateContextDataMixin, TemplateView):
     """
     Представление для страртовой страницы, использует шаблон main
     в котором через аякс подхватывается список вопросов данного пользователя
@@ -34,13 +35,7 @@ class IndexView(TemplateView):
     """
 
     template_name = 'main.html'
-    company_admins = False
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        return super(IndexView, self).dispatch(request, *args, **kwargs)
 
     def get_company_admins(self):
         if self.user_profile.is_company:
@@ -51,17 +46,14 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
         context['company_admins'] = self.get_company_admins()
-        context['user_is_super']  = self.user_profile.is_super_user
-        return context
+        return self.update_context(context)
 
 
 
 
 
-class QuesAdd(FormView):
+class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     """
     Представление формы для добавления вопроса
 
@@ -72,11 +64,6 @@ class QuesAdd(FormView):
     template_name = None
     slug_plus = settings.PLUS_SLUG_FIELD
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        return super(QuesAdd, self).dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
         if self.user_profile.is_company:
@@ -145,13 +132,10 @@ class QuesAdd(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(QuesAdd, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
-        return context
+        return self.update_context(context)
 
 
-class QuesChatForm(FormView):
+class QuesChatForm(SummMixen, FormView):
     """
     Представление формы для чата в обсуждении вопроса
 
@@ -161,31 +145,20 @@ class QuesChatForm(FormView):
     form_class = ChatForm
     success_url = None
     template_name = 'ques_chat_form.html'
-    pk_url_kwarg = 'pk'
     error_msg = None
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        return super(QuesChatForm, self).dispatch(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
-        kwargs.update({
-            'question' : self.question,
-            'msgs_set' : self.chat_msgs,
-            'user_is_company': self.user_profile.is_company,
-            'error_msg' : self.error_msg,
-            'user_is_report': self.user_profile.is_report,
-        })
-        kwargs['user_is_super']  = self.user_profile.is_super_user
-        return kwargs
+        context = super(QuesChatForm, self).get_context_data(**kwargs)
+        context['question'] = self.question
+        context['msgs_set'] =  self.chat_msgs
+        context['error_msg'] = self.error_msg
+        return self.update_context(context)
 
 
     def get_object(self):
         """
         """
-        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        pk = self.get_pk()
         if pk is not None:
             try:
                 obj = Questions.objects.get(pk=pk)
@@ -237,7 +210,7 @@ class QuesChatForm(FormView):
 
 
 
-class MainReportForQuestionsView(TemplateView):
+class MainReportForQuestionsView(LoginRequiredMixin, UpdateContextDataMixin, TemplateView):
     """
     Представление для отчетов по вопросам
 
@@ -246,25 +219,18 @@ class MainReportForQuestionsView(TemplateView):
     template_name = 'main_report_for_ques.html'
 
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company or not self.user_profile.is_report:
-            raise Http404
-        return super(MainReportForQuestionsView, self).dispatch(request, *args, **kwargs)
+    def do_before_handler(self):
+        self.skip_only_user()
+        self.skip_only_report()
 
 
     def get_context_data(self, **kwargs):
         context = super(MainReportForQuestionsView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
-        return context
+        return self.update_context(context)
 
 
 
-class MainReportForPcHistoryView(TemplateView):
+class MainReportForPcHistoryView(LoginRequiredMixin, UpdateContextDataMixin, TemplateView):
     """
     Представление для получения отчета по истории изменения хараетристик ПК
 
@@ -272,21 +238,13 @@ class MainReportForPcHistoryView(TemplateView):
     """
     template_name = 'main_report_for_pc_history.html'
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company or not self.user_profile.is_report:
-            raise Http404
-        return super(MainReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
-
+    def do_before_handler(self):
+        self.skip_only_user()
+        self.skip_only_report()
 
     def get_context_data(self, **kwargs):
         context = super(MainReportForPcHistoryView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
-        return context
+        return self.update_context(context)
 
 
 
@@ -297,20 +255,15 @@ class MainReportForPcHistoryView(TemplateView):
 
 
 
-class QuesChangeStatus(TemplateView):
+class QuesChangeStatus(LoginRequiredMixin, GetOdjectMixin, TemplateView):
     """
     Представление аякс для изменения статуса вопроса
     """
-    pk_url_kwarg = 'pk'
     template_name = 'ok.html'
     post_close_question = 'Close'
     post_open_question = 'Open'
     post_status_question = 'status'
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        return super(QuesChangeStatus, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return Http404
@@ -332,7 +285,7 @@ class QuesChangeStatus(TemplateView):
 
 
     def get_object(self):
-        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        pk = self.get_pk()
         if pk is not None:
             try:
                 obj = Questions.objects.get(pk = pk)
@@ -355,7 +308,7 @@ class QuesChangeStatus(TemplateView):
 
 
 
-class QuestionList(ListView):
+class QuestionList(LoginRequiredMixin, ListView):
     """
     Представление для списка вопросов, для каждого пользователя
     model - модель на основе которой составляется список
@@ -385,10 +338,6 @@ class QuestionList(ListView):
         check_count  = queryset.filter(Q(user_check = False)).count()
         return check_count
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        return super(QuestionList, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(QuestionList, self).get_context_data(**kwargs)
@@ -398,7 +347,7 @@ class QuestionList(ListView):
 
 
 
-class GetQuestionForChat(DetailView):
+class GetQuestionForChat(LoginRequiredMixin, DetailView):
     """
     Представление аякс для получения вопроса на странице чата
 
@@ -408,33 +357,22 @@ class GetQuestionForChat(DetailView):
     model = Questions
     context_object_name = 'question'
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        return super(GetQuestionForChat, self).dispatch(request, *args, **kwargs)
-
     def get_queryset(self):
         queryset = Questions.objects.select_related('user_from__first_name', 'pc_from', 'user_to__first_name', 'user_to__profile').all()
         return queryset
 
 
-class GetButtonForChat(TemplateView):
+class GetButtonForChat(LoginRequiredMixin, GetOdjectMixin, TemplateView):
     """
     Представление аякс для получения кнопки изменения статуса вопроса
     """
     template_name = 'ajax_get_but_for_chat_user.html'
-    pk_url_kwarg  = 'pk'
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        return super(GetButtonForChat, self).dispatch(request, *args, **kwargs)
 
 
     def get_object(self):
         """
         """
-        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        pk = self.get_pk()
         if pk is not None:
             try:
                 obj = Questions.objects.get(pk=pk)
@@ -456,7 +394,7 @@ class GetButtonForChat(TemplateView):
         return kwargs
 
 
-class GetChatMessages(ListView):
+class GetChatMessages(LoginRequiredMixin, GetOdjectMixin,  ListView):
     """
     Представление аякс для получения сообщений в чате
 
@@ -465,21 +403,10 @@ class GetChatMessages(ListView):
     model = Chat
     context_object_name = 'msgs_set'
     template_name = 'ajax_get_chat_mess.html'
-    pk_url_kwarg  = 'pk'
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        return super(GetChatMessages, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        self.question = self.kwargs.get(self.pk_url_kwarg, None)
-        if self.question is None:
-            raise Http404
-        return super(GetChatMessages, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = Chat.objects.select_related('question__user_from__first_name', 'question__pc_from').filter(question = self.question)
+        question = self.get_pk()
+        queryset = Chat.objects.select_related('question__user_from__first_name', 'question__pc_from').filter(question = question)
         return queryset
 
 

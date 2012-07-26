@@ -2,8 +2,6 @@
 from models import Profile
 from django.views.generic.edit import FormView
 from django.views.generic.base import View
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.http import Http404
 from company.Forms import CreateUserForm, CreateCompanyForm, AddCompanyAdminsForUserForm, AddCompanyAdminsForCompanyForm
 from django.contrib.auth.models import User
@@ -11,9 +9,7 @@ from django.db.models.base import ValidationError
 from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse
 from company.models import Posts, Company, CompanyAdmins
-from django.utils import simplejson
-from django.http import HttpResponse
-
+from proj.utils.mixin import JSONResponseMixin, LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, SummMixen
 
 
 
@@ -21,7 +17,7 @@ from django.http import HttpResponse
 ### Static views
 ##############################################################
 
-class CreateUserView(FormView):
+class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     """
     Представление для создания пользователя и профайла
     """
@@ -35,14 +31,8 @@ class CreateUserView(FormView):
         url = reverse('user_list', args=[])
         return url
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_super_user:
-            return super(CreateUserView, self).dispatch(request, *args, **kwargs)
-        else:
-            raise Http404
+    def do_before_handler(self):
+        self.skip_only_super_user()
 
     def form_valid(self, form):
         login           = form.cleaned_data['login']
@@ -84,14 +74,11 @@ class CreateUserView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateUserView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
         context['error_msg']  = self.error_msg
-        return context
+        return self.update_context(context)
 
 
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin, UpdateContextDataMixin, ListView):
     """
     Представления для отображения все сотрудников
     """
@@ -100,21 +87,12 @@ class UserListView(ListView):
     context_object_name = 'users'
     paginate_by = 40
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_super_user:
-            return super(UserListView, self).dispatch(request, *args, **kwargs)
-        else:
-            raise Http404
+    def do_before_handler(self):
+        self.skip_only_super_user()
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
-        return context
+        return self.update_context(context)
 
     def get_queryset(self):
         queryset = User.objects.order_by('username').select_related('profile').filter(profile__is_company=False)
@@ -132,7 +110,7 @@ class CompanyListView(UserListView):
         return queryset
 
 
-class CreateCompanyView(FormView):
+class CreateCompanyView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     """
     Представление для создания компании и профайла
     """
@@ -146,14 +124,8 @@ class CreateCompanyView(FormView):
         url = reverse('company_list', args=[])
         return url
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_super_user:
-            return super(CreateCompanyView, self).dispatch(request, *args, **kwargs)
-        else:
-            raise Http404
+    def do_before_handler(self):
+        self.skip_only_super_user()
 
     def form_valid(self, form):
         login           = form.cleaned_data['login']
@@ -189,14 +161,11 @@ class CreateCompanyView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateCompanyView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
         context['error_msg']  = self.error_msg
-        return context
+        return self.update_context(context)
 
 
-class AddCompanyAdminsForUserView(FormView):
+class AddCompanyAdminsForUserView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, FormView):
     """
     Форма для добавления кураторства у сотрудников
 
@@ -206,30 +175,18 @@ class AddCompanyAdminsForUserView(FormView):
     form_class = AddCompanyAdminsForUserForm
     success_url = None
     template_name = 'add_companyadmins_for_user.html'
-    pk_url_kwarg = 'pk'
 
-    def get_pk(self):
-        self.pk = self.kwargs.pop(self.pk_url_kwarg, None)
-        if self.pk is not None:
-            return self.pk
-        else:
-            raise Http404
 
     def get_object(self):
+        self.pk = self.get_pk()
         try:
             user = User.objects.get(pk=self.pk)
         except User.DoesNotExist:
             raise Http404
         return user
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_super_user:
-            return super(AddCompanyAdminsForUserView, self).dispatch(request, *args, **kwargs)
-        else:
-            raise Http404
+    def do_before_handler(self):
+        self.skip_only_super_user()
 
 
     def get_form_kwargs(self):
@@ -289,12 +246,10 @@ class AddCompanyAdminsForUserView(FormView):
         return super(AddCompanyAdminsForUserView, self).form_valid(form)
 
     def get(self, request, *args, **kwargs):
-        self.get_pk()
         self.user_to = self.get_object()
         return super(AddCompanyAdminsForUserView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.get_pk()
         self.user_to = self.get_object()
         return super(AddCompanyAdminsForUserView, self).post(request, *args, **kwargs)
 
@@ -303,13 +258,10 @@ class AddCompanyAdminsForUserView(FormView):
         context['pk']=self.pk
         context['user_to'] = self.user_to
         context['posts'] = self.get_posts()
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
-        return context
+        return self.update_context(context)
 
 
-class CompanyAdminsForUserListView(ListView):
+class CompanyAdminsForUserListView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, ListView):
     """
     представление для списка компаний в которых работает сотрудник
     """
@@ -317,33 +269,16 @@ class CompanyAdminsForUserListView(ListView):
     template_name = 'companyadmins_list_for_user.html'
     model = CompanyAdmins
     context_object_name = 'companyAdmins'
-    pk_url_kwarg = 'pk'
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_super_user:
-            return super(CompanyAdminsForUserListView, self).dispatch(request, *args, **kwargs)
-        else:
-            raise Http404
+    def do_before_handler(self):
+        self.skip_only_super_user()
 
     def get_context_data(self, **kwargs):
         context = super(CompanyAdminsForUserListView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
         context['posts'] = self.get_posts()
         context['table'] = self.table
         context['user_to'] = self.user_to
-        return context
-
-    def get_pk(self):
-        pk = self.kwargs.get(self.pk_url_kwarg, None)
-        if pk is not None:
-            return pk
-        else:
-            raise Http404
+        return self.update_context(context)
 
     def get_object(self):
         try:
@@ -382,41 +317,25 @@ class CompanyAdminsForUserListView(ListView):
             self.posts_dict[item.id] = False
 
 
-class CompanyAdminsForCompanyListView(ListView):
+class CompanyAdminsForCompanyListView(SummMixen, ListView):
     """
-    представление для списка компаний в которых работает сотрудник
+    представление для списка сотрудников в компании
     """
 
     template_name = 'companyadmins_list_for_company.html'
     model = CompanyAdmins
     context_object_name = 'companyAdmins'
-    pk_url_kwarg = 'pk'
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_super_user:
-            return super(CompanyAdminsForCompanyListView, self).dispatch(request, *args, **kwargs)
-        else:
-            raise Http404
+    def do_before_handler(self):
+        self.skip_only_super_user()
 
     def get_context_data(self, **kwargs):
         context = super(CompanyAdminsForCompanyListView, self).get_context_data(**kwargs)
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
         context['posts'] = self.get_posts()
         context['table'] = self.table
         context['user_to'] = self.company
-        return context
+        return self.update_context(context)
 
-    def get_pk(self):
-        pk = self.kwargs.get(self.pk_url_kwarg, None)
-        if pk is not None:
-            return pk
-        else:
-            raise Http404
 
     def get_object(self):
         try:
@@ -458,7 +377,7 @@ class CompanyAdminsForCompanyListView(ListView):
             self.posts_dict[item.id] = False
 
 
-class AddCompanyAdminsForCompanyView(FormView):
+class AddCompanyAdminsForCompanyView(SummMixen, FormView):
     """
     Форма для добавления кураторства у сотрудников
 
@@ -468,16 +387,9 @@ class AddCompanyAdminsForCompanyView(FormView):
     form_class = AddCompanyAdminsForCompanyForm
     success_url = None
     template_name = 'add_companyadmins_for_company.html'
-    pk_url_kwarg = 'pk'
-
-    def get_pk(self):
-        self.pk = self.kwargs.pop(self.pk_url_kwarg, None)
-        if self.pk is not None:
-            return self.pk
-        else:
-            raise Http404
 
     def get_object(self):
+        self.pk = self.get_pk()
         try:
             user = User.objects.get(pk=self.pk)
             company = Company.objects.get(com_user=user)
@@ -487,14 +399,8 @@ class AddCompanyAdminsForCompanyView(FormView):
             raise Http404
         return company
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_super_user:
-            return super(AddCompanyAdminsForCompanyView, self).dispatch(request, *args, **kwargs)
-        else:
-            raise Http404
+    def do_before_handler(self):
+        self.skip_only_super_user()
 
 
     def get_form_kwargs(self):
@@ -554,12 +460,10 @@ class AddCompanyAdminsForCompanyView(FormView):
         return super(AddCompanyAdminsForCompanyView, self).form_valid(form)
 
     def get(self, request, *args, **kwargs):
-        self.get_pk()
         self.user_to = self.get_object()
         return super(AddCompanyAdminsForCompanyView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.get_pk()
         self.user_to = self.get_object()
         return super(AddCompanyAdminsForCompanyView, self).post(request, *args, **kwargs)
 
@@ -568,10 +472,7 @@ class AddCompanyAdminsForCompanyView(FormView):
         context['pk']=self.pk
         context['user_to'] = self.user_to
         context['posts'] = self.get_posts()
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
-        return context
+        return self.update_context(context)
 
 
 
@@ -580,24 +481,12 @@ class AddCompanyAdminsForCompanyView(FormView):
 ##############################################################
 
 
-class GetProfileImgView(View):
+
+
+class GetProfileImgView(JSONResponseMixin, LoginRequiredMixin, GetOdjectMixin, View):
     """
     Ajax для получения адреса картинки из профиля
     """
-    pk_url_kwarg = 'pk'
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        return super(GetProfileImgView, self).dispatch(request, *args, **kwargs)
-
-    def get_pk(self):
-        pk = self.kwargs.pop(self.pk_url_kwarg, None)
-        if pk is not None:
-            return pk
-        else:
-            raise Http404
 
     def get_object(self, pk):
         try:
@@ -605,10 +494,6 @@ class GetProfileImgView(View):
         except User.DoesNotExist:
             raise Http404
         return odj
-
-    def render_to_response(self, context, **response_kwargs):
-        json = simplejson.dumps(context)
-        return HttpResponse(json, mimetype='application/json', **response_kwargs)
 
     def get_context_data(self, **kwargs):
         pk = self.get_pk()
