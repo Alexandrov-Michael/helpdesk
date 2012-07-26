@@ -14,7 +14,7 @@
         </p>
     </div>
         <div id='question' class='borderLine'>
-            <form action="{% url add_user %}" method="POST">{% csrf_token %}
+            <form action="{% url add_user %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
                 <table id='tableForm' class='user_add'>
                     {{ form.as_table }}
                 </table>
