@@ -148,3 +148,30 @@ class AddCompanyAdminsForUserForm(forms.Form):
                 initial=initial_data,
             )
 
+
+class AddCompanyAdminsForCompanyForm(forms.Form):
+    """
+    Добавленеие кураторов для пользователя
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        initial_data = None
+        # Админы данной фирмы, модель User
+        users_admins = kwargs.pop('users_admins')
+        # Словарь списков, ключи - это User.id админа, значения список должностей
+        user_posts = kwargs.pop('user_posts')
+        CHOICES = Posts.objects.order_by('id').values_list('id', 'name')
+        super(AddCompanyAdminsForCompanyForm, self).__init__( *args, **kwargs)
+        for item_user in users_admins:
+            if user_posts:
+                initial_data = user_posts.get(item_user.id, None)
+            self.fields['%s' % (item_user.id)] = forms.MultipleChoiceField(
+                widget = MyCheckboxSelectMultiple(),
+                choices=CHOICES,
+                required=False,
+                label=u'%s %s' % (item_user.last_name, item_user.first_name,),
+
+                initial=initial_data,
+            )
+

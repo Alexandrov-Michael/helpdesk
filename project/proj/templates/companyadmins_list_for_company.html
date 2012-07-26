@@ -1,13 +1,13 @@
 {% extends 'main.html' %}
 
 {% block title %}
-    Список компаний для сотрудника
+    Список сотрудников для компании
 {% endblock %}
 
 {% block content %}
-    <h1>Список компаний для сотрудника: {{ user_to.first_name }} {{ user_to.last_name }}</h1>
+    <h1>Список сотрудников для компании: {{ user_to.com_user.first_name }}</h1>
     <div class='but'>
-        <button type="button" onclick="AddCompanyAdmins(id={{ user_to.id }})">Изменить должности в компаниях</button>
+        <button type="button" onclick="AddCompanyAdmins(id={{ user_to.com_user.id }})">Изменить должности</button>
     </div>
     <div id="tableDiv">
         <div id="preTableTop">
@@ -23,9 +23,9 @@
             </tr>
             </thead>
             <tbody id="mainTable" class='nopointer'>
-            {% for company, user_posts in table.iteritems %}
+            {% for user_admin, user_posts in table.iteritems %}
                 <tr class='{% cycle 'firstTd' 'secondTd' %}'>
-                    <td>{{ company }}</td>
+                    <td>{{ user_admin.last_name }} {{ user_admin.first_name }}</td>
                     {% for one_post, post_value in user_posts.iteritems %}
                         {% if post_value %}
                             <td class='plus'>Да</td>
@@ -36,7 +36,7 @@
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="20">Нет компаний</td>
+                    <td colspan="20">Нет сотрудников</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -49,7 +49,7 @@
     <script type="text/javascript">
         function AddCompanyAdmins(id)
         {
-            window.location = '/add_companyadmins_for_user/' + id + '/';
+            window.location = '/add_companyadmins_for_company/' + id + '/';
         }
     </script>
 {% endblock %}
