@@ -36,14 +36,13 @@ class SSLRedirect:
 
 
 
-
-
 class HttpsRedirect(object):
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        secure = request.is_secure()
-        url = request.get_full_path()
-        request_url = request.build_absolute_uri(request.get_full_path())
-        enveron = os.environ
-        assert False
-        pass
+        system_secure = request.META.get('SYSTEM_S', None)
+        if not system_secure:
+            newurl = u'https://%s%s' % (get_host(request),request.get_full_path())
+            return HttpResponsePermanentRedirect(newurl)
+        else:
+            del(request.META['SYSTEM_S'])
+

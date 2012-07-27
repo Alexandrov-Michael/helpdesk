@@ -218,8 +218,6 @@ LOGGING = {
 TEMPLATE_CONTEXT_PROCESSORS = utils.TEMPLATE_CONTEXT_PROCESSORS
 
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
-
 ANONYMOUS_USER_ID = -1
 
 
@@ -232,7 +230,7 @@ PLUS_SLUG_FIELD = 0
 
 
 if not HOSTER:
-    INSTALLED_APPS += ('debug_toolbar', 'djangosecure',)
+    INSTALLED_APPS += ('debug_toolbar',)
     MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     INTERNAL_IPS = ('127.0.0.1',)
     DEBUG_TOOLBAR_CONFIG = {
@@ -240,8 +238,8 @@ if not HOSTER:
         }
 
 if HOSTER:
-    MIDDLEWARE_CLASSES += ('djangosecure.middleware.SecurityMiddleware', 'proj.utils.middlewares.HttpsRedirect')
-    INSTALLED_APPS += ('djangosecure',)
+    MIDDLEWARE_CLASSES += ('proj.utils.middlewares.HttpsRedirect')
+#    INSTALLED_APPS += ('djangosecure',)
 #    SECURE_SSL_REDIRECT = True
 #    SECURE_HSTS_SECONDS = True
 #    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -249,10 +247,10 @@ if HOSTER:
 #    SECURE_CONTENT_TYPE_NOSNIFF = True
 #    SECURE_BROWSER_XSS_FILTER = True
 
-if not HOSTER:
-    MIDDLEWARE_CLASSES += ('djangosecure.middleware.SecurityMiddleware',)
-    INSTALLED_APPS += ('djangosecure',)
-    SECURE_SSL_REDIRECT = True
+#if not HOSTER:
+#    MIDDLEWARE_CLASSES += ('djangosecure.middleware.SecurityMiddleware',)
+#    INSTALLED_APPS += ('djangosecure',)
+#    SECURE_SSL_REDIRECT = True
 
 
 
