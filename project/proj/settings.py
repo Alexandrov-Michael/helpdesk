@@ -239,6 +239,7 @@ if not HOSTER:
 
 if HOSTER:
     MIDDLEWARE_CLASSES += ('djangosecure.middleware.SecurityMiddleware',)
+    INSTALLED_APPS += ('djangosecure',)
     SECURE_SSL_REDIRECT = True
 
 
