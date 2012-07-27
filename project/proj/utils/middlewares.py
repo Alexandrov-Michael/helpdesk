@@ -32,3 +32,14 @@ class SSLRedirect:
   Please structure your views so that redirects only occur during GETs."""
 
         return HttpResponsePermanentRedirect(newurl) #I have not had time to test this, but it appears to work better.
+
+
+
+
+
+class HttpsRedirect(object):
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        secure = request.is_secure()
+        assert False
+        pass

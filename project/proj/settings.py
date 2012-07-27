@@ -240,7 +240,7 @@ if not HOSTER:
 if HOSTER:
     MIDDLEWARE_CLASSES += ('proj.utils.middlewares.SSLRedirect',)
 
-HTTPS_SUPPORT = True
+MIDDLEWARE_CLASSES += ('proj.utils.middlewares.HttpsRedirect',)
 
 
 
