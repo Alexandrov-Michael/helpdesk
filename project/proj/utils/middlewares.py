@@ -43,4 +43,6 @@ class HttpsRedirect(object):
         secure = request.is_secure()
         url = request.get_full_path()
         request_url = request.build_absolute_uri(request.get_full_path())
+        enveron = os.environ
+        assert False
         pass
