@@ -3,7 +3,7 @@ __author__ = 'michael'
 
 
 from django.http import HttpResponsePermanentRedirect
-from django.conf import settings
+from proj import settings
 
 
 
