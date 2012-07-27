@@ -2,43 +2,33 @@
 __author__ = 'michael'
 
 
-from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect, get_host
+from django.http import HttpResponsePermanentRedirect, get_host
 from django.conf import settings
 
 
 
 
-class SecureRequiredMiddleware(object):
+
+
+
+class SSLRedirect(object):
     """
-    Мидлваре для перенаправления на https
+    Мидл варе для перенаправления на https
     """
-    def __init__(self):
-        self.enabled = getattr(settings, 'HTTPS_SUPPORT')
+    SSL = 'SSL'
 
-    def process_request(self, request):
-        if self.enabled and not request.is_secure():
-            request_url = request.build_absolute_uri(request.get_full_path())
-            secure_url = request_url.replace('http://', 'https://')
-            return HttpResponsePermanentRedirect(secure_url)
-        return None
+    def is_secure(self, request):
+        if 'HTTP_X_FORWARDED_SSL' in request.META:
+            return request.META['HTTP_X_FORWARDED_SSL'] == 'on'
+        return False
 
-
-SSL = 'SSL'
-
-def is_secure(request):
-    if 'HTTP_X_FORWARDED_SSL' in request.META:
-        return request.META['HTTP_X_FORWARDED_SSL'] == 'on'
-    return False
-
-class SSLRedirect:
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if SSL in view_kwargs:
-            secure = view_kwargs[SSL]
-            del view_kwargs[SSL]
+        if self.SSL in view_kwargs:
+            secure = view_kwargs[self.SSL]
+            del view_kwargs[self.SSL]
         else:
             secure = False
-
-        if not secure == is_secure(request):
+        if not secure == self.is_secure(request):
             return self._redirect(request, secure)
 
     def _redirect(self, request, secure):
@@ -48,6 +38,4 @@ class SSLRedirect:
             raise RuntimeError,\
             """Django can't perform a SSL redirect while maintaining POST data.
   Please structure your views so that redirects only occur during GETs."""
-
-        #return HttpResponseRedirect(newurl)
         return HttpResponsePermanentRedirect(newurl) #I have not had time to test this, but it appears to work better.
