@@ -237,7 +237,8 @@ if not HOSTER:
         'INTERCEPT_REDIRECTS' : False,
         }
 
-
+if HOSTER:
+    MIDDLEWARE_CLASSES += ('proj.utils.middlewares.SecureRequiredMiddleware',)
 
 
 
