@@ -3,7 +3,7 @@ __author__ = 'michael'
 
 
 from django.conf import settings
-from django.http import HttpResponsePermanentRedirect, get_host
+from django.http import HttpResponsePermanentRedirect, get_host, HttpResponseRedirect
 import os
 
 SSL = 'SSL'
@@ -42,7 +42,7 @@ class HttpsRedirect(object):
         system_secure = request.META.get('SYSTEM_S', None)
         if not system_secure:
             newurl = u'https://%s%s' % (get_host(request),request.get_full_path())
-            return HttpResponsePermanentRedirect(newurl)
+            return HttpResponseRedirect(newurl)
         else:
             del(request.META['SYSTEM_S'])
 

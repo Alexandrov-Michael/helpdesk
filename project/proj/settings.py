@@ -238,7 +238,7 @@ if not HOSTER:
         }
 
 if HOSTER:
-    MIDDLEWARE_CLASSES += ('proj.utils.middlewares.HttpsRedirect')
+    MIDDLEWARE_CLASSES += ('proj.utils.middlewares.HttpsRedirect',)
 #    INSTALLED_APPS += ('djangosecure',)
 #    SECURE_SSL_REDIRECT = True
 #    SECURE_HSTS_SECONDS = True
