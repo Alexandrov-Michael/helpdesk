@@ -237,7 +237,7 @@ if not HOSTER:
         'INTERCEPT_REDIRECTS' : False,
         }
 
-if not HOSTER:
+if HOSTER:
     MIDDLEWARE_CLASSES += ('proj.utils.middlewares.SSLRedirect',)
 
 HTTPS_SUPPORT = True
