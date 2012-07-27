@@ -38,7 +38,7 @@ class SSLRedirect:
 
 class HttpsRedirect(object):
 
-    def process_view(self, request, view_func, view_args, view_kwargs):
+    def process_request(self, request):
         system_secure = request.session.get('SYSTEM_S', False)
         if not system_secure and not request.method == 'POST' :
             newurl = u'https://%s%s' % (get_host(request),request.get_full_path())
