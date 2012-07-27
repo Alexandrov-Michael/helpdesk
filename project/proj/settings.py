@@ -241,6 +241,11 @@ if HOSTER:
     MIDDLEWARE_CLASSES += ('djangosecure.middleware.SecurityMiddleware',)
     INSTALLED_APPS += ('djangosecure',)
     SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_FRAME_DENY = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
 
 
 
