@@ -13,7 +13,7 @@ class SecureRequiredMiddleware(object):
     Мидлваре для перенаправления на https
     """
     def __init__(self):
-        self.enabled = self.paths and getattr(settings, 'HTTPS_SUPPORT')
+        self.enabled = getattr(settings, 'HTTPS_SUPPORT')
 
     def process_request(self, request):
         if self.enabled and not request.is_secure():
