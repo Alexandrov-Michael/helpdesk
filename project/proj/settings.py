@@ -240,6 +240,8 @@ if not HOSTER:
 if HOSTER:
     MIDDLEWARE_CLASSES += ('proj.utils.middlewares.SecureRequiredMiddleware',)
 
+HTTPS_SUPPORT = True
+
 
 
 EMAIL_HOST = 'smtp.spaceweb.ru'
