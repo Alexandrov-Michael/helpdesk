@@ -42,6 +42,7 @@ urlpatterns = patterns('',
     url(r'^companyadmins_for_user/(?P<pk>\d+)/$', vp.CompanyAdminsForUserListView.as_view(), name='companyadmins_for_user'),
     url(r'^companyadmins_for_company/(?P<pk>\d+)/$', vp.CompanyAdminsForCompanyListView.as_view(), name='companyadmins_for_company'),
     url(r'^add_companyadmins_for_company/(?P<pk>\d+)/$', vp.AddCompanyAdminsForCompanyView.as_view(), name='add_companyadmins_for_company'),
+    url(r'^chnage_user_to_for_ques/(?P<pk>\d+)/$',    views.ChangeUserToForQuestionView.as_view(), name='change_user_to_for_ques'),
 
 
     #tehnikal

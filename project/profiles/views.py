@@ -37,7 +37,6 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     def form_valid(self, form):
         login           = form.cleaned_data['login']
         password1       = form.cleaned_data['password1']
-        password2       = form.cleaned_data['password2']
         email           = form.cleaned_data['email']
         first_name      = form.cleaned_data['first_name']
         last_name       = form.cleaned_data['last_name']
@@ -45,8 +44,6 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         is_report       = form.cleaned_data['is_report']
         telefon         = form.cleaned_data['telefon']
         image           = form.cleaned_data['image']
-        if password1 != password2:
-            return super(CreateUserView, self).form_invalid(form)
         new_user = User(
             username=login,
             first_name=first_name,
@@ -57,7 +54,7 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         try:
             new_user.full_clean()
         except ValidationError:
-            self.error_msg = u'Такой логин уже существует'
+            self.error_msg = u'Не правильно заполненна форма'
             return super(CreateUserView, self).form_invalid(form)
         new_user.save()
         new_profile = Profile(
@@ -130,11 +127,8 @@ class CreateCompanyView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     def form_valid(self, form):
         login           = form.cleaned_data['login']
         password1       = form.cleaned_data['password1']
-        password2       = form.cleaned_data['password2']
         first_name      = form.cleaned_data['first_name']
         image           = form.cleaned_data['image']
-        if password1 != password2:
-            return super(CreateCompanyView, self).form_invalid(form)
         new_user = User(
             username=login,
             first_name=first_name,
@@ -143,7 +137,7 @@ class CreateCompanyView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         try:
             new_user.full_clean()
         except ValidationError:
-            self.error_msg = u'Такой логин уже существует'
+            self.error_msg = u'Не правильно заполненна форма'
             return super(CreateCompanyView, self).form_invalid(form)
         new_user.save()
         new_profile = Profile(

@@ -7,13 +7,16 @@
 {% block content %}
     <h1>Обсуждение вопроса</h1>
     <div class="q_but"></div>
-    <div class='q_pc_detail'>
-        {% if not user_is_company %}
+    {% if not user_is_company %}
+        <div class='q_pc_detail'>
             {% if question.pc_from %}
                 <button onclick="GetPcInfo()" class='but_q_pc_detail' type="button" id="{{ question.pc_from.id }}">Информация о ПК</button>
             {% endif %}
-        {% endif %}
-    </div>
+        </div>
+        <div class='but_in_question'>
+            <button type="button" onclick="ChangeUserTo({{ question.id }})">Перенаправить</button>
+        </div>
+    {% endif %}
     <div id='question' class='borderLine3'></div>
     <div id="messages">
         <div id="messBlock"></div>
@@ -135,7 +138,10 @@
             var id = $('.but_q_pc_detail').attr('id');
             window.location = '/pc_detail/' + id + '/'
         }
-
+        function ChangeUserTo(id)
+        {
+            window.location = '/chnage_user_to_for_ques/'+id+'/';
+        }
         $(document).ready(function(){
             GetQuestion();
             GetButtons();

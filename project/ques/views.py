@@ -6,8 +6,6 @@ from django.views.generic.edit import FormView
 from django.views.generic.base import TemplateView
 from models import Questions, Chat
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from projForms import EditQuestionUser, EditQuestionAdmin, ChatForm
 from proj import settings
 from django.http import Http404
@@ -15,10 +13,10 @@ from company.models import CompanyAdmins, Company, CompanyPC, PcOptionListHistor
 from django.contrib.auth.models import User
 from datetime import datetime
 from ques.models import Emails
-from profiles.models import Profile
 from files.models import Files
 from proj.utils.mixin import UpdateContextDataMixin, GetOdjectMixin, LoginRequiredMixin, SummMixen
-
+from company.Forms import ChangeUserToForQuesForm
+from django.core.urlresolvers import reverse
 
 
 
@@ -247,6 +245,42 @@ class MainReportForPcHistoryView(LoginRequiredMixin, UpdateContextDataMixin, Tem
         return self.update_context(context)
 
 
+class ChangeUserToForQuestionView(SummMixen, FormView):
+    """
+    Представление для перенаправления вопроса
+    """
+
+    form_class = ChangeUserToForQuesForm
+    template_name = 'change_user_to_for_ques.html'
+    success_url = '/'
+
+    def get_object(self):
+        pk = self.get_pk()
+        try:
+            obj = Questions.objects.get(pk = pk)
+        except Questions.DoesNotExist:
+            raise Http404
+        return obj
+
+    def get_form_kwargs(self):
+        kwargs = super(ChangeUserToForQuestionView, self).get_form_kwargs()
+        kwargs['user'] = self.user
+        return kwargs
+
+
+    def form_valid(self, form):
+        user_to = form.cleaned_data['user_to']
+        question = self.get_object()
+        question.user_to = user_to
+        question.save()
+        return super(ChangeUserToForQuestionView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(ChangeUserToForQuestionView, self).get_context_data(**kwargs)
+        context['pk'] = self.get_pk()
+        return self.update_context(context)
+
+
 
 
 ##################################################################################
@@ -410,7 +444,7 @@ class GetChatMessages(LoginRequiredMixin, GetOdjectMixin,  ListView):
         return queryset
 
 
-class GetCompanyListForReportForQuesView(ListView):
+class GetCompanyListForReportForQuesView(LoginRequiredMixin, ListView):
     """
     Аякс Представление для получения списка компаний для отчета по вопроса
 
@@ -420,20 +454,15 @@ class GetCompanyListForReportForQuesView(ListView):
     context_object_name = 'companys'
     template_name = 'ajax_get_company_for_report_ques.html'
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company:
-            raise Http404
-        return super(GetCompanyListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+    def do_before_handler(self):
+        self.skip_only_user()
 
     def get_queryset(self):
         queryset = Company.objects.select_related('com_user__first_name').all()
         return queryset
 
 
-class GetUserListForReportForQuesView(ListView):
+class GetUserListForReportForQuesView(LoginRequiredMixin, ListView):
     """
     Аякс представление для получения списка сотрудников для отчета по вопросам
 
@@ -443,20 +472,15 @@ class GetUserListForReportForQuesView(ListView):
     context_object_name = 'users'
     template_name = 'ajax_get_users_for_report_for_ques.html'
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company:
-            raise Http404
-        return super(GetUserListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+    def do_before_handler(self):
+        self.skip_only_user()
 
     def get_queryset(self):
         queryset = User.objects.exclude(pk=1).exclude(profile__is_company = True)
         return queryset
 
 
-class GetReportListForReportForQuesView(ListView):
+class GetReportListForReportForQuesView(LoginRequiredMixin, ListView):
     """
     Аякс представления для получения вопросов по заданным
     фильтрам для отчета по вопросам
@@ -470,13 +494,9 @@ class GetReportListForReportForQuesView(ListView):
     user_post_filter = 'user'
     paginate_by = 30
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company or not self.user_profile.is_report:
-            raise Http404
-        return super(GetReportListForReportForQuesView, self).dispatch(request, *args, **kwargs)
+    def do_before_handler(self):
+        self.skip_only_user()
+        self.skip_only_report()
 
 
     def get_filters(self):
@@ -530,7 +550,7 @@ class GetReportListForReportForQuesView(ListView):
         return context
 
 
-class GetPcListForReportPcHistoryView(ListView):
+class GetPcListForReportPcHistoryView(LoginRequiredMixin, ListView):
     """
     Аякс представление для получения списка пк в фирме
 
@@ -542,13 +562,8 @@ class GetPcListForReportPcHistoryView(ListView):
     company_get_filter = 'company'
 
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company:
-            raise Http404
-        return super(GetPcListForReportPcHistoryView, self).dispatch(request, *args, **kwargs)
+    def do_before_handler(self):
+        self.skip_only_user()
 
     def get_filter(self):
         self.company_filter = self.kwargs.get(self.company_get_filter, None)
@@ -568,7 +583,7 @@ class GetPcListForReportPcHistoryView(ListView):
         return queryset
 
 
-class GetCompanyListForReportForPcHistoryView(ListView):
+class GetCompanyListForReportForPcHistoryView(LoginRequiredMixin, ListView):
     """
     Аякс представление для получения скиска компаний в отчету о изменени характеристик
 
@@ -578,20 +593,15 @@ class GetCompanyListForReportForPcHistoryView(ListView):
     context_object_name = 'companys'
     template_name = 'ajax_get_company_for_report_pc_history.html'
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company:
-            raise Http404
-        return super(GetCompanyListForReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+    def do_before_handler(self):
+        self.skip_only_user()
 
     def get_queryset(self):
         queryset = Company.objects.select_related('com_user__first_name').all()
         return queryset
 
 
-class GetReportForPcHistoryView(ListView):
+class GetReportForPcHistoryView(LoginRequiredMixin, ListView):
     """
     Аякс предсталвение для получения отчета по истории измененя характеристик пк
 
@@ -605,13 +615,8 @@ class GetReportForPcHistoryView(ListView):
     company_get_filter = 'company'
     paginate_by = 30
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.user = request.user
-        self.user_profile = Profile.objects.get(user=self.user)
-        if self.user_profile.is_company:
-            raise Http404
-        return super(GetReportForPcHistoryView, self).dispatch(request, *args, **kwargs)
+    def do_before_handler(self):
+        self.skip_only_user()
 
     def get_filters(self):
         pc_filter = self.kwargs.get(self.pc_get_filter, None)

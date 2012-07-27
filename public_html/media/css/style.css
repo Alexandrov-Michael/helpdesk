@@ -568,3 +568,6 @@ input[type="submit"]:active, button:active{
     width: 70px;
     height: 70px;
 }
+.but_in_question{
+    margin: 0 10px 15px;
+}

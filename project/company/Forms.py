@@ -4,45 +4,12 @@ __author__ = 'michael'
 from django import forms
 from models import PcOptionsList, PcOptions, CompanyPC, Departments
 from company.models import Posts
-from django.forms import widgets
-from django.forms.widgets import SelectMultiple, CheckboxInput
-from django.utils.encoding import force_unicode
-from itertools import chain
-from django.utils.html import conditional_escape
-from django.utils.safestring import mark_safe
+from proj.utils.formUtils import MyCheckboxSelectMultiple, FormsCleanUtils, ModelChoiceFieldForUserTo
+from django.contrib.auth.models import User
 
 
 
 
-class MyCheckboxSelectMultiple(SelectMultiple):
-    def render(self, name, value, attrs=None, choices=()):
-        if value is None: value = []
-        has_id = attrs and 'id' in attrs
-        final_attrs = self.build_attrs(attrs, name=name)
-        output = []
-        # Normalize to strings
-        str_values = set([force_unicode(v) for v in value])
-        for i, (option_value, option_label) in enumerate(chain(self.choices, choices)):
-            # If an ID attribute was given, add a numeric index as a suffix,
-            # so that the checkboxes don't all have the same ID attribute.
-            if has_id:
-                final_attrs = dict(final_attrs, id='%s_%s' % (attrs['id'], i))
-                label_for = u' for="%s"' % final_attrs['id']
-            else:
-                label_for = ''
-
-            cb = CheckboxInput(final_attrs, check_test=lambda value: value in str_values)
-            option_value = force_unicode(option_value)
-            rendered_cb = cb.render(name, option_value)
-            option_label = conditional_escape(force_unicode(option_label))
-            output.append(u'<td class="input_td">%s</td>' % (rendered_cb,))
-        return mark_safe(u'\n'.join(output))
-
-    def id_for_label(self, id_):
-        # See the comment for RadioSelect.id_for_label()
-        if id_:
-            id_ += '_0'
-        return id_
 
 
 class ChangePcOptionForm(forms.ModelForm):
@@ -87,20 +54,40 @@ class AddDepartamentForm(forms.ModelForm):
             }
 
 
-class CreateUserForm(forms.Form):
+class CreateUserlogin(forms.Form, FormsCleanUtils ):
     """
-    Форма для создания пользователя
+    Форма для наследования
     """
     login           = forms.CharField(label=u'Логин', max_length=30)
     password1       = forms.CharField(widget=forms.PasswordInput(), label=u'Пароль', max_length=128)
     password2       = forms.CharField(widget=forms.PasswordInput(), label=u'Подтверждение пароля', max_length=128)
-    email           = forms.EmailField()
     first_name      = forms.CharField(label=u'Имя', max_length=30)
+    image           = forms.ImageField(required=False, label=u'Изображение')
+
+
+    def clean(self):
+        cleaned_data = super(CreateUserlogin, self).clean()
+        self.check_passwords(cleaned_data)
+        self.check_login_to_unique(cleaned_data)
+        self.check_email_to_unique(cleaned_data)
+        return cleaned_data
+
+
+
+
+class CreateUserForm(CreateUserlogin):
+    """
+    Форма для создания пользователя
+    """
+
+    email           = forms.EmailField()
     last_name       = forms.CharField(label=u'Фамилия', max_length=30)
     telefon         = forms.CharField(label=u'Телефон', max_length=18)
     is_super_user   = forms.BooleanField(label=u'Суперпользователь', required=False)
     is_report       = forms.BooleanField(label=u'Доступ к отчетам', required=False)
-    image           = forms.ImageField(required=False, label=u'изображение')
+
+
+
 
 
 
@@ -111,18 +98,11 @@ class AddFileForm(forms.Form):
     file = forms.FileField(max_length=100, allow_empty_file=False)
 
 
-class CreateCompanyForm(forms.Form):
+class CreateCompanyForm(CreateUserlogin):
     """
     Форма для создания компании
     """
-    login           = forms.CharField(label=u'Логин', max_length=30)
-    password1       = forms.CharField(widget=forms.PasswordInput(), label=u'Пароль', max_length=128)
-    password2       = forms.CharField(widget=forms.PasswordInput(), label=u'Подтверждение пароля', max_length=128)
-    first_name      = forms.CharField(label=u'Наименование', max_length=30)
-    image           = forms.ImageField(required=False, label=u'Изображение')
-
-
-
+    pass
 
 
 
@@ -176,4 +156,24 @@ class AddCompanyAdminsForCompanyForm(forms.Form):
 
                 initial=initial_data,
             )
+
+
+
+
+class ChangeUserToForQuesForm(forms.Form):
+    """
+    Форма для перенаправления вопроса
+    """
+
+    def __init__(self, user, *args, **kwargs):
+        super(ChangeUserToForQuesForm, self).__init__(*args, **kwargs)
+        self.user = user
+        self.fields['user_to'].queryset = self.get_queryset()
+
+
+    def get_queryset(self):
+        queryset = User.objects.select_related('profile').filter(profile__is_company=False).exclude(pk = self.user.pk)
+        return queryset
+
+    user_to = ModelChoiceFieldForUserTo(queryset=None, label=u'Перенаправить сотруднику:')
 
