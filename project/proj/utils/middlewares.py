@@ -43,7 +43,5 @@ class HttpsRedirect(object):
         if not system_secure and not request.method == 'POST' :
             newurl = u'https://%s%s' % (get_host(request),request.get_full_path())
             request.session['SYSTEM_S'] = True
-            return HttpResponseRedirect(newurl)
-        else:
-            request.session['SYSTEM_S'] = False
+            return HttpResponsePermanentRedirect(newurl)
 
