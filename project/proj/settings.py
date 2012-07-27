@@ -230,7 +230,7 @@ PLUS_SLUG_FIELD = 0
 
 
 if not HOSTER:
-    INSTALLED_APPS += ('debug_toolbar',)
+    INSTALLED_APPS += ('debug_toolbar', 'djangosecure',)
     MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     INTERNAL_IPS = ('127.0.0.1',)
     DEBUG_TOOLBAR_CONFIG = {
@@ -238,9 +238,9 @@ if not HOSTER:
         }
 
 if HOSTER:
-    MIDDLEWARE_CLASSES += ('proj.utils.middlewares.SSLRedirect',)
+    MIDDLEWARE_CLASSES += ('djangosecure.middleware.SecurityMiddleware',)
+    SECURE_SSL_REDIRECT = True
 
-MIDDLEWARE_CLASSES += ('proj.utils.middlewares.HttpsRedirect',)
 
 
 

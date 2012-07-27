@@ -41,5 +41,6 @@ class HttpsRedirect(object):
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         secure = request.is_secure()
-        assert False
+        url = request.get_full_path()
+        request_url = request.build_absolute_uri(request.get_full_path())
         pass
