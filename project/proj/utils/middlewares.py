@@ -4,6 +4,7 @@ __author__ = 'michael'
 
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect, get_host
+from sys import os
 
 SSL = 'SSL'
 
