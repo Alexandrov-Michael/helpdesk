@@ -273,6 +273,13 @@ class ChangeUserToForQuestionView(SummMixen, FormView):
         question = self.get_object()
         question.user_to = user_to
         question.save()
+        sub = u'Перенаправление вопроса от %s %s' % (self.user.first_name, self.user.last_name)
+        new_email = Emails(
+            mail_to=user_to.email,
+            subject=sub,
+            body=question.body,
+        )
+        new_email.save()
         return super(ChangeUserToForQuestionView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
