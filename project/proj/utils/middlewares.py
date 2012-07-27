@@ -40,7 +40,7 @@ class HttpsRedirect(object):
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         system_secure = request.session.get('SYSTEM_S', False)
-        if not system_secure:
+        if not system_secure and not request.method == 'POST' :
             newurl = u'https://%s%s' % (get_host(request),request.get_full_path())
             request.session['SYSTEM_S'] = True
             return HttpResponseRedirect(newurl)
