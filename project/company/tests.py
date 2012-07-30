@@ -1,16 +1,54 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+# -*- coding:utf-8 -*-
 
-Replace this with more appropriate tests for your application.
-"""
 
 from django.test import TestCase
+from company.models import PcOptions
+
 
 
 class SimpleTest(TestCase):
-    def test_basic_addition(self):
+    """
+    Тест представлений
+    """
+    fixtures = ['fixture1.json']
+
+    def test_PcDetail(self):
         """
-        Tests that 1 + 1 always equals 2.
+        проверка представления по деталицаии ПК
         """
-        self.assertEqual(1 + 1, 2)
+        c = self.client
+
+        login_success = c.login(username='admin', password='123')
+        self.assertTrue(login_success)
+        response = c.get('/pc_detail/1/')
+        self.assertEqual(response.status_code, 200)
+        resp = c.get('/pc_detail/99999999999/')
+        self.assertEqual(resp.status_code, 404)
+        c.logout()
+
+        login_success = c.login(username='ferromet', password='user12345')
+        self.assertTrue(login_success)
+        response = c.get('/pc_detail/1/')
+        self.assertEqual(response.status_code, 404)
+        c.logout()
+
+
+    def test_AddPcOption(self):
+        """
+        AddPcOption
+        """
+        c = self.client
+        login_success = c.login(username='admin', password='123')
+        self.assertTrue(login_success)
+        resp = c.get('/add_opt/1/')
+        self.assertEqual(resp.status_code, 200)
+
+        resp1 = c.get('/add_opt/99999999999/')
+        self.assertEqual(resp1.status_code, 404)
+
+        option = PcOptions.objects.get(pk=1)
+        resp2 = c.post('/add_opt/1/', {'option': option, 'body': 'test'})
+        self.assertEqual(resp2.status_code, 200)
+
+
+

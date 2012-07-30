@@ -88,6 +88,7 @@ class AddPcOption(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, Fo
 
     def do_before_handler(self):
         self.skip_only_user()
+        self.pc = self.get_parent_obj()
 
 
     def get_parent_obj(self):
@@ -101,7 +102,6 @@ class AddPcOption(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, Fo
     def form_valid(self, form):
         option  = form.cleaned_data['option']
         body    = form.cleaned_data['body']
-        self.pc = self.get_parent_obj()
         user    = self.user
         new_option = PcOptionsList(
             pc = self.pc,
