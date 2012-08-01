@@ -571,10 +571,10 @@ input[type="submit"]:active, button:active{
 .but_in_question{
     margin: 0 10px 15px;
 }
-.admins_list table{
+#curators_main{
     border: 1px solid black;
 }
-.admins_list table td, th{
+#curators_main td, th{
     border: 1px solid black;
     padding: 2px 5px;
 }
