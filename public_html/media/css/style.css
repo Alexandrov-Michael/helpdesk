@@ -357,7 +357,7 @@ a.section:link, a.section:visited {
 }
 
 .q_pc_detail{
-    margin: 0 0 0 10px;
+    margin: 0 0 10px 10px;
 }
 
 .but_history_but{
