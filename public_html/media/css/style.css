@@ -248,7 +248,7 @@ a.section:link, a.section:visited {
     color: #ff727e;
 }
 .admins_list a{
-    color: #ff727e;
+    color: #000000;
 }
 .admins_list a:hover{
     text-decoration: underline;
