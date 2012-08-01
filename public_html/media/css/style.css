@@ -574,7 +574,7 @@ input[type="submit"]:active, button:active{
 #curators_main{
     border: 1px solid black;
 }
-#curators_main td, th{
+#curators_main td, #curators_main th{
     border: 1px solid black;
     padding: 2px 5px;
 }
