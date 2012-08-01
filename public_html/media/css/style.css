@@ -573,6 +573,8 @@ input[type="submit"]:active, button:active{
 }
 #curators_main{
     border: 1px solid black;
+    font-weight: normal;
+    font-size: 13px;
 }
 #curators_main td, #curators_main th{
     border: 1px solid black;
