@@ -48,7 +48,7 @@ class CompanyPC(models.Model):
     """
     company     = models.ForeignKey(Company, verbose_name=u'Компания', related_name=u'company_pc')
     departament = models.ForeignKey(Departments, verbose_name=u'Отдел', related_name='rel_dep')
-    pc_nameId   = models.PositiveIntegerField(u'ID', unique=True)
+    pc_nameId   = models.CharField(u'ID', unique=True, max_length=50)
     pc_name     = models.TextField(u'hostname')
     files       = generic.GenericRelation(Files)
 
