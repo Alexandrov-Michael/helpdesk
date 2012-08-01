@@ -69,7 +69,6 @@ class CreateUserlogin(forms.Form, FormsCleanUtils ):
         cleaned_data = super(CreateUserlogin, self).clean()
         self.check_passwords(cleaned_data)
         self.check_login_to_unique(cleaned_data)
-        self.check_email_to_unique(cleaned_data)
         return cleaned_data
 
 
@@ -86,7 +85,10 @@ class CreateUserForm(CreateUserlogin):
     is_super_user   = forms.BooleanField(label=u'Суперпользователь', required=False)
     is_report       = forms.BooleanField(label=u'Доступ к отчетам', required=False)
 
-
+    def clean(self):
+        cleaned_data = super(CreateUserForm, self).clean()
+        self.check_email_to_unique(cleaned_data)
+        return cleaned_data
 
 
 
