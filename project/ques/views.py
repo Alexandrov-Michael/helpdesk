@@ -199,6 +199,9 @@ class QuesChatForm(SummMixen, FormView):
         if file:
             new_file = Files(content_object=new_msg, file=file, name=file.name, size=file.size)
             new_file.save()
+        answers_count = Chat.objects.filter(question=self.question).count()
+        self.question.answers = answers_count
+        self.question.save()
         return super(QuesChatForm, self).form_valid(form)
 
     def get_success_url(self):

@@ -10,6 +10,7 @@
         <th>От кого</th>
         <th>Кому</th>
         <th>Вопрос</th>
+        <th>Ответов</th>
         <th class='check'>Вопрос закрыт</th>
         <th>Дата закрытия</th>
     </tr>
@@ -35,6 +36,7 @@
             <td>
                 {{ ques.body|truncatewords:15 }}
             </td>
+            <td class='check'>{{ ques.answers }}</td>
             <td class='
                                 {% if ques.user_check %}
                                     plus
