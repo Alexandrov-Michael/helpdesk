@@ -245,7 +245,7 @@ a.section:link, a.section:visited {
 .admins_list {
     margin: 10px;
     font-size: 15px;
-    color: #ff727e;
+    color: #000000;
 }
 .admins_list a{
     color: #000000;
@@ -570,4 +570,11 @@ input[type="submit"]:active, button:active{
 }
 .but_in_question{
     margin: 0 10px 15px;
+}
+.admins_list table{
+    border: 1px solid black;
+}
+.admins_list table td, th{
+    border: 1px solid black;
+    padding: 2px 5px;
 }

@@ -129,13 +129,22 @@
                 {% if company_admins %}
                     <h2>Сопровождающие специалисты:</h2>
                         <div class='admins_list'>
-                            <ul>
-                            {% for item in company_admins %}
-                                <li>
-                                    <a href="/add_q/?user={{ item.username.id }}">{{ item.post.decription }} - {{ item.username.first_name }} {{ item.username.last_name }} - {{ item.username.profile.telefon }}</a>
-                                </li>
-                            {% endfor %}
-                            </ul>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Должность</th>
+                                        <th>Контакты</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in company_admins %}
+                                        <tr>
+                                            <td><a href="/add_q/?user={{ item.username.id }}">{{ item.post.decription }}</a></td>
+                                            <td><a href="/add_q/?user={{ item.username.id }}">{{ item.username.first_name }} {{ item.username.last_name }} - {{ item.username.profile.telefon }}</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                 {% endif %}
             </div>
