@@ -6,7 +6,7 @@
 
 
 {% block content %}
-    <h1>Задать вопроса</h1>
+    <h1>Задать вопрос</h1>
     <div id='question' class='borderLine'>
         <form action="{% url add_q %}" method="POST">{% csrf_token %}
             <table id='tableForm'>
