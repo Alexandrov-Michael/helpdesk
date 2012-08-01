@@ -130,17 +130,12 @@
                     <h2>Сопровождающие специалисты:</h2>
                         <div class='admins_list'>
                             <table id="curators_main">
-                                <thead>
-                                    <tr>
-                                        <th>Должность</th>
-                                        <th>Контакты</th>
-                                    </tr>
-                                </thead>
                                 <tbody>
                                     {% for item in company_admins %}
                                         <tr>
                                             <td><a href="/add_q/?user={{ item.username.id }}">{{ item.post.decription }}</a></td>
-                                            <td><a href="/add_q/?user={{ item.username.id }}">{{ item.username.first_name }} {{ item.username.last_name }} - {{ item.username.profile.telefon }}</a></td>
+                                            <td><a href="/add_q/?user={{ item.username.id }}">{{ item.username.first_name }} {{ item.username.last_name }}</a></td>
+                                            <td><a href="/add_q/?user={{ item.username.id }}">{{ item.username.profile.telefon }}</a></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
