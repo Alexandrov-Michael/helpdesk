@@ -33,6 +33,7 @@ class Departments(models.Model):
         return self.name
 
     class Meta:
+        ordering = ['name']
         verbose_name = u'Отдел'
         verbose_name_plural = u'Отделы'
 
