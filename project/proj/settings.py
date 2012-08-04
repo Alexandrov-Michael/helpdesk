@@ -2,12 +2,12 @@
 from proj.utils import utils
 # Django settings for proj project.
 import os
-from socket import gethostnam
+from socket import gethostname
 
 PROJECT_PATH = os.path.dirname(__file__)
 BETA_PATH = '/home/f/fregatscom/helpBeta/project/proj/'
 
-HOST_NAME = gethostnam()
+HOST_NAME = gethostname()
 HOSTER_HOST_NAME = 'vh2'
 
 if HOST_NAME == HOSTER_HOST_NAME:
