@@ -92,10 +92,12 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
             ).save()
         else:
             for_all    = form.cleaned_data['for_all']
+
             if not for_all and not user_to:
                 return super(QuesAdd, self).form_invalid(form)
             if for_all and user_to:
                 return super(QuesAdd, self).form_invalid(form)
+
             if for_all:
                 if self.user_profile.is_super_user:
                     comps = CompanyAdmins.objects.select_related('company__com_user').order_by('company.id').distinct('company')
@@ -121,6 +123,12 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                 user_to=user_to,
                 body=body,
             )
+            if not user_to.profile.is_company:
+                Emails(
+                    mail_to = user_to.email,
+                    subject = u'Сообщение от %s' % (self.user.first_name,),
+                    body = body
+                ).save()
         new_question.save()
         slug_first_part = self.user.username[:2]
         slug_2_part = new_question.id + self.slug_plus
