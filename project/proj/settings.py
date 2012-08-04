@@ -1,9 +1,21 @@
 # -*- coding:utf-8 -*-
 from proj.utils import utils
 # Django settings for proj project.
+import os
 
-HOSTER = False
-BETA = False
+PROJECT_PATH = os.path.dirname(__file__)
+HOST_PATH = '/home/f/fregatscom/helpdesk/project/proj/'
+BETA_PATH = '/home/f/fregatscom/helpBeta/project/proj/'
+
+if PROJECT_PATH == HOST_PATH:
+    HOSTER = True
+else:
+    HOSTER = False
+
+if PROJECT_PATH == BETA_PATH:
+    BETA = True
+else:
+    BETA = False
 
 if HOSTER:
     DEBUG = False
@@ -12,8 +24,6 @@ else:
 
 #DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-
-
 
 
 ADMINS = (
