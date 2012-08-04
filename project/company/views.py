@@ -512,7 +512,7 @@ class GetDepartamentForPcListView(LoginRequiredMixin, GetOdjectMixin, ListView):
             com_user = User.objects.select_related('company').get(pk=pk)
         except User.DoesNotExist:
             raise Http404
-        queryset = CompanyPC.objects.filter(company=com_user.company.id).select_related('departament__id', 'departament__name').order_by('departament.id').distinct('departament')
+        queryset = CompanyPC.objects.filter(company=com_user.company.id).select_related('departament__id', 'departament__name').order_by('departament.id').distinct('departament').order_by('departament.name')
         return queryset
 
 
