@@ -17,5 +17,37 @@
 {% endblock %}
 
 {% block script %}
-
+    <script type="text/javascript">
+    function GetCompany()
+    {
+        var loading =  $('#loading');
+        var select = $('#id_company');
+        loading.fadeIn();
+        select.fadeOut();
+        $.ajax({
+            url: '/ajax/get_company_for_add_dep/',
+            type: 'GET',
+            dataType: 'json',
+            success: function(jsonData){
+                select.empty();
+                var option0 = '<option selected="selected" value="">---------</option>';
+                select.append(option0);
+                $.each(jsonData, function(id, value){
+                    select.append(GetSelectHtml(value));
+                });
+                select.fadeIn();
+                loading.fadeOut();
+            }
+        })
+    }
+    function GetSelectHtml(value)
+    {
+        var id = value["company__id"];
+        var name = value["company__com_user__first_name"];
+        return '<option value="'+id+'">'+name+'</option>';
+    }
+    $(document).ready(function(){
+        GetCompany();
+    });
+    </script>
 {% endblock %}

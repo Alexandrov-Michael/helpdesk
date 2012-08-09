@@ -8,14 +8,38 @@ from profiles.models import Profile
 
 
 
-
 class JSONResponseMixin(object):
     """
     Микшин для ответа JSON
+    context = {item: value}
     """
     def render_to_response(self, context, **response_kwargs):
         json = simplejson.dumps(context)
         return HttpResponse(json, mimetype='application/json', **response_kwargs)
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+
+
+
+class JSONQuerySetValuesResponseMixin(object):
+    """
+    Микшин для ответа JSON, context = queryset.values()
+    """
+    def render_to_response(self, context, **response_kwargs):
+        data = {}
+        i = 0
+        for item in context:
+            data[i] = item
+            i += 1
+        json = simplejson.dumps(data)
+        return HttpResponse(json, mimetype='application/json', **response_kwargs)
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
 
 
 

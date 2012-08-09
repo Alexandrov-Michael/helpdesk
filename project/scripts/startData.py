@@ -104,13 +104,13 @@ def run():
     com_test.save()
 
 
-    main_dep = Departments(name = u'Основной')
+    main_dep = Departments(name = u'Основной', company=com_ferromet)
     main_dep.save()
-    buh_dep = Departments(name = u'Бухгалтерия')
+    buh_dep = Departments(name = u'Бухгалтерия', company=com_ferromet)
     buh_dep.save()
-    dir_dep = Departments(name = u'Директорат')
+    dir_dep = Departments(name = u'Директорат', company=com_ferromet)
     dir_dep.save()
-    fin_dep = Departments(name = u'Финансисты')
+    fin_dep = Departments(name = u'Финансисты', company=com_ferromet)
     fin_dep.save()
 
 

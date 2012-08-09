@@ -1,0 +1,137 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Список отделов в компании
+{% endblock %}
+
+{% block content %}
+    <h1>Список отделов в компании</h1>
+    <div id="choise_company">
+        <p id="message">Если список компаний пуст, то вы не обслуживаете ни одну компанию</p>
+        <p>Выберите компанию</p>
+        <select id='id_company' name='id_company' onchange="GetDepartaments(this)"></select>
+    </div>
+    <div id='ajax_pc_list'>
+        <div id='tableDiv'>
+            <div id="preTableTop">
+                <p>&nbsp;</p>
+            </div>
+            <table class='listTable'>
+                <thead>
+                <tr>
+                    <th>Отдел</th>
+                </tr>
+                </thead>
+                <tbody id="mainTable" class='nopointer'></tbody>
+            </table>
+            <p id='paginator'>&nbsp;</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        function StartHide()
+        {
+            $('#ajax_pc_list').hide();
+            $('#message').hide();
+        }
+        function GetCompany()
+        {
+            var loading =  $('#loading');
+            var select = $('#id_company');
+            loading.fadeIn();
+            select.fadeOut();
+            $.ajax({
+                url: '/ajax/get_company_for_add_dep/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(jsonData){
+                    select.empty();
+                    var option0 = '<option selected="selected" value="">---------</option>';
+                    select.append(option0);
+                    $.each(jsonData, function(id, value){
+                        select.append(GetSelectHtml(value));
+                    });
+                    select.fadeIn();
+                    loading.fadeOut();
+                    GetUserToFromGET();
+                    var company = $('#id_company').val();
+                    if(company)
+                    {
+                        GetDepartaments($('#id_company'));
+                    }
+                }
+            })
+        }
+        function GetSelectHtml(value)
+        {
+            var id = value["id"];
+            var name = value["name"];
+            return '<option value="'+id+'">'+name+'</option>';
+        }
+        function GetDepartaments(select)
+        {
+            var loading =  $('#loading');
+            var ajaxDiv = $('#ajax_pc_list');
+            loading.fadeIn();
+            ajaxDiv.fadeOut();
+            var id = $(select).val();
+            if(id){
+                $.ajax({
+                    url: '/ajax/get_dep_list_for_dep_list/'+id+'/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(jsonData){
+                        var tbody = $('#mainTable');
+                        tbody.empty();
+                        if(jsonData){
+                            $.each(jsonData, function(id, value){
+                                tbody.append(GetTrHtml(value));
+                            });
+                            AddClassForTr();
+                        }else{
+                            tbody.append('<tr><td>В компании отделы не определены</td></tr>')
+                        }
+                        ajaxDiv.fadeIn();
+                        loading.fadeOut();
+                    }
+                })
+            }else{
+                loading.fadeOut();
+            }
+        }
+        function GetTrHtml(value)
+        {
+            var name = value['name'];
+            return '<tr><td>'+name+'</td></tr>';
+        }
+        function AddClassForTr()
+        {
+            $('#mainTable tr:even').addClass('firstTd');
+        }
+        function getUrlVars()
+        {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+        function GetUserToFromGET(){
+            var company = getUrlVars()['company'];
+            if(company)
+            {
+                $("#id_company").val(company);
+            }
+        }
+        $(document).ready(function(){
+            StartHide();
+            GetCompany();
+        });
+    </script>
+{% endblock %}

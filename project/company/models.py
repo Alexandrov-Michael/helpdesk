@@ -27,7 +27,8 @@ class Departments(models.Model):
     """
     Модель отделов в которых находить ПК
     """
-    name = models.CharField(u'Наименование', max_length=100)
+    company = models.ForeignKey(Company, verbose_name=u'Компания', related_name='company_deps')
+    name    = models.CharField(u'Наименование', max_length=100)
 
     def __unicode__(self):
         return self.name

@@ -2,13 +2,13 @@
 from models import CompanyPC, Company, CompanyAdmins, PcOptionListHistory, PcOptionsList, PcOptions, Departments
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, FormView, CreateView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.contrib.auth.models import User
 from Forms import ChangePcOptionForm, AddPcOptionForPCForm, AddCompanyPcForm, AddPcOptionsForm, AddDepartamentForm, AddFileForm
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from files.models import Files
-from proj.utils.mixin import LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin
+from proj.utils.mixin import LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, JSONQuerySetValuesResponseMixin, JSONResponseMixin
 
 
 
@@ -293,7 +293,7 @@ class AddDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, CreateView)
     """
     form_class = AddDepartamentForm
     template_name = 'add_departament.html'
-    success_url = '/'
+    success_url = None
 
     def do_before_handler(self):
         self.skip_only_user()
@@ -304,6 +304,11 @@ class AddDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, CreateView)
         """
         context = super(AddDepartamentView, self).get_context_data(**kwargs)
         return self.update_context(context)
+
+    def get_success_url(self):
+        url = reverse('dep_list', args=[])
+        result_url = u'%s?company=%s' % (url, self.object.company.pk, )
+        return result_url
 
 
 class AddFileForPcView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, FormView):
@@ -341,6 +346,20 @@ class AddFileForPcView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixi
     def get_context_data(self, **kwargs):
         context = super(AddFileForPcView, self).get_context_data(**kwargs)
         context['pc_pk'] = self.get_pk()
+        return self.update_context(context)
+
+
+class DepartamentsListView(LoginRequiredMixin, UpdateContextDataMixin, TemplateView):
+    """
+    Список отделов в компаниях
+    """
+    template_name = 'dep_list.html'
+
+    def do_before_handler(self):
+        self.skip_only_user()
+
+    def get_context_data(self, **kwargs):
+        context = super(DepartamentsListView, self).get_context_data(**kwargs)
         return self.update_context(context)
 
 
@@ -547,3 +566,51 @@ class GetUserTo(LoginRequiredMixin, ListView):
         return template
 
 
+class GetCompanyForAddDepartametView(LoginRequiredMixin, View, JSONResponseMixin ):
+    """
+    Ajax Представление для получения списка компаний для пользователя
+    """
+
+    def do_before_handler(self):
+        self.skip_only_user()
+
+
+    def get_context_data(self, **kwargs):
+        result = []
+        if self.user_profile.is_super_user:
+            queryset = Company.objects.select_related('com_user').values('id', 'com_user__first_name')
+            for item in queryset:
+                item_result = {}
+                item_result['id'] = item['id']
+                item_result['name'] = item['com_user__first_name']
+                result.append(item_result)
+        else:
+            queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user', 'company').order_by('company.id').distinct('company').values('company__id', 'company__com_user__first_name')
+            for item in queryset:
+                item_result = {}
+                item_result['id'] = item['company__id']
+                item_result['name'] = item['company__com_user__first_name']
+                result.append(item_result)
+        return result
+
+
+class GetDepartamentsForDeplistView(LoginRequiredMixin, JSONQuerySetValuesResponseMixin, GetOdjectMixin, View):
+    """
+    Ajax представление для получения списка отделов в компании
+    """
+
+    def do_before_handler(self):
+        self.skip_only_user()
+
+    def get_object(self):
+        pk = self.get_pk()
+        try:
+            company = Company.objects.get(pk=pk)
+        except Company.DoesNotExist:
+            raise Http404
+        return company
+
+    def get_context_data(self, **kwargs):
+        company = self.get_object()
+        queryset = Departments.objects.filter(company=company).values('name')
+        return queryset

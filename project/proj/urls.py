@@ -43,6 +43,7 @@ urlpatterns = patterns('',
     url(r'^companyadmins_for_company/(?P<pk>\d+)/$', vp.CompanyAdminsForCompanyListView.as_view(), name='companyadmins_for_company'),
     url(r'^add_companyadmins_for_company/(?P<pk>\d+)/$', vp.AddCompanyAdminsForCompanyView.as_view(), name='add_companyadmins_for_company'),
     url(r'^chnage_user_to_for_ques/(?P<pk>\d+)/$',    views.ChangeUserToForQuestionView.as_view(), name='change_user_to_for_ques'),
+    url(r'^departament_list/$',         vc.DepartamentsListView.as_view(), name='dep_list'),
 
 
     #tehnikal
@@ -70,7 +71,8 @@ urlpatterns = patterns('',
     url(r'^ajax/get_report_pc_history/(?P<pc>\d+)/(?P<user>\d+)/(?P<company>\d+)/$', views.GetReportForPcHistoryView.as_view()),
     url(r'^ajax/get_departament_for_pc_list/(?P<pk>\d+)/$',         vc.GetDepartamentForPcListView.as_view()),
     url(r'^ajax/get_profile_src_img/(?P<pk>\d+)/$',                 vp.GetProfileImgView.as_view()),
-
+    url(r'^ajax/get_company_for_add_dep/$',                         vc.GetCompanyForAddDepartametView.as_view()),
+    url(r'^ajax/get_dep_list_for_dep_list/(?P<pk>\d+)/$',           vc.GetDepartamentsForDeplistView.as_view()),
 
 
     #ajax type: POST

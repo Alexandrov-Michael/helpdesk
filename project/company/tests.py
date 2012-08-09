@@ -51,4 +51,25 @@ class SimpleTest(TestCase):
         self.assertEqual(resp2.status_code, 200)
 
 
+    def test_GetCompanyForAddDepartametView(self):
+        """
+        GetCompanyForAddDepartametView
+        """
+        c = self.client
+        login_success = c.login(username='admin', password='123')
+        self.assertTrue(login_success)
+        resp = c.get('/ajax/get_company_for_add_dep/')
+        self.assertEqual(resp.status_code, 200)
+        c.logout()
+
+        login_success = c.login(username='ferromet', password='user12345')
+        self.assertTrue(login_success)
+        response = c.get('/ajax/get_company_for_add_dep/')
+        self.assertEqual(response.status_code, 404)
+        c.logout()
+        ### response mimetype = json проверить
+
+
+
+
 
