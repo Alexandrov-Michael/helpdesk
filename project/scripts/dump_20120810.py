@@ -81,12 +81,11 @@ def run():
     auth_user_5.date_joined = datetime.datetime(2012, 8, 1, 5, 0, 53, 573000, tzinfo=utc)
     auth_user_5.save()
 
-    auth_user_6 = User()
+    auth_user_6 = User.objects.get(pk=1)
     auth_user_6.username = u'fregatadmin'
     auth_user_6.first_name = u'\u0413\u043b\u0430\u0432\u043d\u044b\u0439 \u043a\u0443\u0440\u0430\u0442\u043e\u0440'
     auth_user_6.last_name = u''
     auth_user_6.email = u'admin@fregatsoft.com'
-    auth_user_6.password = u'pbkdf2_sha256$10000$PMnUhFFTYJ9b$YFOUYEIo69tEkmgm+yUvkfZaN0v02Ik9YXmP9aj9Fxc='
     auth_user_6.is_staff = True
     auth_user_6.is_active = True
     auth_user_6.is_superuser = True
