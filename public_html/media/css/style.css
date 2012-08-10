@@ -235,6 +235,7 @@ a.section:link, a.section:visited {
 .q_body{
     word-wrap: break-word;
     width: 600px;
+    white-space: pre;
 }
 
 #messages{
