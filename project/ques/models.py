@@ -29,6 +29,7 @@ class Questions(models.Model):
     user_check_date  = models.DateTimeField(u'Дата закрытия вопроса отправителем', null=True, blank=True)
     slug             = models.CharField(u'Идентификатор', unique=True, null=True, blank=True, max_length=8 )
     answers          = models.PositiveIntegerField(u'Число ответов', default=0)
+    post             = models.ForeignKey(com.Posts, verbose_name=u'Тематика вопроса', blank=True, null=True, related_name='rel_quest_posts')
 
 
     def __unicode__(self):
@@ -64,7 +65,7 @@ class Chat(models.Model):
 
 
     class Meta:
-        ordering = ['date']
+        ordering = ['-date']
         verbose_name = u'Сообщение чата'
         verbose_name_plural = u'Сообщения чата'
 

@@ -7,7 +7,7 @@
 {% block content %}
     <h1>Список отделов в компании</h1>
     <div id="choise_company">
-        <p id="message">Если список компаний пуст, то вы не обслуживаете ни одну компанию</p>
+        <p id="message"></p>
         <p>Выберите компанию</p>
         <select id='id_company' name='id_company' onchange="GetDepartaments(this)"></select>
     </div>
@@ -22,7 +22,11 @@
                     <th>Отдел</th>
                 </tr>
                 </thead>
-                <tbody id="mainTable" class='nopointer'></tbody>
+                <tbody id="mainTable" class='nopointer'>
+                    <tr>
+                        <td>Отделов нет</td>
+                    </tr>
+                </tbody>
             </table>
             <p id='paginator'>&nbsp;</p>
         </div>
@@ -31,6 +35,17 @@
 
 {% block script %}
     <script type="text/javascript">
+        function CountObjectProperty(data)
+        {
+            var count = 0;
+            for (var foo in data) {
+                if(data.hasOwnProperty(foo))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
         function StartHide()
         {
             $('#ajax_pc_list').hide();
@@ -40,6 +55,8 @@
         {
             var loading =  $('#loading');
             var select = $('#id_company');
+            var message = $('#message');
+            message.hide();
             loading.fadeIn();
             select.fadeOut();
             $.ajax({
@@ -50,9 +67,17 @@
                     select.empty();
                     var option0 = '<option selected="selected" value="">---------</option>';
                     select.append(option0);
-                    $.each(jsonData, function(id, value){
-                        select.append(GetSelectHtml(value));
-                    });
+                    var count = CountObjectProperty(jsonData);
+                    if(count != 0)
+                    {
+                        $.each(jsonData, function(id, value){
+                            select.append(GetSelectHtml(value));
+                        });
+                    }else{
+                        message.empty();
+                        message.append('Вы не обслуживаете ни одну из компаний')
+                        message.fadeIn();
+                    }
                     select.fadeIn();
                     loading.fadeOut();
                     GetUserToFromGET();
@@ -85,7 +110,8 @@
                     success: function(jsonData){
                         var tbody = $('#mainTable');
                         tbody.empty();
-                        if(jsonData){
+                        var count = CountObjectProperty(jsonData);
+                        if(count != 0){
                             $.each(jsonData, function(id, value){
                                 tbody.append(GetTrHtml(value));
                             });
@@ -122,14 +148,16 @@
             }
             return vars;
         }
-        function GetUserToFromGET(){
+        function GetUserToFromGET()
+        {
             var company = getUrlVars()['company'];
             if(company)
             {
                 $("#id_company").val(company);
             }
         }
-        $(document).ready(function(){
+        $(document).ready(function()
+        {
             StartHide();
             GetCompany();
         });

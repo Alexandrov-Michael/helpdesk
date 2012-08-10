@@ -198,6 +198,8 @@ INSTALLED_APPS = (
     'company',
     'profiles',
     'files',
+    'wiki',
+    'tinymce',
 
 )
 

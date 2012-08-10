@@ -69,7 +69,7 @@
             </div>
             <div class='information'>
                 Добро пожаловать, {{ user.first_name }}.
-                <a href="#">Документация</a>
+                <a href="{% url wiki %}">Документация</a>
                 /
                 <a href="/accounts/logout/">Выйти</a>
             </div>
@@ -134,8 +134,8 @@
                                 <tbody>
                                     {% for item in company_admins %}
                                         <tr>
-                                            <td><a href="/add_q/?user={{ item.username.id }}">{{ item.post.decription }}</a></td>
-                                            <td><a href="/add_q/?user={{ item.username.id }}">{{ item.username.first_name }} {{ item.username.last_name }}</a></td>
+                                            <td><a href="/add_q/?user={{ item.username.id }}&post={{ item.post.id }}">{{ item.post.decription }}</a></td>
+                                            <td><a href="/add_q/?user={{ item.username.id }}&post={{ item.post.id }}">{{ item.username.first_name }} {{ item.username.last_name }}</a></td>
                                             <td>{{ item.username.profile.telefon }}</td>
                                         </tr>
                                     {% endfor %}

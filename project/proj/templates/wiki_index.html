@@ -1,0 +1,29 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Википедия
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        function AddPageWiki()
+        {
+            window.location = '/add_page_wiki/';
+        }
+    </script>
+{% endblock %}
+
+
+{% block content %}
+    <h1>Документация</h1>
+    <div id="div_button">
+        <button type="button" onclick="AddPageWiki()">Добавть статью</button>
+    </div>
+    <div id="wiki-list">
+        <ul>
+            {% for item in articals %}
+                <li><a href="{% url read_page_wiki item.id %}">{{ item.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

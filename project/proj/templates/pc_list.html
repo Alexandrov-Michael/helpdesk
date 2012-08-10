@@ -6,15 +6,15 @@
 
 {% block content %}
     <h1>Список компьютеров в ваших компаниях</h1>
+    <div id="message"><p></p></div>
     <div id="choise_company">
-        <p id="message">Если список компаний пуст, то вы не обслуживаете ни одну компанию</p>
-        <p>Выберите компанию</p>
+        <label for="sel_choise_company" >Выберите компанию</label><br>
         <select id='sel_choise_company' name='name_sel_choise_company' onchange="GetPcListForCompany()">
             <option value="0" selected="selected">---------</option>
         </select>
     </div>
     <div id="choise_dep">
-        <p>Выберите отдел</p>
+        <label for="sel_choise_dep" >Выберите отдел</label><br>
         <select id='sel_choise_dep' name='name_sel_choise_dep' onchange="GetPcListForDep()"></select>
     </div>
     <div id='ajax_pc_list'></div>
@@ -23,38 +23,81 @@
 {% block script %}
     <script>
         function GetCompany(){
-            $('#loading').fadeIn();
-            $('#message').hide();
-            $('#sel_choise_company').hide();
+            var message = $('#message p');
+            var loading = $('#loading');
+            var select_company = $('#sel_choise_company');
+            loading.fadeIn();
+            message.empty();
+            select_company.hide();
             $.ajax({
                 url: '/ajax/get_company_for_pc_list/',
                 type: 'GET',
                 dataType: 'html',
                 success: function(data){
-                    $('#sel_choise_company').append(data).fadeIn();
+                    select_company.append(data).fadeIn();
                 }
             }).done(function(){
                         GetOptionsLen();
-                        $('#loading').fadeOut();
+                        loading.fadeOut();
                     });
         }
         function GetOptionsLen(){
+            var message = $('#message p');
             if($('#sel_choise_company option').length<2){
-                $('#message').fadeIn();
+                message.fadeOut();
+                message.empty();
+                message.append('Если список компаний пуст, то вы не обслуживаете ни одну компанию');
+                message.fadeIn();
             }
         }
+        function GetDep()
+        {
+            var message     = $('#message p');
+            var loading     = $('#loading');
+            var id          = $('#sel_choise_company').val();
+            var select_dep  = $('#sel_choise_dep');
+            var div_dep     = $('#choise_dep');
+            message.fadeOut();
+            message.empty();
+            loading.fadeIn();
+            div_dep.fadeOut();
+            $.ajax({
+                url:'/ajax/get_departament_for_pc_list/' + id + '/',
+                type: 'GET',
+                dataType:'json',
+                success: function(data){
+                    select_dep.empty();
+                    select_dep.append('<option value="0" selected="selected">---------</option>');
+                    var count = CountObjectProperty(data);
+                    if(count != 0)
+                    {
+                        $.each(data, function(id, value){
+                            select_dep.append('<option value="'+value["id"]+'">'+value["name"]+'</option>');
+                        });
+                        div_dep.fadeIn();
+                    }else{
+                        message.fadeOut();
+                        message.empty();
+                        message.append('В компании отделы не определены');
+                        message.fadeIn();
+                    }
+                    loading.fadeOut();
+                }
+            })
+        }
         function GetPcListForCompany(){
-            $('#loading').fadeIn();
+            var loading = $('#loading');
             var com = $('#sel_choise_company').val();
-            var dep = $('#sel_choise_dep').val();
-            if(! dep ){
-                dep = 0;
-            }
+            var message = $('#message p');
+            var div_choise_dep = $('#choise_dep');
+            message.fadeOut();
+            loading.fadeIn();
+            div_choise_dep.fadeOut();
             if(com != 0){
                 $('#p_choise_msg').fadeOut();
                 $('#ajax_pc_list').hide();
                 $.ajax({
-                    url: '/ajax/get_pc_for_list/'+com+'/' + dep + '/',
+                    url: '/ajax/get_pc_for_list/'+com+'/' + 0 + '/',
                     type: 'GET',
                     dataType: 'html',
                     success: function(data){
@@ -69,7 +112,7 @@
             }else{
                     $('#ajax_pc_list').fadeOut().empty();
                     $('#choise_dep').fadeOut();
-                    $('#loading').fadeOut();
+                    loading.fadeOut();
             }
         }
         function GetPcListForDep(){
@@ -115,19 +158,16 @@
         function HideDep(){
             $('#choise_dep').hide();
         }
-        function GetDep(){
-            $('#loading').fadeIn();
-            var id = $('#sel_choise_company').val();
-            $.ajax({
-                url:'/ajax/get_departament_for_pc_list/' + id + '/',
-                type: 'GET',
-                dataType:'html',
-                success: function(data){
-                    $('#sel_choise_dep').empty().append(data);
-                    $('#choise_dep').fadeIn();
-                    $('#loading').fadeOut();
+        function CountObjectProperty(data)
+        {
+            var count = 0;
+            for (var foo in data) {
+                if(data.hasOwnProperty(foo))
+                {
+                    count++;
                 }
-            })
+            }
+            return count;
         }
         function GetPeginatorNext(){
             $('#tableDiv').hide();

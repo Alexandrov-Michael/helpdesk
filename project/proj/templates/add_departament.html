@@ -6,6 +6,7 @@
 
 {% block content %}
     <h1>Добавление отдела в компании</h1>
+    <div id="message"><p></p></div>
     <div id='question' class='borderLine'>
         <form action="{% url add_dep %}" method="POST">{% csrf_token %}
             <table id='tableForm'>
@@ -18,12 +19,26 @@
 
 {% block script %}
     <script type="text/javascript">
+    function CountObjectProperty(data)
+    {
+        var count = 0;
+        for (var foo in data) {
+            if(data.hasOwnProperty(foo))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
     function GetCompany()
     {
         var loading =  $('#loading');
         var select = $('#id_company');
+        var message = $('#message p');
         loading.fadeIn();
         select.fadeOut();
+        message.fadeOut();
+        message.empty();
         $.ajax({
             url: '/ajax/get_company_for_add_dep/',
             type: 'GET',
@@ -32,9 +47,15 @@
                 select.empty();
                 var option0 = '<option selected="selected" value="">---------</option>';
                 select.append(option0);
-                $.each(jsonData, function(id, value){
-                    select.append(GetSelectHtml(value));
-                });
+                var counter = CountObjectProperty(jsonData);
+                if(counter != 0){
+                    $.each(jsonData, function(id, value){
+                        select.append(GetSelectHtml(value));
+                    });
+                }else{
+                    message.append('Вы не обслуживаете ни одну компанию')
+                    message.fadeIn();
+                }
                 select.fadeIn();
                 loading.fadeOut();
             }
@@ -42,8 +63,8 @@
     }
     function GetSelectHtml(value)
     {
-        var id = value["company__id"];
-        var name = value["company__com_user__first_name"];
+        var id = value["id"];
+        var name = value["name"];
         return '<option value="'+id+'">'+name+'</option>';
     }
     $(document).ready(function(){

@@ -168,23 +168,3 @@ def run():
 
 
     host_names_list = ['server', 'buh', 'manager', 'mail', 'secretary']
-
-
-    for i in range(0, 30):
-        com = randrange(0, len(companyList))
-        CompanyPC(
-            company = companyList[com],
-            pc_nameId = i,
-            pc_name = u'%s %s' % (companyList[com], host_names_list[randrange(0, len(host_names_list))]),
-            departament = dep_list[randrange(0, len(dep_list))],
-        ).save()
-
-
-
-
-    option_list = PcOptions.objects.all()
-    pc_list = CompanyPC.objects.all()
-
-    for one_pc in pc_list:
-        for one_option in option_list:
-            PcOptionsList(pc = one_pc, option=one_option, body=alfavitList[randrange(0, len(alfavitList))]).save()

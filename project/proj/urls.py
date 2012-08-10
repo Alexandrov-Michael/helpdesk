@@ -9,6 +9,7 @@ from proj import settings
 from ques import views
 from company import views as vc
 from profiles import views as vp
+from wiki import views as vw
 
 urlpatterns = patterns('',
 
@@ -16,6 +17,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^admin_tools/', include('admin_tools.urls')),
+
+    url(r'^tinymce/', include('tinymce.urls')),
 
 
     #working
@@ -44,6 +47,9 @@ urlpatterns = patterns('',
     url(r'^add_companyadmins_for_company/(?P<pk>\d+)/$', vp.AddCompanyAdminsForCompanyView.as_view(), name='add_companyadmins_for_company'),
     url(r'^chnage_user_to_for_ques/(?P<pk>\d+)/$',    views.ChangeUserToForQuestionView.as_view(), name='change_user_to_for_ques'),
     url(r'^departament_list/$',         vc.DepartamentsListView.as_view(), name='dep_list'),
+    url(r'^wiki/$',                     vw.IndexWikiView.as_view(), name='wiki'),
+    url(r'^add_page_wiki/$',            vw.AddArticleView.as_view(), name='add_page_wiki'),
+    url(r'^read_page_wiki/(?P<pk>\d+)/$', vw.ReadArcticleView.as_view(), name='read_page_wiki'),
 
 
     #tehnikal
@@ -73,6 +79,8 @@ urlpatterns = patterns('',
     url(r'^ajax/get_profile_src_img/(?P<pk>\d+)/$',                 vp.GetProfileImgView.as_view()),
     url(r'^ajax/get_company_for_add_dep/$',                         vc.GetCompanyForAddDepartametView.as_view()),
     url(r'^ajax/get_dep_list_for_dep_list/(?P<pk>\d+)/$',           vc.GetDepartamentsForDeplistView.as_view()),
+    url(r'^ajax/get_dep_list_for_add_pc/(?P<pk>\d+)/$',             vc.GetDepartamentsForAddPCView.as_view()),
+    url(r'^ajax/get_posts_for_add_ques/(?P<pk>\d+)/$',              vc.GetPostsForQuestionAddView.as_view()),
 
 
     #ajax type: POST

@@ -38,7 +38,7 @@
             <span>Прикрепленные файлы:</span>
             <ol>
                 {% for item in pc.files.all %}
-                    <li><a href="{{ item.file.url }}">имя:{{ item.name }},  размер:{{ item.size|filesizeformat }},  дата заливки:{{ item.date }}</a></li>
+                    <li><a href="{{ item.file.url }}">имя:{{ item.name }}</a>  размер:{{ item.size|filesizeformat }},  дата заливки:{{ item.date }}</li>
                 {% endfor %}
             </ol>
         </div>

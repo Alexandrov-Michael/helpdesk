@@ -1,0 +1,18 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Прочтение статьи
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+
+{% block content %}
+    <h1>{{ article.title }}</h1>
+    <p>Дата редактирования {{ article.date }}</p>
+    <div id='article_body'>
+        {{ article.body|safe }}
+    </div>
+{% endblock %}

@@ -74,3 +74,8 @@ class ModelChoiceFieldForUserTo(ModelChoiceField):
     """
     def label_from_instance(self, obj):
         return "%s %s" % (obj.first_name, obj.last_name,)
+
+
+class QuestionPostModelChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.decription

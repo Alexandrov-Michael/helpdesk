@@ -61,7 +61,6 @@ class CreateUserlogin(forms.Form, FormsCleanUtils ):
     login           = forms.CharField(label=u'Логин', max_length=30)
     password1       = forms.CharField(widget=forms.PasswordInput(), label=u'Пароль', max_length=128)
     password2       = forms.CharField(widget=forms.PasswordInput(), label=u'Подтверждение пароля', max_length=128)
-    first_name      = forms.CharField(label=u'Имя', max_length=30)
     image           = forms.ImageField(required=False, label=u'Изображение')
 
 
@@ -80,6 +79,7 @@ class CreateUserForm(CreateUserlogin):
     """
 
     email           = forms.EmailField()
+    first_name      = forms.CharField(label=u'Имя', max_length=30)
     last_name       = forms.CharField(label=u'Фамилия', max_length=30)
     telefon         = forms.CharField(label=u'Телефон', max_length=18)
     is_super_user   = forms.BooleanField(label=u'Суперпользователь', required=False)
@@ -104,7 +104,7 @@ class CreateCompanyForm(CreateUserlogin):
     """
     Форма для создания компании
     """
-    pass
+    first_name      = forms.CharField(label=u'Наименование', max_length=30)
 
 
 

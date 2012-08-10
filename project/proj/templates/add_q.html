@@ -7,6 +7,7 @@
 
 {% block content %}
     <h1>Задать вопрос</h1>
+    <div id="message"><p></p></div>
     <div id='question' class='borderLine'>
         <div id="face_wrop">
             <p>Фотография получателя</p>
@@ -28,17 +29,92 @@
 
 {% block script %}
     <script>
+    var start = false;
+    function CountObjectProperty(data)
+    {
+        var count = 0;
+        for (var foo in data) {
+            if(data.hasOwnProperty(foo))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+    function OnchangeUserTo()
+    {
+        $('#id_user_to').change(function(){
+            GetPostForUserTo();
+        });
+    }
+    function GetPostForUserTo()
+    {
+        var select_post = $('#id_post');
+        var loading = $('#loading');
+        var value_user_to = $('#id_user_to').val();
+        var message = $('#message p');
+        loading.fadeIn();
+        select_post.fadeOut();
+        select_post.empty();
+        select_post.removeAttr('disabled');
+        select_post.append('<option value="0" selected="selected">---------</option>');
+        if(value_user_to)
+        {
+            $.ajax({
+                url : '/ajax/get_posts_for_add_ques/'+value_user_to+'/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data){
+                    var counter = CountObjectProperty(data);
+                    if(counter != 0){
+                        $.each(data, function(id, value){
+                            select_post.append('<option value="'+id+'" >'+value+'</option>');
+                        });
+                    }else{
+                        message.append('Для данного полльзователя нет должностей');
+                        message.fadeIn();
+                    }
+                    if(! start)
+                    {
+                        var getPost = getUrlVars()['post'];
+                        if(getPost)
+                        {
+                            select_post.val(getPost);
+                        }
+                        start = true;
+
+                    }
+                    select_post.fadeIn();
+                    loading.fadeOut();
+                }
+            });
+        }else{
+            select_post.attr('disabled',"disabled");
+            select_post.fadeIn();
+            loading.fadeOut();
+        }
+    }
     function GetPcFrom(){
-        $('#loading').fadeIn();
-        $('#id_user_from').hide();
+        var select_user_from = $('#id_user_from');
+        var loading = $('#loading');
+        var message = $('#message p');
+        message.fadeOut();
+        loading.fadeIn();
+        select_user_from.hide();
                     $.ajax({
                         url: '/ajax/get_pc_from/',
                         dataType: 'html',
-                        type:'GET'
-                    }).done(function(data){
-                                $('#id_user_from').empty().append(data).fadeIn();
-                                $('#loading').fadeOut();
-              });
+                        type:'GET',
+                        success: function(data){
+                            select_user_from.empty().append(data).fadeIn();
+                            var options_len = $('option', select_user_from).length;
+                            if( options_len == 1){
+                                message.append('У вас не зарегистрирован ни один компьютер');
+                                message.fadeIn();
+                            }
+                            loading.fadeOut();
+                        }
+                    });
     }
     function GetUserTo(){
         $('#loading').fadeIn();
@@ -53,6 +129,7 @@
                 $('#loading').fadeOut();
                 GetUserToFromGET();
                 GetUserToImgStart();
+                GetPostForUserTo();
             }
         });
     }
@@ -126,6 +203,7 @@
         GetPcFrom();
         GetUserTo();
         GetUserToImg();
+        OnchangeUserTo();
     });
     </script>
 {% endblock %}

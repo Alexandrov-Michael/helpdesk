@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from models import CompanyPC, Company, CompanyAdmins, PcOptionListHistory, PcOptionsList, PcOptions, Departments
+from models import CompanyPC, Company, CompanyAdmins, PcOptionListHistory, PcOptionsList, PcOptions, Departments, Posts
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView, View
@@ -50,7 +50,7 @@ class PcDetail(LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, ListV
     """
     Представление для детализации информации о ПК
 
-    optimized 20120705
+    tested
     """
     template_name = 'pc_detail.html'
     model = PcOptionsList
@@ -80,7 +80,7 @@ class AddPcOption(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, Fo
     """
     Представление для добавления характеристики к ПК
 
-    optimized 20120726
+    tested
     """
     form_class = AddPcOptionForPCForm
     template_name = 'add_pc_option.html'
@@ -290,6 +290,8 @@ class AddPcOptionForAllView(LoginRequiredMixin, UpdateContextDataMixin, GetOdjec
 class AddDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
     """
     Представление для добавления вида отдела
+
+    tested
     """
     form_class = AddDepartamentForm
     template_name = 'add_departament.html'
@@ -490,48 +492,47 @@ class GetOptionsForAdd(LoginRequiredMixin, GetOdjectMixin, ListView):
         return new_options
 
 
-class GetCompanyForPcAddView(LoginRequiredMixin, ListView):
+class GetCompanyForPcAddView(LoginRequiredMixin, View, JSONResponseMixin):
     """
     Ajax представление для получения списка компаний в представление по добавлению ПК
 
 
     optimized 20120705
     """
-    model = CompanyAdmins
-    context_object_name = u'company_admins_list'
-    template_name = 'ajax_get_company_for_pc_add.html'
 
     def do_before_handler(self):
         self.skip_only_user()
 
-    def get_queryset(self):
+    def get_context_data(self, **kwargs):
+        result = {}
         if self.user_profile.is_super_user:
-            queryset = CompanyAdmins.objects.select_related('company__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
+            queryset = Company.objects.all().select_related('com_user')
+            for item in queryset:
+                result[item.id] = item.com_user.first_name
         else:
             queryset = CompanyAdmins.objects.select_related('company__id', 'company__com_user__first_name').filter(username = self.user).order_by('company.id').distinct('company')
-        return queryset
+            for item in queryset:
+                result[item.company.id] = item.company.com_user.first_name
+        return result
 
 
-class GetDepartamentForPcListView(LoginRequiredMixin, GetOdjectMixin, ListView):
+class GetDepartamentForPcListView(LoginRequiredMixin, GetOdjectMixin, View, JSONQuerySetValuesResponseMixin):
     """
     Представление для вывода отделов в компании
-
-    optimized 20120705
     """
-    model = CompanyPC
-    context_object_name = 'comPcList'
-    template_name = 'ajax_get_departament_for_pc_list.html'
 
     def do_before_handler(self):
         self.skip_only_user()
 
-    def get_queryset(self):
+    def get_context_data(self, *args, **kwargs):
         pk = self.get_pk()
         try:
-            com_user = User.objects.select_related('company').get(pk=pk)
+            com_user = User.objects.select_related('company', 'profile').get(pk=pk)
         except User.DoesNotExist:
             raise Http404
-        queryset = CompanyPC.objects.filter(company=com_user.company.id).select_related('departament__id', 'departament__name').order_by('departament.id').distinct('departament')
+        if not com_user.profile.is_company:
+            raise Http404
+        queryset = Departments.objects.filter(company=com_user.company.id).values('id', 'name')
         return queryset
 
 
@@ -569,6 +570,8 @@ class GetUserTo(LoginRequiredMixin, ListView):
 class GetCompanyForAddDepartametView(LoginRequiredMixin, View, JSONResponseMixin ):
     """
     Ajax Представление для получения списка компаний для пользователя
+
+    tested
     """
 
     def do_before_handler(self):
@@ -579,24 +582,28 @@ class GetCompanyForAddDepartametView(LoginRequiredMixin, View, JSONResponseMixin
         result = []
         if self.user_profile.is_super_user:
             queryset = Company.objects.select_related('com_user').values('id', 'com_user__first_name')
-            for item in queryset:
-                item_result = {}
-                item_result['id'] = item['id']
-                item_result['name'] = item['com_user__first_name']
-                result.append(item_result)
+            if queryset:
+                for item in queryset:
+                    item_result = {}
+                    item_result['id'] = item['id']
+                    item_result['name'] = item['com_user__first_name']
+                    result.append(item_result)
         else:
             queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user', 'company').order_by('company.id').distinct('company').values('company__id', 'company__com_user__first_name')
-            for item in queryset:
-                item_result = {}
-                item_result['id'] = item['company__id']
-                item_result['name'] = item['company__com_user__first_name']
-                result.append(item_result)
+            if queryset:
+                for item in queryset:
+                    item_result = {}
+                    item_result['id'] = item['company__id']
+                    item_result['name'] = item['company__com_user__first_name']
+                    result.append(item_result)
         return result
 
 
 class GetDepartamentsForDeplistView(LoginRequiredMixin, JSONQuerySetValuesResponseMixin, GetOdjectMixin, View):
     """
     Ajax представление для получения списка отделов в компании
+
+    tested
     """
 
     def do_before_handler(self):
@@ -614,3 +621,64 @@ class GetDepartamentsForDeplistView(LoginRequiredMixin, JSONQuerySetValuesRespon
         company = self.get_object()
         queryset = Departments.objects.filter(company=company).values('name')
         return queryset
+
+
+class GetDepartamentsForAddPCView(LoginRequiredMixin, JSONQuerySetValuesResponseMixin, GetOdjectMixin, View):
+    """
+    Ajax представление для получения списка отделов в компании для добавления ПК
+
+    tested
+    """
+
+    def do_before_handler(self):
+        self.skip_only_user()
+
+    def get_object(self):
+        pk = self.get_pk()
+        try:
+            company = Company.objects.get(pk=pk)
+        except Company.DoesNotExist:
+            raise Http404
+        return company
+
+    def get_context_data(self, **kwargs):
+        company = self.get_object()
+        queryset = Departments.objects.filter(company=company).values('id','name')
+        return queryset
+
+
+class GetPostsForQuestionAddView(LoginRequiredMixin, View, GetOdjectMixin, JSONResponseMixin):
+    """
+    Ajax предсталвение для получения должности сотрудника в данной компании для вопроса
+
+    tested
+    """
+
+    def get_object(self):
+        pk = self.get_pk()
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
+        return user
+
+    def get_context_data(self, **kwargs):
+        result = {}
+        user = self.get_object()
+        if self.user_profile.is_super_user:
+            queryset = Posts.objects.all().values('id', 'decription')
+            for item in queryset:
+                result[item['id']] = item['decription']
+            return result
+        elif self.user_profile.is_company:
+            queryset = CompanyAdmins.objects.select_related('post', 'company__com_user').filter(username = user, company = self.user.company)
+        else:
+            try:
+                company = user.company
+            except Company.DoesNotExist:
+                raise Http404
+            queryset = CompanyAdmins.objects.filter(username=self.user, company = company)
+        queryset = queryset.values('post__id', 'post__decription')
+        for item in queryset:
+            result[item['post__id']] = item['post__decription']
+        return result

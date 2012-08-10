@@ -61,6 +61,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     success_url = '/'
     template_name = None
     slug_plus = settings.PLUS_SLUG_FIELD
+    mess = None
 
 
     def get_form_class(self):
@@ -92,43 +93,55 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
             ).save()
         else:
             for_all    = form.cleaned_data['for_all']
-
-            if not for_all and not user_to:
-                return super(QuesAdd, self).form_invalid(form)
-            if for_all and user_to:
-                return super(QuesAdd, self).form_invalid(form)
-
             if for_all:
                 if self.user_profile.is_super_user:
-                    comps = CompanyAdmins.objects.select_related('company__com_user').order_by('company.id').distinct('company')
+                    comps = Company.objects.all()
+                    if comps:
+                        for one_comp in comps:
+                            new_question = Questions(
+                                user_from=self.user,
+                                user_to=one_comp.com_user,
+                                body=body
+                            )
+                            new_question.save()
+                            slug_first_part = self.user.username[:2]
+                            slug_2_part = new_question.id + self.slug_plus
+                            new_question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
+                            new_question.save()
+                        return super(QuesAdd, self).form_valid(form)
+                    else:
+                        self.mess = u'Вы не обслуживаете ни одну из компаний'
+                        return super(QuesAdd, self).form_invalid(form)
                 else:
                     comps = CompanyAdmins.objects.select_related('company__com_user').filter(username=self.user).order_by('company.id').distinct('company')
-                if comps:
-                    for one_comp in comps:
-                        new_question = Questions(
-                            user_from=self.user,
-                            user_to=one_comp.company.com_user,
-                            body=body
-                        )
-                        new_question.save()
-                        slug_first_part = self.user.username[:2]
-                        slug_2_part = new_question.id + self.slug_plus
-                        new_question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
-                        new_question.save()
-                    return super(QuesAdd, self).form_valid(form)
-                else:
-                    return super(QuesAdd, self).form_invalid(form)
-            new_question = Questions(
-                user_from=self.user,
-                user_to=user_to,
-                body=body,
-            )
-            if not user_to.profile.is_company:
-                Emails(
-                    mail_to = user_to.email,
-                    subject = u'Сообщение от %s' % (self.user.first_name,),
-                    body = body
-                ).save()
+                    if comps:
+                        for one_comp in comps:
+                            new_question = Questions(
+                                user_from=self.user,
+                                user_to=one_comp.company.com_user,
+                                body=body
+                            )
+                            new_question.save()
+                            slug_first_part = self.user.username[:2]
+                            slug_2_part = new_question.id + self.slug_plus
+                            new_question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
+                            new_question.save()
+                        return super(QuesAdd, self).form_valid(form)
+                    else:
+                        self.mess = u'Вы не обслуживаете ни одну из компаний'
+                        return super(QuesAdd, self).form_invalid(form)
+            else:
+                new_question = Questions(
+                    user_from=self.user,
+                    user_to=user_to,
+                    body=body,
+                )
+                if not user_to.profile.is_company:
+                    Emails(
+                        mail_to = user_to.email,
+                        subject = u'Сообщение от %s' % (self.user.first_name,),
+                        body = body
+                    ).save()
         new_question.save()
         slug_first_part = self.user.username[:2]
         slug_2_part = new_question.id + self.slug_plus
@@ -138,6 +151,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(QuesAdd, self).get_context_data(**kwargs)
+        context['mess'] = self.mess
         return self.update_context(context)
 
 
