@@ -9,6 +9,7 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from files.models import Files
 from proj.utils.mixin import LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, JSONQuerySetValuesResponseMixin, JSONResponseMixin
+from datetime import datetime
 
 
 
@@ -108,6 +109,7 @@ class AddPcOption(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, Fo
             option = option,
             body = body,
             user = user,
+            date=datetime.now(),
         )
         new_option.save()
         new_history_opt = PcOptionListHistory(
@@ -115,6 +117,7 @@ class AddPcOption(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, Fo
             option = option,
             body = body,
             user = user,
+            date=datetime.now(),
         )
         new_history_opt.save()
         return super(AddPcOption, self).form_valid(form)
@@ -216,7 +219,8 @@ class ChangePcOption(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
         option  = self.object.option
         body    = self.object.body
         user    = self.user
-        new_row = PcOptionListHistory(pc = pc, option=option, body=body, user=user)
+        self.object.date = datetime.now()
+        new_row = PcOptionListHistory(pc = pc, option=option, body=body, user=user, date=datetime.now())
         new_row.save()
         return super(ChangePcOption, self).form_valid(form)
 
@@ -337,7 +341,7 @@ class AddFileForPcView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixi
     def form_valid(self, form):
         self.pc = self.get_parent_obj()
         file = form.cleaned_data['file']
-        new_file = Files(content_object=self.pc, name=file.name, file=file, size=file.size)
+        new_file = Files(content_object=self.pc, name=file.name, file=file, size=file.size, date=datetime.now())
         new_file.save()
         return super(AddFileForPcView, self).form_valid(form)
 

@@ -127,7 +127,7 @@ class PcOptionsList(models.Model):
     option  = models.ForeignKey(PcOptions, verbose_name=u'Характеристика', related_name='rel_pc_option')
     #body blank & null потому что при создании используется get_or_create по полям pc & option
     body    = models.TextField(u'Знaчение', blank=True)
-    date    = models.DateTimeField(u'Дата изменения', auto_now=True)
+    date    = models.DateTimeField(u'Дата изменения')
     #user blank & null потому что при создании используется get_or_create по полям pc & option
     user    = models.ForeignKey(User, verbose_name=u'Кто изменил', related_name='rel_pc_option_user', blank=True, null=True)
 
@@ -147,7 +147,7 @@ class PcOptionListHistory(models.Model):
     pc      = models.ForeignKey(CompanyPC, verbose_name=u'ПК', related_name='rel_pc_pcOptionListHistory')
     option  = models.ForeignKey(PcOptions, verbose_name=u'Характеристика', related_name='rel_pc_option_pcOptionListHistory')
     body    = models.TextField(u'Значение')
-    date    = models.DateTimeField(u'Дата изменения', auto_now_add=True)
+    date    = models.DateTimeField(u'Дата изменения')
     user    = models.ForeignKey(User, verbose_name=u'Кто изменил', related_name='rel_pc_option_user_pcOptionListHistory')
 
     def __unicode__(self):

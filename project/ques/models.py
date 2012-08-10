@@ -23,7 +23,7 @@ class Questions(models.Model):
     pc_from          = models.ForeignKey(com.CompanyPC, verbose_name=u'От пользователя', related_name=u'rel_px_from', blank=True, null=True)
     worker_from      = models.TextField(u'ФИО', blank=True)
     user_to          = models.ForeignKey(com.User, verbose_name=u'Кому', related_name=u'rel_user_to')
-    date             = models.DateTimeField(u'Дата создания', auto_now_add=True)
+    date             = models.DateTimeField(u'Дата создания')
     body             = models.TextField(u'Вопрос')
     user_check       = models.BooleanField(u'Отметка пользователя')
     user_check_date  = models.DateTimeField(u'Дата закрытия вопроса отправителем', null=True, blank=True)
@@ -56,7 +56,7 @@ class Chat(models.Model):
     """
     question   = models.ForeignKey(Questions, verbose_name=u'Вопрос', related_name=u'rel_question_chat')
     admin_name = models.ForeignKey(com.User, verbose_name=u'От получателя', related_name=u'rel_admin_name', blank=True, null=True)
-    date       = models.DateTimeField(u'Дата создания', auto_now_add=True)
+    date       = models.DateTimeField(u'Дата создания')
     body       = models.TextField(u'Сообщение')
     files      = generic.GenericRelation(Files)
 

@@ -10,7 +10,7 @@ class Files(models.Model):
     """
     name            = models.CharField(max_length=100)
     file            = models.FileField(upload_to='files')
-    date            = models.DateTimeField(auto_now_add=True)
+    date            = models.DateTimeField()
     size            = models.PositiveIntegerField()
     content_type    = models.ForeignKey(ContentType)
     object_id       = models.PositiveIntegerField()

@@ -85,6 +85,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                 worker_from=worker_from,
                 user_to=user_to,
                 body=body,
+                date=datetime.now(),
             )
             Emails(
                 mail_to = user_to.email,
@@ -101,7 +102,8 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                             new_question = Questions(
                                 user_from=self.user,
                                 user_to=one_comp.com_user,
-                                body=body
+                                body=body,
+                                date=datetime.now(),
                             )
                             new_question.save()
                             slug_first_part = self.user.username[:2]
@@ -119,7 +121,8 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                             new_question = Questions(
                                 user_from=self.user,
                                 user_to=one_comp.company.com_user,
-                                body=body
+                                body=body,
+                                date=datetime.now(),
                             )
                             new_question.save()
                             slug_first_part = self.user.username[:2]
@@ -135,6 +138,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                     user_from=self.user,
                     user_to=user_to,
                     body=body,
+                    date=datetime.now(),
                 )
                 if not user_to.profile.is_company:
                     Emails(
@@ -214,12 +218,12 @@ class QuesChatForm(SummMixen, FormView):
         body = form.cleaned_data['body']
         file = form.cleaned_data['file']
         if self.sender:
-            new_msg = Chat(question=self.question, body=body)
+            new_msg = Chat(question=self.question, body=body, date=datetime.now())
         else:
-            new_msg = Chat(question=self.question, body=body, admin_name = self.user)
+            new_msg = Chat(question=self.question, body=body, admin_name = self.user, date=datetime.now())
         new_msg.save()
         if file:
-            new_file = Files(content_object=new_msg, file=file, name=file.name, size=file.size)
+            new_file = Files(content_object=new_msg, file=file, name=file.name, size=file.size, date=datetime.now())
             new_file.save()
         answers_count = Chat.objects.filter(question=self.question).count()
         self.question.answers = answers_count
