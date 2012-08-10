@@ -26,6 +26,60 @@
 
 {% block script %}
     <script>
+        function CountObjectProperty(data)
+        {
+            var count = 0;
+            for (var foo in data) {
+                if(data.hasOwnProperty(foo))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        function OnchangeUserTo()
+        {
+            $('#id_user_to').change(function(){
+                GetPostForUserTo();
+            });
+        }
+        function GetPostForUserTo()
+        {
+            var select_post = $('#id_post');
+            var loading = $('#loading');
+            var value_user_to = $('#id_user_to').val();
+            var message = $('#message p');
+            loading.fadeIn();
+            select_post.fadeOut();
+            select_post.empty();
+            select_post.removeAttr('disabled');
+            select_post.append('<option value="" selected="selected">---------</option>');
+            if(value_user_to)
+            {
+                $.ajax({
+                    url : '/ajax/get_posts_for_add_ques/'+value_user_to+'/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data){
+                        var counter = CountObjectProperty(data);
+                        if(counter != 0){
+                            $.each(data, function(id, value){
+                                select_post.append('<option value="'+id+'" >'+value+'</option>');
+                            });
+                        }else{
+                            message.append('Для данного полльзователя нет должностей');
+                            message.fadeIn();
+                        }
+                        select_post.fadeIn();
+                        loading.fadeOut();
+                    }
+                });
+            }else{
+                select_post.attr('disabled',"disabled");
+                select_post.fadeIn();
+                loading.fadeOut();
+            }
+        }
     function GetCompanyTo(){
         $('#loading').fadeIn();
                     $.ajax({
@@ -73,7 +127,8 @@
     $(document).ready(function(){
         GetUserTo();
         ChangeForAllCheckBox();
-        CheckBoxForAll()
+        CheckBoxForAll();
+        OnchangeUserTo();
     });
     </script>
 {% endblock %}

@@ -672,17 +672,23 @@ class GetPostsForQuestionAddView(LoginRequiredMixin, View, GetOdjectMixin, JSONR
         if self.user_profile.is_super_user:
             queryset = Posts.objects.all().values('id', 'decription')
             for item in queryset:
-                result[item['id']] = item['decription']
+                result[item['id']] = u'%s ...' % (item['decription'][:60],)
             return result
         elif self.user_profile.is_company:
             queryset = CompanyAdmins.objects.select_related('post', 'company__com_user').filter(username = user, company = self.user.company)
+            queryset = queryset.values('post__id', 'post__decription')
+            for item in queryset:
+                result[item['post__id']] = u'%s ...' % (item['post__decription'][:60],)
+            return result
         else:
-            try:
-                company = user.company
-            except Company.DoesNotExist:
-                raise Http404
-            queryset = CompanyAdmins.objects.filter(username=self.user, company = company)
-        queryset = queryset.values('post__id', 'post__decription')
-        for item in queryset:
-            result[item['post__id']] = item['post__decription']
-        return result
+            if user.profile.is_company:
+                queryset = CompanyAdmins.objects.filter(username=self.user, company = user.company)
+                queryset = queryset.values('post__id', 'post__decription')
+                for item in queryset:
+                    result[item['post__id']] = u'%s ...' % (item['post__decription'][:60],)
+                return result
+            else:
+                queryset = Posts.objects.all().values('id', 'decription')
+                for item in queryset:
+                    result[item['id']] = u'%s ...' % (item['decription'][:60],)
+                return result
