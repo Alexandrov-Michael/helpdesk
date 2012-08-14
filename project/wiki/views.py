@@ -2,13 +2,13 @@
 from django.core.urlresolvers import reverse
 from models import SimpleWiki
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
-from proj.utils.mixin import LoginRequiredMixin
+from proj.utils.mixin import LoginRequiredMixin, UpdateContextDataMixin
 from forms import AddWikiPageForm
 
 
-class IndexWikiView(LoginRequiredMixin, ListView):
+class IndexWikiView(LoginRequiredMixin, UpdateContextDataMixin, ListView):
     """
     Представление для списка статей
     """
@@ -19,8 +19,11 @@ class IndexWikiView(LoginRequiredMixin, ListView):
     def do_before_handler(self):
         self.skip_only_user()
 
+    def get_context_data(self, **kwargs):
+        context = super(IndexWikiView, self).get_context_data(**kwargs)
+        return self.update_context(context)
 
-class AddArticleView(LoginRequiredMixin, CreateView):
+class AddArticleView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
     """
     Представление для создания вики страницы
     """
@@ -36,9 +39,12 @@ class AddArticleView(LoginRequiredMixin, CreateView):
         url = reverse('wiki')
         return url
 
+    def get_context_data(self, **kwargs):
+        context = super(AddArticleView, self).get_context_data(**kwargs)
+        return self.update_context(context)
 
 
-class ReadArcticleView(LoginRequiredMixin, DetailView):
+class ReadArcticleView(LoginRequiredMixin, UpdateContextDataMixin, DetailView):
     """
     Представление для просмотра статьи
     """
@@ -48,3 +54,29 @@ class ReadArcticleView(LoginRequiredMixin, DetailView):
 
     def do_before_handler(self):
         self.skip_only_user()
+
+    def get_context_data(self, **kwargs):
+        context = super(ReadArcticleView, self).get_context_data(**kwargs)
+        return self.update_context(context)
+
+
+class EditArticleView(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
+    """
+    Представление для изменения статьи в вики
+    """
+    model = SimpleWiki
+    template_name = 'edit_article.html'
+    form_class = AddWikiPageForm
+    success_url = None
+
+    def do_before_handler(self):
+        self.skip_only_user()
+
+
+    def get_success_url(self):
+        url = reverse('wiki')
+        return url
+
+    def get_context_data(self, **kwargs):
+        context = super(EditArticleView, self).get_context_data(**kwargs)
+        return self.update_context(context)

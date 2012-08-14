@@ -22,7 +22,7 @@
                     <th>Отдел</th>
                 </tr>
                 </thead>
-                <tbody id="mainTable" class='nopointer'>
+                <tbody id="mainTable" class='dep_list_hover'>
                     <tr>
                         <td>Отделов нет</td>
                     </tr>
@@ -130,7 +130,8 @@
         function GetTrHtml(value)
         {
             var name = value['name'];
-            return '<tr><td>'+name+'</td></tr>';
+            var id = value['id'];
+            return '<tr data-id='+id+'><td>'+name+'</td></tr>';
         }
         function AddClassForTr()
         {
@@ -156,10 +157,19 @@
                 $("#id_company").val(company);
             }
         }
+        function OnCkickTr()
+        {
+            $('#mainTable').on('click', 'tr', function(){
+                var id = $(this).attr('data-id');
+                var company = $("#id_company").val();
+                window.location = '/edit_dep/' + id +'/?company=' + company;
+            });
+        }
         $(document).ready(function()
         {
             StartHide();
             GetCompany();
+            OnCkickTr();
         });
     </script>
 {% endblock %}

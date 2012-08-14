@@ -1,25 +1,25 @@
 {% extends 'main.html' %}
 
-{% block title %}
-    Добавление статьи
-{% endblock %}
-
 {% block script %}
 
 {% endblock %}
 
+{% block title %}
+    Изменить страницу документации
+{% endblock %}
+
+
 {% block content %}
-    <h1>Добавление новый статьи</h1>
+    <h1>Изменение страницы</h1>
     <div id="add_page">
         <form method="POST" action="">{% csrf_token %}
             <table>
                 {{ form.as_table }}
             </table>
-            <input type="submit" value="Создать">
+            <input type="submit" value="Изменить">
         </form>
     </div>
 {% endblock %}
-
 
 {% block head_script %}
     {{ form.media }}

@@ -47,9 +47,17 @@ urlpatterns = patterns('',
     url(r'^add_companyadmins_for_company/(?P<pk>\d+)/$', vp.AddCompanyAdminsForCompanyView.as_view(), name='add_companyadmins_for_company'),
     url(r'^chnage_user_to_for_ques/(?P<pk>\d+)/$',    views.ChangeUserToForQuestionView.as_view(), name='change_user_to_for_ques'),
     url(r'^departament_list/$',         vc.DepartamentsListView.as_view(), name='dep_list'),
+    url(r'^edit_dep/(?P<pk>\d+)/$',     vc.EditDepartamentView.as_view(), name='edit_dep'),
+
+
+    #### WIKI ####
     url(r'^wiki/$',                     vw.IndexWikiView.as_view(), name='wiki'),
     url(r'^add_page_wiki/$',            vw.AddArticleView.as_view(), name='add_page_wiki'),
     url(r'^read_page_wiki/(?P<pk>\d+)/$', vw.ReadArcticleView.as_view(), name='read_page_wiki'),
+    url(r'^edit_page_wiki/(?P<pk>\d+)/$', vw.EditArticleView.as_view(), name='edit_page_wiki'),
+
+
+    #### End WIKI ####
 
 
     #tehnikal
@@ -81,6 +89,7 @@ urlpatterns = patterns('',
     url(r'^ajax/get_dep_list_for_dep_list/(?P<pk>\d+)/$',           vc.GetDepartamentsForDeplistView.as_view()),
     url(r'^ajax/get_dep_list_for_add_pc/(?P<pk>\d+)/$',             vc.GetDepartamentsForAddPCView.as_view()),
     url(r'^ajax/get_posts_for_add_ques/(?P<pk>\d+)/$',              vc.GetPostsForQuestionAddView.as_view()),
+    url(r'^ajax/get_user_from_for_ques/(?P<pk>\d+)/$',              vc.GetPcFromForAddQues.as_view(), name='ajax_GetPcFromForAddQues'),
 
 
     #ajax type: POST

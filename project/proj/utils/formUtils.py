@@ -74,3 +74,12 @@ class ModelChoiceFieldForUserTo(ModelChoiceField):
     """
     def label_from_instance(self, obj):
         return "%s %s" % (obj.first_name, obj.last_name,)
+
+
+class ModelChoiceFieldForUserToForQues(ModelChoiceField):
+    """
+    поле для добавления вопроса компанией поле=user_to
+    """
+
+    def label_from_instance(self, obj):
+        return "%s %s" %(obj.username.first_name, obj.username.last_name,)

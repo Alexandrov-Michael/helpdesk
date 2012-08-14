@@ -14,5 +14,5 @@ class SimpleWiki(models.Model):
 
     class Meta:
         verbose_name = u'Стараница вики'
-        verbose_name_plural = u'Стрвницы вики'
+        verbose_name_plural = u'Страницы вики'
 

@@ -30,6 +30,7 @@ class Questions(models.Model):
     slug             = models.CharField(u'Идентификатор', unique=True, null=True, blank=True, max_length=8 )
     answers          = models.PositiveIntegerField(u'Число ответов', default=0)
     post             = models.ForeignKey(com.Posts, verbose_name=u'Тематика вопроса', blank=True, null=True, related_name='rel_quest_posts')
+    department       = models.ForeignKey(com.Departments, verbose_name=u'Отдел', null=True, blank=True, related_name='rel_question_deps')
 
 
     def __unicode__(self):

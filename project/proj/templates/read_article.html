@@ -5,13 +5,21 @@
 {% endblock %}
 
 {% block script %}
-
+    <script type="text/javascript">
+        function EditWikiPage(id)
+        {
+            window.location = '/edit_page_wiki/'+id+'/';
+        }
+    </script>
 {% endblock %}
 
 
 {% block content %}
     <h1>{{ article.title }}</h1>
     <p>Дата редактирования {{ article.date }}</p>
+    <div class="but">
+        <button type="button" onclick="EditWikiPage({{ article.id }})">Изменить страницу</button>
+    </div>
     <div id='article_body'>
         {{ article.body|safe }}
     </div>

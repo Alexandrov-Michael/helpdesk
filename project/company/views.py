@@ -300,6 +300,7 @@ class AddDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, CreateView)
     form_class = AddDepartamentForm
     template_name = 'add_departament.html'
     success_url = None
+    model = Departments
 
     def do_before_handler(self):
         self.skip_only_user()
@@ -315,6 +316,41 @@ class AddDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, CreateView)
         url = reverse('dep_list', args=[])
         result_url = u'%s?company=%s' % (url, self.object.company.pk, )
         return result_url
+
+
+class EditDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
+    """
+    Представление для изменения отдела
+
+    tested
+    """
+    form_class = AddDepartamentForm
+    template_name = 'edit_department.html'
+    success_url = None
+    model = Departments
+
+    def do_before_handler(self):
+        """
+        Пропускаем только пользователей сотрудников компании предаставляющей услуги
+        """
+        self.skip_only_user()
+
+    def get_context_data(self, **kwargs):
+        """
+        Добавляем в контекст ответа переменные для корректного отображения меню
+        """
+        context = super(EditDepartamentView, self).get_context_data(**kwargs)
+        return self.update_context(context)
+
+    def get_success_url(self):
+        """
+        Определяем урл для удачного изменения, подставлем гет параметр id компании в которой был отдел,
+        чтобы не обнулялся выбор пользователя
+        """
+        url = reverse('dep_list', args=[])
+        result_url = u'%s?company=%s' % (url, self.object.company.pk, )
+        return result_url
+
 
 
 class AddFileForPcView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, FormView):
@@ -550,25 +586,13 @@ class GetUserTo(LoginRequiredMixin, ListView):
     """
     model = User
     context_object_name = u'users'
-    template_name = None
-    template_for_company = u'ajax_users_to_for_company.html'
-    template_for_admins = u'ajax_users_to_for_admins.html'
+    template_name = u'ajax_users_to_for_admins.html'
 
 
     def get_queryset(self):
-        if self.user_profile.is_company:
-            queryset = CompanyAdmins.objects.select_related('username__id', 'username__first_name', 'username__last_name', 'post__id', 'post__name').filter(company__com_user = self.user).order_by('username.id').distinct('username')
-        else:
-            queryset = User.objects.exclude(profile__is_company = True).exclude(username=self.user.username)
+        queryset = User.objects.exclude(profile__is_company = True).exclude(username=self.user.username)
         return queryset
 
-
-    def get_template_names(self):
-        if self.user_profile.is_company:
-            template = self.template_for_company
-        else:
-            template = self.template_for_admins
-        return template
 
 
 class GetCompanyForAddDepartametView(LoginRequiredMixin, View, JSONResponseMixin ):
@@ -623,7 +647,7 @@ class GetDepartamentsForDeplistView(LoginRequiredMixin, JSONQuerySetValuesRespon
 
     def get_context_data(self, **kwargs):
         company = self.get_object()
-        queryset = Departments.objects.filter(company=company).values('name')
+        queryset = Departments.objects.filter(company=company).values('id', 'name')
         return queryset
 
 
@@ -692,3 +716,33 @@ class GetPostsForQuestionAddView(LoginRequiredMixin, View, GetOdjectMixin, JSONR
                 for item in queryset:
                     result[item['id']] = u'%s ...' % (item['decription'][:60],)
                 return result
+
+
+class GetPcFromForAddQues(LoginRequiredMixin, GetOdjectMixin, View, JSONResponseMixin):
+    """
+    Ajax представление для получения компьютера по отделу
+
+    tested
+    """
+
+    def get_object(self):
+        """
+        получение отдела из гет параметра
+        """
+        pk = self.get_pk()
+        try:
+            dep = Departments.objects.get(pk=pk)
+        except Departments.DoesNotExist:
+            raise Http404
+        return dep
+
+    def get_context_data(self, **kwargs):
+        """
+        получение данных для возврата
+        """
+        result = {}
+        dep = self.get_object()
+        pc_from = CompanyPC.objects.filter(departament=dep)
+        for item in pc_from:
+            result[item.id] = u'%s %s' % (item.pc_nameId, item.pc_name,)
+        return result

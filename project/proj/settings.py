@@ -216,6 +216,7 @@ INSTALLED_APPS = (
     'files',
     'wiki',
     'tinymce',
+    'south',
 
 )
 

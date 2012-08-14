@@ -64,52 +64,47 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     mess = None
 
 
-    def get_form_class(self):
+    def get_form(self, form_class):
         if self.user_profile.is_company:
-            self.form_class = EditQuestionUser
+            form_class = EditQuestionUser
             self.template_name = u'add_q.html'
+            return form_class(user=self.user, **self.get_form_kwargs())
         else:
-            self.form_class = EditQuestionAdmin
+            form_class = EditQuestionAdmin
             self.template_name = u'add_q_admin.html'
-        return self.form_class
+            return form_class(**self.get_form_kwargs())
 
     def form_valid(self, form):
-        body       = form.cleaned_data['body']
-        user_to    = form.cleaned_data['user_to']
+        body    = form.cleaned_data['body']
+        user_to = form.cleaned_data['user_to']
+        post    = form.cleaned_data['post']
+        department = form.cleaned_data['department']
         if self.user_profile.is_company:
             user_from   = form.cleaned_data['user_from']
             worker_from = form.cleaned_data['worker_from']
-            new_question = Questions(
+            self.create_question(
                 user_from=self.user,
                 pc_from=user_from,
                 worker_from=worker_from,
                 user_to=user_to,
                 body=body,
-                date=datetime.now(),
+                post=post,
+                department = department,
             )
-            Emails(
-                mail_to = user_to.email,
-                subject = u'Сообщение от %s' % (self.user.first_name,),
-                body = body
-            ).save()
+            self.send_email(user_to, self.user, body)
         else:
-            for_all    = form.cleaned_data['for_all']
+            for_all = form.cleaned_data['for_all']
             if for_all:
                 if self.user_profile.is_super_user:
                     comps = Company.objects.all()
                     if comps:
                         for one_comp in comps:
-                            new_question = Questions(
+                            self.create_question(
                                 user_from=self.user,
                                 user_to=one_comp.com_user,
                                 body=body,
-                                date=datetime.now(),
+                                post=post,
                             )
-                            new_question.save()
-                            slug_first_part = self.user.username[:2]
-                            slug_2_part = new_question.id + self.slug_plus
-                            new_question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
-                            new_question.save()
                         return super(QuesAdd, self).form_valid(form)
                     else:
                         self.mess = u'Вы не обслуживаете ни одну из компаний'
@@ -118,45 +113,75 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                     comps = CompanyAdmins.objects.select_related('company__com_user').filter(username=self.user).order_by('company.id').distinct('company')
                     if comps:
                         for one_comp in comps:
-                            new_question = Questions(
+                            self.create_question(
                                 user_from=self.user,
                                 user_to=one_comp.company.com_user,
                                 body=body,
-                                date=datetime.now(),
+                                post=post,
                             )
-                            new_question.save()
-                            slug_first_part = self.user.username[:2]
-                            slug_2_part = new_question.id + self.slug_plus
-                            new_question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
-                            new_question.save()
                         return super(QuesAdd, self).form_valid(form)
                     else:
                         self.mess = u'Вы не обслуживаете ни одну из компаний'
                         return super(QuesAdd, self).form_invalid(form)
             else:
-                new_question = Questions(
+                self.create_question(
                     user_from=self.user,
                     user_to=user_to,
                     body=body,
-                    date=datetime.now(),
-                )
+                    post=post,)
                 if not user_to.profile.is_company:
-                    Emails(
-                        mail_to = user_to.email,
-                        subject = u'Сообщение от %s' % (self.user.first_name,),
-                        body = body
-                    ).save()
-        new_question.save()
-        slug_first_part = self.user.username[:2]
-        slug_2_part = new_question.id + self.slug_plus
-        new_question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
-        new_question.save()
+                    self.send_email(user_to, self.user, body)
         return super(QuesAdd, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super(QuesAdd, self).get_context_data(**kwargs)
         context['mess'] = self.mess
         return self.update_context(context)
+
+
+
+    def send_email(self, user_to, user_from, body):
+        """
+        Функция записывает в очередь email на отправку
+        """
+        Emails(
+            mail_to = user_to.email,
+            subject = u'Сообщение от %s' % (user_from.first_name,),
+            body = body
+        ).save()
+
+
+
+
+    def create_question(self, user_from, user_to, body, post, department=None, pc_from=None, worker_from=''):
+        """
+        Создание вопроса
+        """
+        question = Questions(
+            user_from=user_from,
+            pc_from=pc_from,
+            worker_from=worker_from,
+            user_to=user_to,
+            body=body,
+            date=datetime.now(),
+            post=post,
+            department=department,
+        )
+        question.save()
+        self.update_slug_plus(question=question, user=self.user)
+
+
+    def update_slug_plus(self, question, user):
+        """
+        Добавляет поле splug_plus в в прос
+        """
+        slug_first_part = user.username[:2]
+        slug_2_part = question.id + self.slug_plus
+        question.slug = u'%s%04d' % (slug_first_part, slug_2_part)
+        question.save()
+
+
+
 
 
 class QuesChatForm(SummMixen, FormView):

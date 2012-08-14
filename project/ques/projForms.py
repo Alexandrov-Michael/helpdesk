@@ -2,7 +2,9 @@
 __author__ = 'michael'
 
 from django import forms
-from company.models import CompanyPC, User, Posts
+from company.models import CompanyPC, User, Posts, Departments, CompanyAdmins, Company
+from django.http import Http404
+from proj.utils.formUtils import ModelChoiceFieldForUserTo
 
 
 
@@ -10,14 +12,33 @@ class EditQuestionUser(forms.Form):
     """
     Форма для добавления вопроса для компаний
     """
-    worker_from = forms.CharField(label=u'Ваше ФИО')
-    #будет браться через ajax
-    user_from   = forms.ModelChoiceField(queryset=CompanyPC.objects.all(), label=u'От кого')
+    def __init__(self, user, *args, **kwargs):
+        try:
+            company = Company.objects.get(com_user=user)
+        except Company.DoesNotExist:
+            raise Http404
+        departments = Departments.objects.filter(company = company)
+        companyAdmins = CompanyAdmins.objects.filter(company = company).select_related('username').order_by('username.id').distinct('username')
+        ids_user_to = []
+        for item in companyAdmins:
+            ids_user_to.append(item.username.id)
+        user_to = User.objects.filter(id__in = ids_user_to)
 
-    #будет формироваться через ajax
-    user_to   = forms.ModelChoiceField(queryset=User.objects.all(), label=u'Кому')
-    post      = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема')
-    body      = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
+
+        user_from = CompanyPC.objects.filter(company = company).order_by('pc_nameId')
+
+        super(EditQuestionUser, self).__init__(*args, **kwargs)
+        self.fields['department'].queryset = departments
+        self.fields['user_to'].queryset = user_to
+        self.fields['user_from'].queryset = user_from
+
+
+    worker_from = forms.CharField(label=u'Ваше ФИО')
+    department  = forms.ModelChoiceField(queryset=None, label=u'Отдел')
+    user_from   = forms.ModelChoiceField(queryset=None, label=u'От кого')
+    user_to     = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому')
+    post        = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема')
+    body        = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
 
 
 

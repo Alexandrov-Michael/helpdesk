@@ -94,44 +94,19 @@
             loading.fadeOut();
         }
     }
-    function GetPcFrom(){
+    function CheckNullPcFrom()
+    {
         var select_user_from = $('#id_user_from');
         var loading = $('#loading');
         var message = $('#message p');
+        var options_len = $('option', select_user_from).length;
         message.fadeOut();
         loading.fadeIn();
-        select_user_from.hide();
-                    $.ajax({
-                        url: '/ajax/get_pc_from/',
-                        dataType: 'html',
-                        type:'GET',
-                        success: function(data){
-                            select_user_from.empty().append(data).fadeIn();
-                            var options_len = $('option', select_user_from).length;
-                            if( options_len == 1){
-                                message.append('У вас не зарегистрирован ни один компьютер');
-                                message.fadeIn();
-                            }
-                            loading.fadeOut();
-                        }
-                    });
-    }
-    function GetUserTo(){
-        $('#loading').fadeIn();
-        $('#id_user_to').hide();
-        $.ajax({
-            url: '/ajax/get_user_to/',
-            dataType: 'html',
-            type:'GET',
-            success:function(data){
-                $('#id_user_to').empty().append(data);
-                $('#id_user_to').fadeIn();
-                $('#loading').fadeOut();
-                GetUserToFromGET();
-                GetUserToImgStart();
-                GetPostForUserTo();
-            }
-        });
+        if( options_len == 1){
+            message.append('У вас не зарегистрирован ни один компьютер');
+            message.fadeIn();
+        }
+        loading.fadeOut();
     }
     function getUrlVars()
     {
@@ -145,7 +120,8 @@
         }
         return vars;
     }
-    function GetUserToFromGET(){
+    function GetUserToFromGET()
+    {
         var userToGet = getUrlVars()['user'];
         if(userToGet)
         {
@@ -199,11 +175,60 @@
                     });
         }
     }
+    function GetPcFrom()
+    {
+        var loading = $('#loading');
+        var department = $('#id_department').val();
+        var pcFrom = $('#id_user_from');
+        var message = $('#message p');
+        message.fadeOut();
+        message.empty();
+        loading.fadeIn();
+        pcFrom.fadeOut();
+        pcFrom.empty();
+        pcFrom.append('<option selected="selected" value="">---------</option>');
+        if(department){
+            pcFrom.removeAttr('disabled');
+            $.ajax({
+                url : '/ajax/get_user_from_for_ques/'+department+'/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data){
+                    var counter = CountObjectProperty(data);
+                    if(counter != 0){
+                        $.each(data, function(id, value){
+                            pcFrom.append('<option value="'+id+'">'+value+'</option>');
+                        });
+                    }else{
+                        message.append('В данном отделе нет комьютеров')
+                        message.fadeIn();
+                        pcFrom.attr('disabled', 'disabled');
+                    }
+                    pcFrom.fadeIn();
+                    loading.fadeOut();
+                }
+            });
+        }else{
+            pcFrom.attr('disabled', 'disabled');
+            pcFrom.fadeIn();
+            loading.fadeOut();
+        }
+    }
+    function OnChangeDep()
+    {
+        $('#id_department').on('change', function(){
+            GetPcFrom();
+        });
+    }
     $(document).ready(function(){
-        GetPcFrom();
-        GetUserTo();
         GetUserToImg();
         OnchangeUserTo();
+        GetUserToFromGET();
+        GetUserToImgStart();
+        GetPostForUserTo();
+        CheckNullPcFrom();
+        GetPcFrom();
+        OnChangeDep();
     });
     </script>
 {% endblock %}
