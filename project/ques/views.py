@@ -78,7 +78,10 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         body    = form.cleaned_data['body']
         user_to = form.cleaned_data['user_to']
         post    = form.cleaned_data['post']
-        department = form.cleaned_data['department']
+        try:
+            department = form.cleaned_data['department']
+        except KeyError:
+            department = None
         if self.user_profile.is_company:
             user_from   = form.cleaned_data['user_from']
             worker_from = form.cleaned_data['worker_from']
