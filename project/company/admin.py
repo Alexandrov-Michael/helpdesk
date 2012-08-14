@@ -22,6 +22,11 @@ class CompanyAdmin(admin.ModelAdmin):
         CompanyPcInLine,
         ]
 
+
+class DepartmetnsAdmin(admin.ModelAdmin):
+    list_display = ('company', 'name')
+    ordering = ['company']
+
 admin.site.register(models.Company, CompanyAdmin)
 admin.site.register(models.CompanyAdmins, CompanyAdminsAdmin)
 admin.site.register(models.CompanyPC)
@@ -29,4 +34,4 @@ admin.site.register(models.Posts)
 admin.site.register(models.PcOptionListHistory)
 admin.site.register(models.PcOptions)
 admin.site.register(models.PcOptionsList)
-admin.site.register(models.Departments)
+admin.site.register(models.Departments, DepartmetnsAdmin)
