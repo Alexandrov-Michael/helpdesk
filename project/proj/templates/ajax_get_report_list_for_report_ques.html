@@ -15,7 +15,7 @@
             <th>Дата закрытия</th>
         </tr>
         </thead>
-        <tbody id="mainTable">
+        <tbody id="mainTable" class='tr_list_hover'>
         {% for ques in questions %}
             <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ ques.id }}">
                 <td >{{ ques.slug }}</td>

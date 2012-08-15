@@ -609,8 +609,7 @@ div#message{
     margin: 20px;
 }
 
-
-/* тестирование ховера на строках таблицы в списке отделов */
-.dep_list_hover tr:hover{
+/* рабочий ховер на отчет в списке вопросов */
+.tr_list_hover tr:hover td{
     background-color: #6699ff;
 }
