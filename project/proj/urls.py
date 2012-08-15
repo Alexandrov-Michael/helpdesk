@@ -95,8 +95,6 @@ urlpatterns = patterns('',
 
 
 
-    #tests
-    url('^test/$', vc.test.as_view(), name='test'),
 )
 
 
@@ -105,4 +103,8 @@ if not settings.HOSTER:
         url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
             'document_root': settings.MEDIA_ROOT,
             }),
+
+
+        #tests
+        url('^test/$', vc.test.as_view(), name='test'),
     )
