@@ -10,7 +10,7 @@
             <th>Host name</th>
         </tr>
         </thead>
-        <tbody id="mainTable">
+        <tbody id="mainTable" class='tr_list_hover'>
         {% for pc in pc_list %}
             <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ pc.id }}">
                 <td>{{ pc.departament }}</td>

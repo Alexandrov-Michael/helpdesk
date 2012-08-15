@@ -15,12 +15,14 @@
     {% endblock %}
     <script type="text/javascript">
         var menuItem;
-        function HideMenuHide(){
+        function HideMenuHide()
+        {
             $('.hide_menu').hide();
         }
-        function ClicItemMenu(){
+        function ClicItemMenu()
+        {
             $('#menu ul li').click(function(){
-                var id = $(this).attr('id')
+                var id = $(this).attr('id');
                 if(menuItem == id)
                 {
                     $('ul', this).toggle();
@@ -155,29 +157,15 @@
 </div><!--wropper-->
 {% block script %}
     <script>
-        function GetQues(){
-            $('tbody tr').click(function(){
+        function GetQues()
+        {
+            $('tbody').on ('click', 'tr',function(){
                 var id = $(this).attr('id');
-                if(id){
+                if(id)
+                {
                     window.location = '/chat/' + id;
                 }
             })
-        }
-        function getDetailHover(){
-                var colorminus;
-                var colorplus;
-            $('#mainTable tr').hover( function(){
-                colorminus = $(this).find('td.minus').css('background-color');
-                colorplus = $(this).find('td.plus').css('background-color');
-                $('td', this).css('background','#6699ff');
-            }, function(){
-                $('td', this).css( 'background','');
-                if(colorminus){
-                    $(this).find('td.minus').css('background', colorminus);
-                }else{
-                    $(this).find('td.plus').css('background', colorplus);
-                }
-            });
         }
         function GetIndexQuestion(){
             $('#tableDiv').hide();
@@ -190,7 +178,6 @@
                             $('#tableDivWrop').empty().append(data).fadeIn();
                             }
             }).done(function(){
-                        getDetailHover();
                         GetQues();
                         $('#loading').fadeOut();
                     });
@@ -205,7 +192,6 @@
                     $('#tableDivWrop').empty().append(data);
                 }
             }).done(function(){
-                        getDetailHover();
                         GetQues();
                         $('#loading').fadeOut();
                     });
@@ -221,7 +207,6 @@
                     $('#tableDivWrop').empty().append(data).fadeIn();
                 }
             }).done(function(){
-                        getDetailHover();
                         GetQues();
                     });
         }
@@ -236,7 +221,6 @@
                     $('#tableDivWrop').empty().append(data).fadeIn();
                 }
             }).done(function(){
-                        getDetailHover();
                         GetQues();
                     });
         }

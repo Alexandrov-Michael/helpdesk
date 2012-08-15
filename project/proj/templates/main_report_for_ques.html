@@ -35,7 +35,6 @@
                 }
             }).done(function(){
                         $('.div_choise_company').fadeIn();
-//                        getDetailHover();
                         GetQues();
                         $('#loading').fadeOut();
                     });
@@ -52,7 +51,6 @@
                 }
             }).done(function(){
                         $('.div_choise_user').fadeIn();
-//                        getDetailHover();
                         GetQues();
                         $('#loading').fadeOut();
                     });
@@ -61,7 +59,7 @@
             $('#loading').fadeIn();
             $('#report_list').hide();
             var company = $('#sel_choise_company').val();
-            var user = $('#sel_choise_user').val()
+            var user = $('#sel_choise_user').val();
             if(user==0 && company==0){
                 $('#report_list').empty();
                 $('#loading').fadeOut();
@@ -73,7 +71,6 @@
                 success: function(data){
                     $('#report_list').empty().append(data).fadeIn();
                     $('#loading').fadeOut();
-//                    getDetailHover();
                     GetQues();
                 }
             });
@@ -87,34 +84,17 @@
                 }
             })
         }
-        function getDetailHover(){
-            var colorminus;
-            var colorplus;
-            $('#mainTable tr').hover( function(){
-                colorminus = $(this).find('td.minus').css('background-color');
-                colorplus = $(this).find('td.plus').css('background-color');
-                $('td', this).css('background','#6699ff');
-            }, function(){
-                $('td', this).css( 'background','');
-                if(colorminus){
-                    $(this).find('td.minus').css('background', colorminus);
-                }else{
-                    $(this).find('td.plus').css('background', colorplus);
-                }
-            });
-        }
         function GetPeginatorNext(){
             $('#tableDiv').hide();
             var page = $('#next').attr('href');
             var company = $('#sel_choise_company').val();
-            var user = $('#sel_choise_user').val()
+            var user = $('#sel_choise_user').val();
             $.ajax({
                 url: '/ajax/get_report_for_report_ques/' + company + '/' + user +'/'+page,
                 type : 'GET',
                 dataType: 'html',
                 success: function(data){
                     $('#report_list').empty().append(data).fadeIn();
-//                    getDetailHover();
                     GetQues();
                 }
             });
@@ -123,14 +103,13 @@
             $('#tableDiv').hide();
             var page = $('#prev').attr('href');
             var company = $('#sel_choise_company').val();
-            var user = $('#sel_choise_user').val()
+            var user = $('#sel_choise_user').val();
             $.ajax({
                 url: '/ajax/get_report_for_report_ques/' + company + '/' + user +'/'+page,
                 type : 'GET',
                 dataType: 'html',
                 success: function(data){
                     $('#report_list').empty().append(data).fadeIn();
-//                    getDetailHover();
                     GetQues();
                 }
             });
@@ -138,7 +117,6 @@
         $(document).ready(function(){
             GetCompanyList();
             GetUserList();
-//            getDetailHover();
             GetQues();
         });
     </script>
