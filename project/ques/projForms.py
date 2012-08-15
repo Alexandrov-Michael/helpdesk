@@ -56,14 +56,14 @@ class EditQuestionAdmin(forms.Form):
             company_admins = CompanyAdmins.objects.filter(username=user)
             for item in company_admins:
                 user_ids.append(item.company.com_user.id)
-            user_to = User.objects.filter((~Q(id = user.id) & ~Q(profile__is_company = True)) | ~Q(id__in = user_ids))
+            user_to = User.objects.filter((~Q(id = user.id) & ~Q(profile__is_company = True)) | Q(id__in = user_ids)).order_by('profile__is_company')
         super(EditQuestionAdmin, self).__init__(*args, **kwargs)
         self.fields['user_to'].queryset = user_to
 
 
 
     for_all = forms.BooleanField(label=u'Для всех ваших компаний', required=False)
-    user_to = forms.ModelChoiceField(queryset=None, label=u'Кому', required=False)
+    user_to = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому', required=False)
     post    = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема', required=False)
     body    = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
 
