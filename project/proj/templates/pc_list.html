@@ -9,9 +9,7 @@
     <div id="message"><p></p></div>
     <div id="choise_company">
         <label for="sel_choise_company" >Выберите компанию</label><br>
-        <select id='sel_choise_company' name='name_sel_choise_company' onchange="GetPcListForCompany()">
-            <option value="0" selected="selected">---------</option>
-        </select>
+        <select id='sel_choise_company' name='name_sel_choise_company' onchange="GetPcListForCompany()"></select>
     </div>
     <div id="choise_dep">
         <label for="sel_choise_dep" >Выберите отдел</label><br>
@@ -22,33 +20,38 @@
 
 {% block script %}
     <script>
-        function GetCompany(){
+        function GetCompany()
+        {
             var message = $('#message p');
             var loading = $('#loading');
             var select_company = $('#sel_choise_company');
             loading.fadeIn();
+            message.fadeOut();
             message.empty();
             select_company.hide();
+            select_company.empty();
+            select_company.append('<option value="" selected="selected">---------</option>');
             $.ajax({
                 url: '/ajax/get_company_for_pc_list/',
                 type: 'GET',
-                dataType: 'html',
+                dataType: 'json',
                 success: function(data){
-                    select_company.append(data).fadeIn();
+                    var counter = CountObjectProperty(data);
+                    if(counter != 0)
+                    {
+                        $.each(data, function(id, com_value){
+                            var com_id = com_value["id"];
+                            var name = com_value["name"];
+                            select_company.append('<option value="'+com_id+'">'+name+'</option>');
+                        });
+                    }else{
+                        message.append(' Вы не обслуживаете ни одну компанию.');
+                        message.fadeIn();
+                    }
+                    select_company.fadeIn();
+                    loading.fadeOut();
                 }
-            }).done(function(){
-                        GetOptionsLen();
-                        loading.fadeOut();
-                    });
-        }
-        function GetOptionsLen(){
-            var message = $('#message p');
-            if($('#sel_choise_company option').length<2){
-                message.fadeOut();
-                message.empty();
-                message.append('Если список компаний пуст, то вы не обслуживаете ни одну компанию');
-                message.fadeIn();
-            }
+            });
         }
         function GetDep()
         {
@@ -78,7 +81,7 @@
                     }else{
                         message.fadeOut();
                         message.empty();
-                        message.append('В компании отделы не определены');
+                        message.append(' В компании отделы не определены.');
                         message.fadeIn();
                     }
                     loading.fadeOut();

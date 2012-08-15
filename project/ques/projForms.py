@@ -5,6 +5,7 @@ from django import forms
 from company.models import CompanyPC, User, Posts, Departments, CompanyAdmins, Company
 from django.http import Http404
 from proj.utils.formUtils import ModelChoiceFieldForUserTo
+from django.db.models import Q
 
 
 
@@ -46,9 +47,23 @@ class EditQuestionAdmin(forms.Form):
     """
     Форма для добавления вопроса для админов
     """
-    #будет браться через ajax
+
+    def __init__(self, user, *args, **kwargs):
+        if user.profile.is_super_user:
+            user_to = User.objects.exclude(id = user.id)
+        else:
+            user_ids = []
+            company_admins = CompanyAdmins.objects.filter(username=user)
+            for item in company_admins:
+                user_ids.append(item.company.com_user.id)
+            user_to = User.objects.filter((~Q(id = user.id) & ~Q(profile__is_company = True)) | ~Q(id__in = user_ids))
+        super(EditQuestionAdmin, self).__init__(*args, **kwargs)
+        self.fields['user_to'].queryset = user_to
+
+
+
     for_all = forms.BooleanField(label=u'Для всех ваших компаний', required=False)
-    user_to = forms.ModelChoiceField(queryset=User.objects.all(), label=u'Кому', required=False)
+    user_to = forms.ModelChoiceField(queryset=None, label=u'Кому', required=False)
     post    = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема', required=False)
     body    = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
 

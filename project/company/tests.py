@@ -290,6 +290,7 @@ class SimpleTest(TestCase):
         """
         response = client.get(url)
         self.assertEqual(response.status_code, status)
+        return  response
 
     def test_GetPcFromForAddQues(self):
         """
@@ -305,14 +306,12 @@ class SimpleTest(TestCase):
         # разрешение на вход
         dep1 = Departments.objects.get(pk=1)
         url = reverse('ajax_GetPcFromForAddQues', args=[dep1.id])
-        resp1 = c.get(url)
-        self.checkUrlToStatusGET(c, url, 200)
+        resp1 = self.checkUrlToStatusGET(c, url, 200)
         self.assertEqual(resp1['Content-Type'], 'application/json')
 
 
         #если не находит такой
         url = reverse('ajax_GetPcFromForAddQues', args=[999999])
-        resp2 = c.get(url)
         self.checkUrlToStatusGET(c, url, 404)
         c.logout()
 
@@ -324,5 +323,32 @@ class SimpleTest(TestCase):
         url = reverse('ajax_GetPcFromForAddQues', args=[dep1.id])
         self.checkUrlToStatusGET(c, url, 200)
         c.logout()
+
+
+    def test_GetCompanyForPcList(self):
+        """
+        GetCompanyForPcList
+        """
+        c = self.client
+
+        # тестируем на удачный логин
+        login_success = c.login(username='admin', password=self.password)
+        self.assertTrue(login_success)
+
+        # разрешение на вход
+        url = reverse('ajax_GetCompanyForPcList', args=[])
+        resp1 = self.checkUrlToStatusGET(c, url, 200)
+        self.assertEqual(resp1['Content-Type'], 'application/json')
+        c.logout()
+
+        #заходим под пользователем компании
+        login_success = c.login(username='ferromet', password=self.password)
+        self.assertTrue(login_success)
+
+
+        self.checkUrlToStatusGET(c, url, 404)
+        c.logout()
+
+
 
 

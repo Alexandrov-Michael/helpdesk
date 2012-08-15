@@ -429,36 +429,33 @@ class GetPcFrom(LoginRequiredMixin, ListView):
 
 
 
-class GetCompanyTo(LoginRequiredMixin, ListView):
+class GetCompanyForPcList(LoginRequiredMixin, View, JSONResponseMixin):
     """
-    представление которое возвращает список компаний которых данный админ курирует аякс
+    Аякс предсталвение для отображения доступных компаний насдуется от списка из создания вопроса
 
-    optimized 20120705
+    tested
     """
-    model = CompanyAdmins
-    context_object_name = u'companys'
-    template_name = u'ajax_get_company_for_admin.html'
 
     def do_before_handler(self):
         self.skip_only_user()
 
-    def get_queryset(self):
+    def get_context_data(self, **kwargs):
+        result = []
         if self.user_profile.is_super_user:
-            queryset = CompanyAdmins.objects.select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
+            queryset = User.objects.exclude(profile__is_company = False)
+            for item in queryset:
+                interim = {}
+                interim['id'] = item.id
+                interim['name'] = item.first_name
+                result.append(interim)
         else:
             queryset = CompanyAdmins.objects.filter(username=self.user).select_related('company__com_user__id', 'company__com_user__first_name').order_by('company.id').distinct('company')
-        return queryset
-
-
-class GetCompanyForPcList(GetCompanyTo):
-    """
-    Аякс предсталвение для отображения доступных компаний насдуется от списка из создания вопроса
-    """
-
-    def get_context_data(self, **kwargs):
-        context = super(GetCompanyForPcList, self).get_context_data(**kwargs)
-        context['block_for_all'] = True
-        return context
+            for item in queryset:
+                interim = {}
+                interim['id'] = item.company.com_user.id
+                interim['name'] = item.company.com_user.first_name
+                result.append(interim)
+        return result
 
 
 class GetPcForPcList(LoginRequiredMixin, ListView):
@@ -576,22 +573,7 @@ class GetDepartamentForPcListView(LoginRequiredMixin, GetOdjectMixin, View, JSON
         return queryset
 
 
-class GetUserTo(LoginRequiredMixin, ListView):
-    """
-    Представление возвращает список кому отправлять вопрос для аякса
-    если это пользователь который состоит в группе company то возвращает
-    админов данной компании, если это админ то показывает всех админов
 
-    optimized 20120705
-    """
-    model = User
-    context_object_name = u'users'
-    template_name = u'ajax_users_to_for_admins.html'
-
-
-    def get_queryset(self):
-        queryset = User.objects.exclude(profile__is_company = True).exclude(username=self.user.username)
-        return queryset
 
 
 

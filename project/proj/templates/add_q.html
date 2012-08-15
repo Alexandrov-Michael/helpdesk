@@ -71,7 +71,7 @@
                             select_post.append('<option value="'+id+'" >'+value+'</option>');
                         });
                     }else{
-                        message.append('Для данного полльзователя нет должностей');
+                        message.append(' Для данного полльзователя нет должностей.');
                         message.fadeIn();
                     }
                     if(! start)
@@ -103,7 +103,7 @@
         message.fadeOut();
         loading.fadeIn();
         if( options_len == 1){
-            message.append('У вас не зарегистрирован ни один компьютер');
+            message.append(' У вас нет зарегистрированных компьютеров.');
             message.fadeIn();
         }
         loading.fadeOut();
@@ -200,7 +200,7 @@
                             pcFrom.append('<option value="'+id+'">'+value+'</option>');
                         });
                     }else{
-                        message.append('В данном отделе нет комьютеров')
+                        message.append(' В данном отделе нет комьютеров.')
                         message.fadeIn();
                         pcFrom.attr('disabled', 'disabled');
                     }
@@ -226,8 +226,8 @@
         GetUserToFromGET();
         GetUserToImgStart();
         GetPostForUserTo();
-        CheckNullPcFrom();
         GetPcFrom();
+        CheckNullPcFrom();
         OnChangeDep();
     });
     </script>

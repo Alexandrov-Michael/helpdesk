@@ -80,56 +80,30 @@
                 loading.fadeOut();
             }
         }
-    function GetCompanyTo(){
-        $('#loading').fadeIn();
-                    $.ajax({
-                        url: '/ajax/get_company_to/',
-                        dataType: 'html',
-                        type:'GET'
-                    }).done(function(data){
-                                $('#id_user_to').append(data).fadeIn();
-                                $('#loading').fadeOut();
-              });
-    }
-    function GetUserTo(){
-        $('#loading').fadeIn();
-        $('#id_user_to').hide();
-        $.ajax({
-            url: '/ajax/get_user_to/',
-            dataType: 'html',
-            type:'GET'
-        }).done(function(data){
-                    $('#id_user_to').empty().append(data);
-                }).done(function(){
-                    GetCompanyTo();
-                    $('#loading').fadeOut();
-                });
-    }
-    function ChangeForAllCheckBox(){
-        $('#id_for_all').click(function(){
-            if(this.checked){
+        function ChangeForAllCheckBox(){
+            $('#id_for_all').click(function(){
+                if(this.checked){
+                    $('#id_user_to').attr("disabled","disabled");
+                    $('#id_user_to').val('0');
+                }else{
+                    $('#id_user_to').removeAttr("disabled");
+                }
+            });
+        }
+        function CheckBoxForAll(){
+            var value = $('#id_for_all').prop("checked");
+            if(value){
                 $('#id_user_to').attr("disabled","disabled");
                 $('#id_user_to').val('0');
             }else{
                 $('#id_user_to').removeAttr("disabled");
             }
-        });
-    }
-    function CheckBoxForAll(){
-        var value = $('#id_for_all').prop("checked");
-        if(value){
-            $('#id_user_to').attr("disabled","disabled");
-            $('#id_user_to').val('0');
-        }else{
-            $('#id_user_to').removeAttr("disabled");
         }
-    }
-    $(document).ready(function(){
-        GetUserTo();
-        ChangeForAllCheckBox();
-        CheckBoxForAll();
-        OnchangeUserTo();
-        GetPostForUserTo();
-    });
+        $(document).ready(function(){
+            ChangeForAllCheckBox();
+            CheckBoxForAll();
+            OnchangeUserTo();
+            GetPostForUserTo();
+        });
     </script>
 {% endblock %}

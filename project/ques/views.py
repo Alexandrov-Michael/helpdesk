@@ -68,11 +68,10 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         if self.user_profile.is_company:
             form_class = EditQuestionUser
             self.template_name = u'add_q.html'
-            return form_class(user=self.user, **self.get_form_kwargs())
         else:
             form_class = EditQuestionAdmin
             self.template_name = u'add_q_admin.html'
-            return form_class(**self.get_form_kwargs())
+        return form_class(user=self.user, **self.get_form_kwargs())
 
     def form_valid(self, form):
         body    = form.cleaned_data['body']
