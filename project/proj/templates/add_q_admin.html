@@ -37,11 +37,34 @@
             }
             return count;
         }
-        function OnchangeUserTo()
+        function OnchangeFields()
         {
-            $('#id_user_to').change(function(){
+            var user_to = $('#id_user_to');
+            var for_all = $('#id_for_all');
+            user_to.on('change', function(){
                 GetPostForUserTo();
             });
+
+            $('#id_for_all').on('click', function(){
+                CheckCheckBox();
+            });
+
+            CheckCheckBox();
+        }
+        function CheckCheckBox()
+        {
+            var user_to = $('#id_user_to');
+            var select_post = $('#id_post');
+            var for_all = $('#id_for_all');
+            var value = for_all.prop('checked');
+            if(value){
+                user_to.attr("disabled","disabled");
+                user_to.val('0');
+                select_post.attr("disabled","disabled");
+                GetPostForUserTo();
+            }else{
+                user_to.removeAttr("disabled");
+            }
         }
         function GetPostForUserTo()
         {
@@ -80,16 +103,6 @@
                 loading.fadeOut();
             }
         }
-        function ChangeForAllCheckBox(){
-            $('#id_for_all').click(function(){
-                if(this.checked){
-                    $('#id_user_to').attr("disabled","disabled");
-                    $('#id_user_to').val('0');
-                }else{
-                    $('#id_user_to').removeAttr("disabled");
-                }
-            });
-        }
         function CheckBoxForAll(){
             var value = $('#id_for_all').prop("checked");
             if(value){
@@ -100,9 +113,8 @@
             }
         }
         $(document).ready(function(){
-            ChangeForAllCheckBox();
             CheckBoxForAll();
-            OnchangeUserTo();
+            OnchangeFields();
             GetPostForUserTo();
         });
     </script>
