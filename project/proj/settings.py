@@ -281,3 +281,11 @@ EMAIL_HOST_USER = 'fregatsoft.com+help'
 EMAIL_HOST_PASSWORD = 'ngt543edcvf'
 EMAIL_USE_TLS = True
 
+
+TINYMCE_JS_URL = os.path.join(MEDIA_URL, 'js/tiny_mce/tiny_mce.js')
+TINYMCE_JS_ROOT = os.path.join(MEDIA_ROOT, 'js/tiny_mce')
+
+TINYMCE_DEFAULT_CONFIG = {
+            'theme': 'advanced',
+            'mode': 'textareas',
+}
