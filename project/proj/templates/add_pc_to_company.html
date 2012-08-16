@@ -2,24 +2,11 @@
 
 {% block script %}
     <script>
-        function CountObjectProperty(data)
-        {
-            var count = 0;
-            for (var foo in data) {
-                if(data.hasOwnProperty(foo))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
         function GetCompany(){
             var select_company = $('#id_company');
             var loading        = $('#loading');
-            var message        = $('#message p');
             loading.fadeIn();
             select_company.hide();
-            message.fadeOut();
             $.ajax({
                 url: '/ajax/get_company_for_pc_add/',
                 type: 'GET',
@@ -42,11 +29,8 @@
         }
         function CheckNullCompanyList(){
             if($('#id_company option').length == 1){
-                var message =  $('#message p');
-                message.fadeOut();
-                message.empty();
-                message.append('<p>Если список компаний пуст, то не обслуживаете ни одну из компаний</p>')
-                message.fadeIn();
+                var text = 'Если список компаний пуст, то не обслуживаете ни одну из компаний';
+                AddMessageError(text);
             }
         }
         function GetDepForCompany()
@@ -55,8 +39,6 @@
             var select_company = $('#id_company');
             var loading        = $('#loading');
             var company        = select_company.val();
-            var message        = $('#message p');
-            message.hide();
             loading.fadeIn();
             select_dep.fadeOut();
             select_dep.empty();
@@ -75,10 +57,8 @@
                             });
                         }else{
                             select_dep.attr('disabled',"disabled");
-                            message.fadeOut();
-                            message.empty();
-                            message.append('<p>Добавьте отдел в данную компанию</p>')
-                            message.fadeIn();
+                            var text = 'Добавьте отдел в данную компанию';
+                            AddMessageError(text);
                         }
                         loading.fadeOut();
                         select_dep.fadeIn();
@@ -119,7 +99,6 @@
 
 {% block content %}
     <h1>Добавление компьютера в компанию</h1>
-    <div id="message"><p></p></div>
     <div id='question' class='borderLine'>
         <form action="{% url add_pc %}" method="POST">{% csrf_token %}
             <table id='tableForm'>

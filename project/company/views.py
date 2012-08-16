@@ -120,6 +120,7 @@ class AddPcOption(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, Fo
             date=datetime.now(),
         )
         new_history_opt.save()
+        self.set_success_message(u'Характеристика успешно добавлена.')
         return super(AddPcOption, self).form_valid(form)
 
 
@@ -183,6 +184,10 @@ class AddCompanyPcView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
         context = super(AddCompanyPcView, self).get_context_data(**kwargs)
         return self.update_context(context)
 
+    def form_valid(self, form):
+        self.set_success_message(u'Компьютер успешно добавлен.')
+        return super(AddCompanyPcView, self).form_valid(form)
+
 
 class ChangePcOption(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
     """
@@ -222,6 +227,7 @@ class ChangePcOption(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
         self.object.date = datetime.now()
         new_row = PcOptionListHistory(pc = pc, option=option, body=body, user=user, date=datetime.now())
         new_row.save()
+        self.set_success_message(u'Характеристика успешно изменена')
         return super(ChangePcOption, self).form_valid(form)
 
 
@@ -290,6 +296,10 @@ class AddPcOptionForAllView(LoginRequiredMixin, UpdateContextDataMixin, GetOdjec
         context['pc_pk'] = self.pk
         return self.update_context(context)
 
+    def form_valid(self, form):
+        self.set_success_message(u'Характеристика успешно добавлена.')
+        return super(AddPcOptionForAllView, self).form_valid(form)
+
 
 class AddDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
     """
@@ -316,6 +326,10 @@ class AddDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, CreateView)
         url = reverse('dep_list', args=[])
         result_url = u'%s?company=%s' % (url, self.object.company.pk, )
         return result_url
+
+    def form_valid(self, form):
+        self.set_success_message(u'Отдел успешно добавлен.')
+        return super(AddDepartamentView, self).form_valid(form)
 
 
 class EditDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
@@ -352,6 +366,10 @@ class EditDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, UpdateView
         return result_url
 
 
+    def form_valid(self, form):
+        self.set_success_message(u'Отдел успешно изменен.')
+        return super(EditDepartamentView, self).form_valid(form)
+
 
 class AddFileForPcView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, FormView):
     """
@@ -379,6 +397,7 @@ class AddFileForPcView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixi
         file = form.cleaned_data['file']
         new_file = Files(content_object=self.pc, name=file.name, file=file, size=file.size, date=datetime.now())
         new_file.save()
+        self.set_success_message(u'Файл успешно добавлен.')
         return super(AddFileForPcView, self).form_valid(form)
 
     def get_success_url(self):

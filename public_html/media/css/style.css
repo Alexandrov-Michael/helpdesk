@@ -83,6 +83,7 @@ a.section:link, a.section:visited {
 #menu{
     padding: 5px 5px 5px 10px;
     height: 40px;
+    position: relative;
 }
 
 #menu a{
@@ -111,6 +112,40 @@ a.section:link, a.section:visited {
 #menu>ul>li>a:hover{
     background-color: #3c6079;
 }
+
+
+
+/* обертка для сообщений  */
+
+div#message_wrop{
+    position: absolute;
+    top: 25px;
+    margin: 0 40%;
+}
+
+/* div для вывода сообщений на javascript */
+div.show_message{
+    border: 1px solid #c9c9c9;
+    background-color: #fefe98;
+    border-radius: 6px;
+    padding: 3px 7px;
+    word-wrap: normal;
+    white-space: nowrap;
+    font-weight: bolder;
+    font-size: 13px;
+    margin: 0 0 5px 0;
+    float: left;
+    display: none;
+}
+/* сообщение об ошибке всплывающее */
+div.message_err{
+    color: red;
+}
+
+
+
+
+
 /* content */
 
 #content{

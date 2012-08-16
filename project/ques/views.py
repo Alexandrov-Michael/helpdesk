@@ -107,6 +107,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                                 body=body,
                                 post=post,
                             )
+                        self.set_success_message(u'Вопросы успешно добавлены.')
                         return super(QuesAdd, self).form_valid(form)
                     else:
                         self.mess = u'Вы не обслуживаете ни одну из компаний'
@@ -121,6 +122,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                                 body=body,
                                 post=post,
                             )
+                        self.set_success_message(u'Вопросы успешно добавлены.')
                         return super(QuesAdd, self).form_valid(form)
                     else:
                         self.mess = u'Вы не обслуживаете ни одну из компаний'
@@ -133,6 +135,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                     post=post,)
                 if not user_to.profile.is_company:
                     self.send_email(user_to, self.user, body)
+        self.set_success_message(u'Вопрос успешно добавлен.')
         return super(QuesAdd, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -255,6 +258,7 @@ class QuesChatForm(SummMixen, FormView):
         answers_count = Chat.objects.filter(question=self.question).count()
         self.question.answers = answers_count
         self.question.save()
+        self.set_success_message(u'Ответ успешно добавлен.')
         return super(QuesChatForm, self).form_valid(form)
 
     def get_success_url(self):
@@ -336,6 +340,7 @@ class ChangeUserToForQuestionView(SummMixen, FormView):
             body=question.body,
         )
         new_email.save()
+        self.set_success_message(u'Вопрос успешно перенаправлен.')
         return super(ChangeUserToForQuestionView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):

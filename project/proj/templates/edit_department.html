@@ -6,7 +6,6 @@
 
 {% block content %}
     <h1>Изменение отдела в компании</h1>
-    <div id="message"><p></p></div>
     <div id='question' class='borderLine'>
         <form action="{% url edit_dep object.pk %}" method="POST">{% csrf_token %}
             <table id='tableForm'>
@@ -22,26 +21,12 @@
 
         var start = true;
 
-        function CountObjectProperty(data)
-        {
-            var count = 0;
-            for (var foo in data) {
-                if(data.hasOwnProperty(foo))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
         function GetCompany()
         {
             var loading =  $('#loading');
             var select = $('#id_company');
-            var message = $('#message p');
             loading.fadeIn();
             select.fadeOut();
-            message.fadeOut();
-            message.empty();
             $.ajax({
                 url: '/ajax/get_company_for_add_dep/',
                 type: 'GET',
@@ -56,8 +41,8 @@
                             select.append(GetSelectHtml(value));
                         });
                     }else{
-                        message.append('Вы не обслуживаете ни одну компанию')
-                        message.fadeIn();
+                        var text = 'Вы не обслуживаете ни одну компанию';
+                        AddMessageError(text);
                     }
                     if(start)
                     {
@@ -74,18 +59,6 @@
             var id = value["id"];
             var name = value["name"];
             return '<option value="'+id+'">'+name+'</option>';
-        }
-        function getUrlVars()
-        {
-            var vars = [], hash;
-            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-            for(var i = 0; i < hashes.length; i++)
-            {
-                hash = hashes[i].split('=');
-                vars.push(hash[0]);
-                vars[hash[0]] = hash[1];
-            }
-            return vars;
         }
         function GetDefaultCompanyToFromGET(){
             var objToGet = getUrlVars()['company'];

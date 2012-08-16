@@ -90,7 +90,14 @@ class UpdateContextDataMixin(object):
         context['user_is_company'] = self.user_profile.is_company
         context['user_is_report']  = self.user_profile.is_report
         context['user_is_super']  = self.user_profile.is_super_user
+        context['success_message'] = self.request.session.pop('message', '')
         return context
+
+    def set_success_message(self, text):
+        """
+        устанавливает сообщение для вывода после успешного выполнения формы
+        """
+        self.request.session['message'] = text
 
 
 class GetOdjectMixin(object):

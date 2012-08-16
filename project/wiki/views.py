@@ -43,6 +43,10 @@ class AddArticleView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
         context = super(AddArticleView, self).get_context_data(**kwargs)
         return self.update_context(context)
 
+    def form_valid(self, form):
+        self.set_success_message(u'Страница успешно добавлена.')
+        return super(AddArticleView, self).form_valid(form)
+
 
 class ReadArcticleView(LoginRequiredMixin, UpdateContextDataMixin, DetailView):
     """
@@ -80,3 +84,7 @@ class EditArticleView(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(EditArticleView, self).get_context_data(**kwargs)
         return self.update_context(context)
+
+    def form_valid(self, form):
+        self.set_success_message(u'Страница успешно изменена.')
+        return super(EditArticleView, self).form_valid(form)

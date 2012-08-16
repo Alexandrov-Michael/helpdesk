@@ -6,7 +6,6 @@
 
 {% block content %}
     <h1>Список компьютеров в ваших компаниях</h1>
-    <div id="message"><p></p></div>
     <div id="choise_company">
         <label for="sel_choise_company" >Выберите компанию</label><br>
         <select id='sel_choise_company' name='name_sel_choise_company' onchange="GetPcListForCompany()"></select>
@@ -22,12 +21,9 @@
     <script>
         function GetCompany()
         {
-            var message = $('#message p');
             var loading = $('#loading');
             var select_company = $('#sel_choise_company');
             loading.fadeIn();
-            message.fadeOut();
-            message.empty();
             select_company.hide();
             select_company.empty();
             select_company.append('<option value="" selected="selected">---------</option>');
@@ -45,8 +41,8 @@
                             select_company.append('<option value="'+com_id+'">'+name+'</option>');
                         });
                     }else{
-                        message.append(' Вы не обслуживаете ни одну компанию.');
-                        message.fadeIn();
+                        var text = ' Вы не обслуживаете ни одну компанию.';
+                        AddMessageError(text);
                     }
                     select_company.fadeIn();
                     loading.fadeOut();
@@ -55,13 +51,10 @@
         }
         function GetDep()
         {
-            var message     = $('#message p');
             var loading     = $('#loading');
             var id          = $('#sel_choise_company').val();
             var select_dep  = $('#sel_choise_dep');
             var div_dep     = $('#choise_dep');
-            message.fadeOut();
-            message.empty();
             loading.fadeIn();
             div_dep.fadeOut();
             $.ajax({
@@ -79,10 +72,8 @@
                         });
                         div_dep.fadeIn();
                     }else{
-                        message.fadeOut();
-                        message.empty();
-                        message.append(' В компании отделы не определены.');
-                        message.fadeIn();
+                        var text = 'В компании отделы не определены.';
+                        AddMessageError(text);
                     }
                     loading.fadeOut();
                 }
@@ -91,9 +82,7 @@
         function GetPcListForCompany(){
             var loading = $('#loading');
             var com = $('#sel_choise_company').val();
-            var message = $('#message p');
             var div_choise_dep = $('#choise_dep');
-            message.fadeOut();
             loading.fadeIn();
             div_choise_dep.fadeOut();
             if(com != 0){
@@ -151,17 +140,6 @@
         }
         function HideDep(){
             $('#choise_dep').hide();
-        }
-        function CountObjectProperty(data)
-        {
-            var count = 0;
-            for (var foo in data) {
-                if(data.hasOwnProperty(foo))
-                {
-                    count++;
-                }
-            }
-            return count;
         }
         function GetPeginatorNext(){
             $('#tableDiv').hide();

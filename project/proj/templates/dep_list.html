@@ -7,7 +7,6 @@
 {% block content %}
     <h1>Список отделов в компании</h1>
     <div id="choise_company">
-        <p id="message"></p>
         <p>Выберите компанию</p>
         <select id='id_company' name='id_company' onchange="GetDepartaments(this)"></select>
     </div>
@@ -35,17 +34,6 @@
 
 {% block script %}
     <script type="text/javascript">
-        function CountObjectProperty(data)
-        {
-            var count = 0;
-            for (var foo in data) {
-                if(data.hasOwnProperty(foo))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
         function StartHide()
         {
             $('#ajax_pc_list').hide();
@@ -55,8 +43,6 @@
         {
             var loading =  $('#loading');
             var select = $('#id_company');
-            var message = $('#message');
-            message.hide();
             loading.fadeIn();
             select.fadeOut();
             $.ajax({
@@ -74,9 +60,8 @@
                             select.append(GetSelectHtml(value));
                         });
                     }else{
-                        message.empty();
-                        message.append('Вы не обслуживаете ни одну из компаний')
-                        message.fadeIn();
+                        var text = 'Вы не обслуживаете ни одну из компаний';
+                        AddMessageError(text);
                     }
                     select.fadeIn();
                     loading.fadeOut();
@@ -136,18 +121,6 @@
         function AddClassForTr()
         {
             $('#mainTable tr:even').addClass('firstTd');
-        }
-        function getUrlVars()
-        {
-            var vars = [], hash;
-            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-            for(var i = 0; i < hashes.length; i++)
-            {
-                hash = hashes[i].split('=');
-                vars.push(hash[0]);
-                vars[hash[0]] = hash[1];
-            }
-            return vars;
         }
         function GetUserToFromGET()
         {

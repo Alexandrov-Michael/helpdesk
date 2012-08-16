@@ -120,6 +120,7 @@
                         <img src="{{user.profile.image.url }}" width="70" height="70">
                     {% endif %}
                 </div>
+                <div id="message_wrop"></div>
             </div>
         </div><!--headerBot-->
     </div><!--header-->
@@ -155,6 +156,58 @@
         {% endblock %}
     </div><!--footer-->
 </div><!--wropper-->
+<script type="text/javascript">
+    function ShowMessage()
+    {
+        var text_message = '{{ success_message }}';
+        var div_message = $('#message_wrop');
+        if(text_message)
+        {
+            div_message.append('<div class="show_message">'+text_message+'</div>');
+            var mess = $('div:last-child',div_message);
+            mess.fadeIn();
+            setTimeout(function(){
+                mess.fadeOut('slow');
+            }, 3500);
+        }
+    }
+    function AddMessageError(text)
+    {
+        var message = $('#message_wrop');
+        message.append('<div class="show_message message_err">'+text+'</div>');
+        var err_mess = $('div:last-child',message);
+        err_mess.fadeIn();
+        setTimeout(function(){
+            err_mess.fadeOut('slow');
+        }, 3500);
+    }
+    function CountObjectProperty(data)
+    {
+        var count = 0;
+        for (var foo in data) {
+            if(data.hasOwnProperty(foo))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    $(document).ready(function(){
+        ShowMessage();
+    });
+</script>
 {% block script %}
     <script>
         function GetQues()

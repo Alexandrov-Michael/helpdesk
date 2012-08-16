@@ -26,17 +26,6 @@
 
 {% block script %}
     <script>
-        function CountObjectProperty(data)
-        {
-            var count = 0;
-            for (var foo in data) {
-                if(data.hasOwnProperty(foo))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
         function OnchangeFields()
         {
             var user_to = $('#id_user_to');
@@ -71,7 +60,6 @@
             var select_post = $('#id_post');
             var loading = $('#loading');
             var value_user_to = $('#id_user_to').val();
-            var message = $('#message p');
             loading.fadeIn();
             select_post.fadeOut();
             select_post.empty();
@@ -90,8 +78,8 @@
                                 select_post.append('<option value="'+id+'" >'+value+'</option>');
                             });
                         }else{
-                            message.append('Для данного полльзователя нет должностей');
-                            message.fadeIn();
+                            var text = 'Для данного полльзователя нет должностей';
+                            AddMessageError(text);
                         }
                         select_post.fadeIn();
                         loading.fadeOut();

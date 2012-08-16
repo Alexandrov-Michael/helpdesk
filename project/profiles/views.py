@@ -66,6 +66,7 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
             image=image,
         )
         new_profile.save()
+        self.set_success_message(u'Пользователь успешно добавлен.')
         return super(CreateUserView,self).form_valid(form)
 
 
@@ -150,6 +151,7 @@ class CreateCompanyView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         new_profile.save()
         new_company = Company(com_user=new_user)
         new_company.save()
+        self.set_success_message(u'Компания успешно добавлена.')
         return super(CreateCompanyView,self).form_valid(form)
 
 
@@ -237,6 +239,7 @@ class AddCompanyAdminsForUserView(LoginRequiredMixin, GetOdjectMixin, UpdateCont
                         post=post,
                     )
                     new_companyadmins.save()
+        self.set_success_message(u'Кураторство успешно добавлено.')
         return super(AddCompanyAdminsForUserView, self).form_valid(form)
 
     def get(self, request, *args, **kwargs):
@@ -451,6 +454,7 @@ class AddCompanyAdminsForCompanyView(SummMixen, FormView):
                         post=post,
                     )
                     new_companyadmins.save()
+        self.set_success_message(u'Кураторство успешно добавлено.')
         return super(AddCompanyAdminsForCompanyView, self).form_valid(form)
 
     def get(self, request, *args, **kwargs):
