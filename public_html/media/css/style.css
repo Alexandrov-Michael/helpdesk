@@ -657,3 +657,8 @@ div#message{
     border-radius: 10px;
     float: left;
 }
+
+/* тело сообщения об изменениях системы */
+.wiki_system_body{
+    padding: 3px 20px;
+}
