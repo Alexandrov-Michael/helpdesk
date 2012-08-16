@@ -22,8 +22,22 @@
     <div id="wiki-list">
         <ul>
             {% for item in articals %}
-                <li><a href="{% url read_page_wiki item.id %}">{{ item.title }}</a></li>
+                {% if not item.system %}
+                    <li><a href="{% url read_page_wiki item.id %}">{{ item.title }}</a></li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
+
+    <h2>Последние изменения в системе</h2>
+    {% for item in articals %}
+        {% if item.system %}
+            <div class='wrop_sys_mes'>
+                <div class='system_change_message'>
+                    <p>{{ item.date }}</p>
+                    <div>{{ item.body|safe }}</div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endblock %}

@@ -24,6 +24,18 @@
 {% block head_script %}
     {{ form.media }}
     <script type="text/javascript">
-
+        function BlockSystemField()
+        {
+            var site_programmer = '{% if user.username == 'alexandrov' %}1{% endif %}';
+            var systemField = $('#id_system');
+            if(site_programmer != 1)
+            {
+                systemField.closest('tr').hide();
+                systemField.attr('disabled', 'disabled');
+            }
+        }
+        $(document).ready(function(){
+            BlockSystemField();
+        });
     </script>
 {% endblock %}

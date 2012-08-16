@@ -8,6 +8,7 @@ class SimpleWiki(models.Model):
     title = models.CharField(u'Заголовок', max_length=200)
     date  = models.DateTimeField(u'Дата изменения', auto_now=True)
     body  = models.TextField(u'Содержание')
+    system = models.BooleanField(u'Изменения в структуре сайта')
 
     def __unicode__(self):
         return self.title
