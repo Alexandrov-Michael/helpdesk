@@ -25,7 +25,6 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     form_class = CreateUserForm
     success_url = None
     template_name = 'add_user.html'
-    error_msg = None
 
     def get_success_url(self):
         url = reverse('user_list', args=[])
@@ -54,7 +53,7 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         try:
             new_user.full_clean()
         except ValidationError:
-            self.error_msg = u'Не правильно заполненна форма'
+            self.set_message(u'Не правильно заполненна форма', True)
             return super(CreateUserView, self).form_invalid(form)
         new_user.save()
         new_profile = Profile(
@@ -66,13 +65,12 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
             image=image,
         )
         new_profile.save()
-        self.set_success_message(u'Пользователь успешно добавлен.')
+        self.set_message(u'Пользователь успешно добавлен.')
         return super(CreateUserView,self).form_valid(form)
 
 
     def get_context_data(self, **kwargs):
         context = super(CreateUserView, self).get_context_data(**kwargs)
-        context['error_msg']  = self.error_msg
         return self.update_context(context)
 
 
@@ -116,7 +114,6 @@ class CreateCompanyView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     form_class = CreateCompanyForm
     success_url = None
     template_name = 'add_company.html'
-    error_msg = None
 
     def get_success_url(self):
         url = reverse('company_list', args=[])
@@ -138,7 +135,7 @@ class CreateCompanyView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         try:
             new_user.full_clean()
         except ValidationError:
-            self.error_msg = u'Не правильно заполненна форма'
+            self.set_message(u'Не правильно заполненна форма', True)
             return super(CreateCompanyView, self).form_invalid(form)
         new_user.save()
         new_profile = Profile(
@@ -151,13 +148,12 @@ class CreateCompanyView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         new_profile.save()
         new_company = Company(com_user=new_user)
         new_company.save()
-        self.set_success_message(u'Компания успешно добавлена.')
+        self.set_message(u'Компания успешно добавлена.')
         return super(CreateCompanyView,self).form_valid(form)
 
 
     def get_context_data(self, **kwargs):
         context = super(CreateCompanyView, self).get_context_data(**kwargs)
-        context['error_msg']  = self.error_msg
         return self.update_context(context)
 
 
@@ -239,7 +235,7 @@ class AddCompanyAdminsForUserView(LoginRequiredMixin, GetOdjectMixin, UpdateCont
                         post=post,
                     )
                     new_companyadmins.save()
-        self.set_success_message(u'Кураторство успешно добавлено.')
+        self.set_message(u'Кураторство успешно добавлено.')
         return super(AddCompanyAdminsForUserView, self).form_valid(form)
 
     def get(self, request, *args, **kwargs):
@@ -454,7 +450,7 @@ class AddCompanyAdminsForCompanyView(SummMixen, FormView):
                         post=post,
                     )
                     new_companyadmins.save()
-        self.set_success_message(u'Кураторство успешно добавлено.')
+        self.set_message(u'Кураторство успешно добавлено.')
         return super(AddCompanyAdminsForCompanyView, self).form_valid(form)
 
     def get(self, request, *args, **kwargs):

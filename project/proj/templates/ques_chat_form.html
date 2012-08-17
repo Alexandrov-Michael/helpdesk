@@ -4,135 +4,84 @@
     Чат
 {% endblock %}
 
-{% block content %}
-    <h1>Обсуждение вопроса</h1>
-    <div class="q_but"></div>
-    {% if not user_is_company %}
-        <div class='q_pc_detail'>
-            {% if question.pc_from %}
-                <button onclick="GetPcInfo()" class='but_q_pc_detail' type="button" id="{{ question.pc_from.id }}">Информация о ПК</button>
-            {% endif %}
-        </div>
-        <div class='but_in_question'>
-            <button type="button" onclick="ChangeUserTo({{ question.id }})">Перенаправить</button>
-        </div>
-    {% endif %}
-    <div id='question' class='borderLine3'></div>
-    <div id="messages">
-        <div id="messBlock"></div>
-        <div class='red_error'>
-            <p>
-                {% if error_msg %}
-                    {{ error_msg }}
-                {% endif %}
-            </p>
-        </div>
-        <div id="messForm" class="borderLine oneMsg">
-            <form action="{% url chat question.pk %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
-                {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                {% endfor %}
-                {{ form.non_field_errors }}
-                <div class="fieldWrapper">
-                    <span id="error_mess">{{ form.body.errors }}</span>
-                    <label id="mes_table_lable" for="id_body">Сообщение:</label>
-                    <table id="mes_table">
-                        <tbody>
-                            <tr>
-                                <td id='mes_table_message'>{{ form.body }}</td>
-                                <td id="mes_table_button"><input id="mes_button" type="submit" value="Отправить" /></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <label for='id_file'>Прикрепить файл:</label>
-                    <div>{{ form.file }}</div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="q_but"></div>
-{% endblock %}
 
 {% block script %}
     <script>
+
+        var start = true;
+        var status_user_check;
+        var last_message = 0;
+
         function ChangeStatus(){
-                var st = $('.quesBut').attr('id');
-                $('#loading').fadeIn();
-                $.post('/change_status/{{ question.id }}/', { status : st, csrfmiddlewaretoken: '{{ csrf_token }}' }).done(
-                        function(){
-                            GetQuestionNoHide();
-                            GetButtonsNoHide();
-                            $('#loading').fadeOut()
-                        });
-        }
-        function GetQuestion(){
-            $('#question').hide();
-            $('#loading').fadeIn();
+            var loading = $('#loading');
+            loading.fadeIn();
+            var question_status;
+            if(start)
+            {
+                question_status = '{{ question.user_check }}';
+            }else{
+                question_status = status_user_check;
+            }
             $.ajax({
-                url: '/ajax/get_ques/{{ question.id }}/',
+                url: '/ajax/change_status_ques/{{ question.id }}/'+question_status+'/',
                 type: 'GET',
-                dataType: 'html'
-            }).done(function(data){
-                        $('#question').empty().append(data).fadeIn();
-                        $('#loading').fadeOut();
-                    })
-        }
-        function GetQuestionNoHide(){
-            $('#loading').fadeIn();
-            $.ajax({
-                url: '/ajax/get_ques/{{ question.id }}/',
-                type: 'GET',
-                dataType: 'html'
-            }).done(function(data){
-                        $('#question').empty().append(data);
-                        $('#loading').fadeOut();
-                    })
-        }
-        function GetButtons(){
-            $('#loading').fadeIn();
-            $('.q_but').hide();
-            $.ajax({
-               url: '/ajax/get_but/{{ question.id }}/',
-               type: "GET",
-               dataType: 'html'
-            }).done(function(data){
-                        $('.q_but').empty().append(data).fadeIn();
-                        $('#loading').fadeOut();
-                    });
-        }
-        function GetButtonsNoHide(){
-            $('#loading').fadeIn();
-            $.ajax({
-                url: '/ajax/get_but/{{ question.id }}/',
-                type: "GET",
-                dataType: 'html'
-            }).done(function(data){
-                        $('.q_but').empty().append(data);
-                        $('#loading').fadeOut();
-                    });
+                dataType: 'json',
+                success: function(data){
+                    var new_status = data['new_status'];
+                    var text = new_status ? 'Вопрос успешно закрыт' : 'Вопрос успешно открыт';
+                    AddSuccessMessage(text);
+                    GetQuestion();
+                    loading.fadeOut();
+                }
+            });
         }
         function GetChat(){
-            $('#messBlock').hide();
-            $('#loading').fadeIn();
+            var message_block = $('#messBlock');
+            var loading = $('#loading');
+            loading.fadeIn();
             $.ajax({
                 url:'/ajax/get_chat_mess/{{ question.id }}/',
                 type: 'GET',
-                dataType: 'html'
-            }).done(function(data){
-                        $('#messBlock').empty().append(data).fadeIn();
-                        $('#loading').fadeOut();
-                    });
-        }
-        function GetChatNoHide(){
-            $('#loading').fadeIn();
-            $.ajax({
-                url:'/ajax/get_chat_mess/{{ question.id }}/',
-                type: 'GET',
-                dataType: 'html'
-            }).done(function(data){
-                        $('#messBlock').empty().append(data);
-                        $('#loading').fadeOut();
-                    });
+                dataType: 'json',
+                success: function(data){
+                    var counter = CountObjectProperty(data);
+                    if(counter != 0)
+                    {
+                        $.each(data, function(id, one_mes){
+                            var date = one_mes['date'];
+                            var body = one_mes['body'];
+                            var is_that_sender = one_mes['is_that_sender'];
+                            var sender = one_mes['sender'];
+                            var files = one_mes['files'];
+                            var files_links = '';
+                            var message_id = one_mes['id'];
+                            var sender_class = '';
+                            if(is_that_sender)
+                            {
+                                sender_class = 'oneMsgUser';
+                            }else{
+                                sender_class = 'oneMsgAdmin';
+                            }
+                            if(message_id > last_message)
+                            {
+                                if(files)
+                                {
+                                    $.each(files, function(id, value){
+                                        var url = value['url'];
+                                        var name = value['name'];
+                                        var size = value['size'];
+                                        var text = 'Прикрепленный файл: <a href="'+url+'">'+name+'</a>,  размер: '+size;
+                                        files_links = files_links + text;
+                                    });
+                                }
+                                message_block.prepend('<div class="oneMsg '+sender_class+'"><div class="userName">'+date+' : '+sender+'</div><p><div class="q_body">'+body+'</div></p><div id="files">'+files_links+'</div></div');
+                                last_message = message_id;
+                            }
+                        });
+                    }
+                    loading.fadeOut();
+                }
+            });
         }
         function GetPcInfo(){
             var id = $('.but_q_pc_detail').attr('id');
@@ -142,12 +91,240 @@
         {
             window.location = '/chnage_user_to_for_ques/'+id+'/';
         }
+        function ChangeQuestion(id)
+        {
+            window.location = '/edit_question/'+id+'/';
+        }
+        function GetQuestion(){
+            var loading = $('#loading');
+            loading.fadeIn();
+            start = false;
+            $.ajax({
+                url: '/ajax/get_ques/{{ question.id }}/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data)
+                {
+                    var date = data['date'];
+                    var user_from = data['user_from_name'];
+                    var user_from_last_name = data['user_from_last_name'];
+                    var pc_from = data['pc_from'];
+                    var worker_from = data['worker_from'];
+                    var user_to = data['user_to_name'];
+                    var user_to_last_name = data['user_to_last_name'];
+                    var body = data['body'];
+                    var user_check = data['user_check'];
+                    var user_check_date = data['user_check_date'];
+                    var image_url = data['image'];
+
+                    var div_date = $('#question_date');
+                    var div_user_from = $('#question_user_from');
+                    var div_user_to = $('#question_user_to');
+                    var div_body = $('#question_body');
+                    var div_user_check = $('#question_user_check');
+                    var div_user_check_date = $('#question_user_check_date');
+                    var img = $('#admin_face_visilble img');
+                    var but_change_status = $('.changeStatus');
+
+                    var text_user_from;
+                    var text_user_to;
+                    var text_user_check;
+
+
+                    div_date.fadeOut().empty();
+                    div_user_from.fadeOut().empty();
+                    div_user_to.fadeOut().empty();
+                    div_body.fadeOut().empty();
+                    div_user_check.fadeOut().empty();
+                    div_user_check_date.fadeOut().empty();
+
+
+
+                    div_date.append(date);
+                    text_user_from = user_from;
+                    text_user_from = user_from_last_name ? text_user_from + ' ' + user_from_last_name: text_user_from;
+                    text_user_from = pc_from ? text_user_from + ' : ' + pc_from + ' ' + worker_from : text_user_from;
+                    div_user_from.append(text_user_from);
+                    text_user_to = user_to;
+                    text_user_to = user_to_last_name ? text_user_to + ' ' + user_to_last_name : text_user_to;
+                    div_user_to.append(text_user_to);
+                    div_body.append(body);
+                    div_user_check.removeClass('green_font', 'red_font');
+                    if(user_check)
+                    {
+                        text_user_check = 'Вопрос закрыт';
+                        div_user_check.addClass('green_font');
+                        but_change_status.empty().append('Открыть вопрос');
+                        status_user_check = 'True';
+                    }else{
+                        text_user_check = 'Вопрос открыт';
+                        div_user_check.addClass('red_font');
+                        but_change_status.empty().append('Зыкрыть вопрос');
+                        status_user_check = 'False';
+                    }
+                    div_user_check.append(text_user_check);
+                    if(user_check_date)
+                    {
+                        div_user_check_date.append(user_check_date);
+                    }else{
+                        div_user_check_date.hide();
+                    }
+                    if(image_url)
+                    {
+                        img.attr('src', image_url);
+                    }else{
+                        img.attr('src', "{{ MEDIA_URL }}img/fregat_logo.png");
+                    }
+
+                    div_date.fadeIn();
+                    div_user_from.fadeIn();
+                    div_user_to.fadeIn();
+                    div_body.fadeIn();
+                    div_user_check.fadeIn();
+                    div_user_check_date.fadeIn();
+
+                    loading.fadeOut();
+                }
+                });
+        }
         $(document).ready(function(){
-            GetQuestion();
-            GetButtons();
             GetChat();
-            setInterval('GetChatNoHide()', 30000);
-            setInterval('GetQuestionNoHide()', 60000);
+            setInterval('GetChat()', 30000);
+            setInterval('GetQuestion()', 60000);
         });
     </script>
 {% endblock %}
+
+
+
+
+
+{% block content %}
+    <h1>Обсуждение вопроса</h1>
+    <div class="but_in_question">
+        <button class="changeStatus" type="button" onclick="ChangeStatus()">
+            {% if question.user_check %}
+                Открыть вопрос
+            {% else %}
+                Закрыть вопрос
+            {% endif %}
+        </button>
+    </div>
+    {% if not user_is_company %}
+        <div class='but_in_question'>
+            {% if question.pc_from %}
+                <button onclick="GetPcInfo()" class='but_q_pc_detail' type="button" id="{{ question.pc_from.id }}">Информация о ПК</button>
+            {% endif %}
+        </div>
+        <div class='but_in_question'>
+            <button type="button" onclick="ChangeUserTo({{ question.id }})">Перенаправить</button>
+        </div>
+        {% if can_change %}
+            <div class='but_in_question'>
+                <button type="button" onclick="ChangeQuestion({{ question.id }})">Изменить вопрос</button>
+            </div>
+        {% endif %}
+    {% endif %}
+    <div id='question' class='borderLine3'>
+
+        <div id="face_wrop">
+            <p>Фотография получателя</p>
+            <div id="admin_face_visilble">
+                {% if question.user_to.profile.image %}
+                    <img src="{{ question.user_to.profile.image.url }}" width="70" height="70">
+                {% else %}
+                    <img src="{{ MEDIA_URL }}img/fregat_logo.png" width="70" height="70">
+                {% endif %}
+            </div>
+        </div>
+        <table>
+            <tbody id="q_table">
+            <tr>
+                <th>Дата создания вопроса:</th>
+                <td id="question_date">{{ question.date|date:"H:i d/m/Y" }}</td>
+            </tr>
+            <tr>
+                <th>От кого:</th>
+                <td id="question_user_from">
+                    {{ question.user_from.first_name }}
+                    {% if question.user_from.last_name %}
+                        {{ question.user_from.last_name }}
+                    {% endif %}
+                    {% if question.pc_from %}
+                        : {{ question.pc_from }} {{ question.worker_from }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Кому:</th>
+                <td id="question_user_to">
+                    {{ question.user_to.first_name }}
+                    {% if question.user_to.last_name %}
+                        {{ question.user_to.last_name }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Вопрос:</th>
+                <td class='chat_question_body'><div class='q_body' id='question_body'>{{ question.body }}</div></td>
+            </tr>
+            <tr>
+                <th>Вопрос закрыт:</th>
+                    {% if question.user_check %}
+                        <td id="question_user_check" class='green_font'>Вопрос закрыт</td>
+                    {% else %}
+                        <td id="question_user_check" class='red_font'>Вопрос открыт</td>
+                    {% endif %}
+            </tr>
+            <tr>
+                <th>Дата закрытия</th>
+                <td id="question_user_check_date">
+                    {% if question.user_check_date %}
+                        {{ question.user_check_date }}
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <div id="messages">
+        <div id="messBlock"></div>
+
+        {% if not can_not_send_mess %}
+            <div id="messForm" class="borderLine chatForm">
+                <form action="{% url chat question.pk %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    {{ form.non_field_errors }}
+                    <div class="fieldWrapper">
+                        <span id="error_mess">{{ form.body.errors }}</span>
+                        <label id="mes_table_lable" for="id_body">Сообщение:</label>
+                        <table id="mes_table">
+                            <tbody>
+                                <tr>
+                                    <td id='mes_table_message'>{{ form.body }}</td>
+                                    <td id="mes_table_button"><input id="mes_button" type="submit" value="Отправить" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <label for='id_file'>Прикрепить файл:</label>
+                        <div>{{ form.file }}</div>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+
+    </div>
+    <div class="but_in_question">
+        <button class="changeStatus" type="button" onclick="ChangeStatus()">
+            {% if question.user_check %}
+                Открыть вопрос
+            {% else %}
+                Закрыть вопрос
+            {% endif %}
+        </button>
+    </div>
+{% endblock %}
+

@@ -44,7 +44,7 @@ class AddArticleView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
         return self.update_context(context)
 
     def form_valid(self, form):
-        self.set_success_message(u'Страница успешно добавлена.')
+        self.set_message(u'Страница успешно добавлена.')
         return super(AddArticleView, self).form_valid(form)
 
 
@@ -86,5 +86,5 @@ class EditArticleView(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
         return self.update_context(context)
 
     def form_valid(self, form):
-        self.set_success_message(u'Страница успешно изменена.')
+        self.set_message(u'Страница успешно изменена.')
         return super(EditArticleView, self).form_valid(form)

@@ -8,6 +8,7 @@ PROJECT_PATH = os.path.dirname(__file__)
 BETA_PATH = '/home/f/fregatscom/helpBeta/project/proj/'
 
 HOME = False
+BETA = False
 HOST_NAME = gethostname()
 HOSTER_HOST_NAME = 'vh2'
 HOME_HOST_NAME = 'ubuntu'
@@ -217,6 +218,7 @@ INSTALLED_APPS = (
     'wiki',
     'tinymce',
     'south',
+    'conformity',
 
 )
 
@@ -339,3 +341,8 @@ TINYMCE_DEFAULT_CONFIG={
     },
     'pagebreak_separator' : "",
 }
+
+
+
+# название глобальной переменной в таблице соответсвия
+KURATOR = 'kurator'

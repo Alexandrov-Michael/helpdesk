@@ -302,6 +302,13 @@ div.message_err{
     padding: 10px;
     margin:0 0 10px 0;
     width: 620px;
+    border:2px solid #ccc;
+}
+.chatForm{
+    border-radius: 11px;
+    padding: 10px;
+    margin:0 0 10px 0;
+    width: 620px;
 }
 
 .oneMsgAdmin{
@@ -605,7 +612,7 @@ input[type="submit"]:active, button:active{
     height: 70px;
 }
 .but_in_question{
-    margin: 0 10px 15px;
+    margin: 15px 10px 0;
 }
 #curators_main{
     border: 1px solid black;
@@ -662,3 +669,14 @@ div#message{
 .wiki_system_body{
     padding: 3px 20px;
 }
+
+
+/*  для поля закрт ли вопрос в форме чата к вопросу */
+.red_font{
+    color: red;
+}
+.green_font{
+    color: green;
+}
+
+

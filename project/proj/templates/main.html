@@ -160,21 +160,37 @@
     function ShowMessage()
     {
         var text_message = '{{ success_message }}';
+        var error_class = '{% if is_error_message %}1{% endif %}';
         var div_message = $('#message_wrop');
         if(text_message)
         {
-            div_message.append('<div class="show_message">'+text_message+'</div>');
-            var mess = $('div:last-child',div_message);
-            mess.fadeIn();
-            setTimeout(function(){
-                mess.fadeOut('slow');
-            }, 3500);
+            if(error_class == 1)
+            {
+                AddMessageError(text_message);
+            }else{
+                div_message.append('<div class="show_message">'+text_message+'</div>');
+                var mess = $('div:last-child',div_message);
+                mess.fadeIn();
+                setTimeout(function(){
+                    mess.fadeOut('slow');
+                }, 3500);
+            }
         }
     }
     function AddMessageError(text)
     {
         var message = $('#message_wrop');
         message.append('<div class="show_message message_err">'+text+'</div>');
+        var err_mess = $('div:last-child',message);
+        err_mess.fadeIn();
+        setTimeout(function(){
+            err_mess.fadeOut('slow');
+        }, 3500);
+    }
+    function AddSuccessMessage(text)
+    {
+        var message = $('#message_wrop');
+        message.append('<div class="show_message">'+text+'</div>');
         var err_mess = $('div:last-child',message);
         err_mess.fadeIn();
         setTimeout(function(){

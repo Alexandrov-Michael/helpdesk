@@ -5,3 +5,4 @@ dj_static
 *.pyc
 public_html/media/files
 public_html/media/profile_img
+migrations

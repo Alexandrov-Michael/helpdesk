@@ -48,6 +48,7 @@ urlpatterns = patterns('',
     url(r'^chnage_user_to_for_ques/(?P<pk>\d+)/$',    views.ChangeUserToForQuestionView.as_view(), name='change_user_to_for_ques'),
     url(r'^departament_list/$',         vc.DepartamentsListView.as_view(), name='dep_list'),
     url(r'^edit_dep/(?P<pk>\d+)/$',     vc.EditDepartamentView.as_view(), name='edit_dep'),
+    url(r'^edit_question/(?P<pk>\d+)/$', views.EditQuesView.as_view(), name='edit_question'),
 
 
     #### WIKI ####
@@ -68,7 +69,6 @@ urlpatterns = patterns('',
     #ajax views
     url(r'^ajax/get_pc_from/$',                                     vc.GetPcFrom.as_view()),
     url(r'^ajax/get_ques/(?P<pk>\d+)/$',                            views.GetQuestionForChat.as_view()),
-    url(r'^ajax/get_but/(?P<pk>\d+)/$',                             views.GetButtonForChat.as_view()),
     url(r'^ajax/get_chat_mess/(?P<pk>\d+)/$',                       views.GetChatMessages.as_view()),
     url(r'^ajax/get_index_ques/$',                                  views.QuestionList.as_view()),
     url(r'^ajax/get_company_for_pc_list/$',                         vc.GetCompanyForPcList.as_view(), name='ajax_GetCompanyForPcList'),
@@ -88,11 +88,7 @@ urlpatterns = patterns('',
     url(r'^ajax/get_dep_list_for_add_pc/(?P<pk>\d+)/$',             vc.GetDepartamentsForAddPCView.as_view()),
     url(r'^ajax/get_posts_for_add_ques/(?P<pk>\d+)/$',              vc.GetPostsForQuestionAddView.as_view()),
     url(r'^ajax/get_user_from_for_ques/(?P<pk>\d+)/$',              vc.GetPcFromForAddQues.as_view(), name='ajax_GetPcFromForAddQues'),
-
-
-    #ajax type: POST
-    url(r'^change_status/(?P<pk>\d+)/$', views.QuesChangeStatus.as_view()),
-
+    url(r'^ajax/change_status_ques/(?P<pk>\d+)/(?P<user_check>\w+)/$', views.QuesChangeStatus.as_view()),
 
 
 )

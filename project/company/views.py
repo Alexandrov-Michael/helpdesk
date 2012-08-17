@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from files.models import Files
 from proj.utils.mixin import LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, JSONQuerySetValuesResponseMixin, JSONResponseMixin
 from datetime import datetime
+from django.utils.timezone import now
 
 
 
@@ -109,7 +110,7 @@ class AddPcOption(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, Fo
             option = option,
             body = body,
             user = user,
-            date=datetime.now(),
+            date=now(),
         )
         new_option.save()
         new_history_opt = PcOptionListHistory(
@@ -117,10 +118,10 @@ class AddPcOption(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixin, Fo
             option = option,
             body = body,
             user = user,
-            date=datetime.now(),
+            date=now(),
         )
         new_history_opt.save()
-        self.set_success_message(u'Характеристика успешно добавлена.')
+        self.set_message(u'Характеристика успешно добавлена.')
         return super(AddPcOption, self).form_valid(form)
 
 
@@ -185,7 +186,7 @@ class AddCompanyPcView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
         return self.update_context(context)
 
     def form_valid(self, form):
-        self.set_success_message(u'Компьютер успешно добавлен.')
+        self.set_message(u'Компьютер успешно добавлен.')
         return super(AddCompanyPcView, self).form_valid(form)
 
 
@@ -224,10 +225,10 @@ class ChangePcOption(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
         option  = self.object.option
         body    = self.object.body
         user    = self.user
-        self.object.date = datetime.now()
-        new_row = PcOptionListHistory(pc = pc, option=option, body=body, user=user, date=datetime.now())
+        self.object.date = now()
+        new_row = PcOptionListHistory(pc = pc, option=option, body=body, user=user, date=now())
         new_row.save()
-        self.set_success_message(u'Характеристика успешно изменена')
+        self.set_message(u'Характеристика успешно изменена')
         return super(ChangePcOption, self).form_valid(form)
 
 
@@ -297,7 +298,7 @@ class AddPcOptionForAllView(LoginRequiredMixin, UpdateContextDataMixin, GetOdjec
         return self.update_context(context)
 
     def form_valid(self, form):
-        self.set_success_message(u'Характеристика успешно добавлена.')
+        self.set_message(u'Характеристика успешно добавлена.')
         return super(AddPcOptionForAllView, self).form_valid(form)
 
 
@@ -328,7 +329,7 @@ class AddDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, CreateView)
         return result_url
 
     def form_valid(self, form):
-        self.set_success_message(u'Отдел успешно добавлен.')
+        self.set_message(u'Отдел успешно добавлен.')
         return super(AddDepartamentView, self).form_valid(form)
 
 
@@ -367,7 +368,7 @@ class EditDepartamentView(LoginRequiredMixin, UpdateContextDataMixin, UpdateView
 
 
     def form_valid(self, form):
-        self.set_success_message(u'Отдел успешно изменен.')
+        self.set_message(u'Отдел успешно изменен.')
         return super(EditDepartamentView, self).form_valid(form)
 
 
@@ -395,9 +396,9 @@ class AddFileForPcView(LoginRequiredMixin, GetOdjectMixin, UpdateContextDataMixi
     def form_valid(self, form):
         self.pc = self.get_parent_obj()
         file = form.cleaned_data['file']
-        new_file = Files(content_object=self.pc, name=file.name, file=file, size=file.size, date=datetime.now())
+        new_file = Files(content_object=self.pc, name=file.name, file=file, size=file.size, date=now())
         new_file.save()
-        self.set_success_message(u'Файл успешно добавлен.')
+        self.set_message(u'Файл успешно добавлен.')
         return super(AddFileForPcView, self).form_valid(form)
 
     def get_success_url(self):

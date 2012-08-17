@@ -73,7 +73,7 @@ class Posts(models.Model):
     decription = models.TextField(u'Описание')
 
     def __unicode__(self):
-        return self.name
+        return u'%s %s' % (self.id, self.name,)
 
     class Meta:
         ordering = ['name']

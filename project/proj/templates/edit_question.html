@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Изменение вопроса
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block content %}
+    <h1>Изменение вопроса</h1>
+    <div id='question' class='borderLine'>
+        <form action="" method="POST">{% csrf_token %}
+            <table id='tableForm'>
+                {{ form.as_table }}
+            </table>
+            <button type="submit">Изменить</button>
+        </form>
+    </div>
+{% endblock %}

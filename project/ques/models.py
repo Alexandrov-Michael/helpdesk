@@ -56,7 +56,7 @@ class Chat(models.Model):
     body - тело сообщения
     """
     question   = models.ForeignKey(Questions, verbose_name=u'Вопрос', related_name=u'rel_question_chat')
-    admin_name = models.ForeignKey(com.User, verbose_name=u'От получателя', related_name=u'rel_admin_name', blank=True, null=True)
+    admin_name = models.ForeignKey(com.User, verbose_name=u'Отправитель', related_name=u'rel_admin_name', blank=True, null=True)
     date       = models.DateTimeField(u'Дата создания')
     body       = models.TextField(u'Сообщение')
     files      = generic.GenericRelation(Files)

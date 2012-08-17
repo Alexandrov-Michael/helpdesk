@@ -1,22 +1,26 @@
 # -*- coding:utf-8 -*-
 
 from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from models import Questions, Chat
 from django.db.models import Q
-from projForms import EditQuestionUser, EditQuestionAdmin, ChatForm
+from projForms import EditQuestionUser, EditQuestionAdmin, ChatForm, EditQuestionForKuratorForm
 from proj import settings
 from django.http import Http404
-from company.models import CompanyAdmins, Company, CompanyPC, PcOptionListHistory
+from company.models import CompanyAdmins, Company, CompanyPC, PcOptionListHistory, Posts
 from django.contrib.auth.models import User
-from datetime import datetime
 from ques.models import Emails
 from files.models import Files
-from proj.utils.mixin import UpdateContextDataMixin, GetOdjectMixin, LoginRequiredMixin, SummMixen
+from proj.utils.mixin import UpdateContextDataMixin, GetOdjectMixin, LoginRequiredMixin, SummMixen, JSONResponseMixin
 from company.Forms import ChangeUserToForQuesForm
 from django.core.urlresolvers import reverse
+from conformity.models import Conform
+from django.shortcuts import redirect
+from django.utils.timezone import now
+from pytz import timezone
+
+
 
 
 
@@ -61,7 +65,6 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     success_url = '/'
     template_name = None
     slug_plus = settings.PLUS_SLUG_FIELD
-    mess = None
 
 
     def get_form(self, form_class):
@@ -107,10 +110,10 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                                 body=body,
                                 post=post,
                             )
-                        self.set_success_message(u'Вопросы успешно добавлены.')
+                        self.set_message(u'Вопросы успешно добавлены.')
                         return super(QuesAdd, self).form_valid(form)
                     else:
-                        self.mess = u'Вы не обслуживаете ни одну из компаний'
+                        self.set_message(u'Вы не обслуживаете ни одну из компаний', True)
                         return super(QuesAdd, self).form_invalid(form)
                 else:
                     comps = CompanyAdmins.objects.select_related('company__com_user').filter(username=self.user).order_by('company.id').distinct('company')
@@ -122,10 +125,10 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                                 body=body,
                                 post=post,
                             )
-                        self.set_success_message(u'Вопросы успешно добавлены.')
+                        self.set_message(u'Вопросы успешно добавлены.')
                         return super(QuesAdd, self).form_valid(form)
                     else:
-                        self.mess = u'Вы не обслуживаете ни одну из компаний'
+                        self.set_message(u'Вы не обслуживаете ни одну из компаний', True)
                         return super(QuesAdd, self).form_invalid(form)
             else:
                 self.create_question(
@@ -135,12 +138,11 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
                     post=post,)
                 if not user_to.profile.is_company:
                     self.send_email(user_to, self.user, body)
-        self.set_success_message(u'Вопрос успешно добавлен.')
+        self.set_message(u'Вопрос успешно добавлен.')
         return super(QuesAdd, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super(QuesAdd, self).get_context_data(**kwargs)
-        context['mess'] = self.mess
         return self.update_context(context)
 
 
@@ -168,7 +170,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
             worker_from=worker_from,
             user_to=user_to,
             body=body,
-            date=datetime.now(),
+            date=now(),
             post=post,
             department=department,
         )
@@ -199,13 +201,14 @@ class QuesChatForm(SummMixen, FormView):
     form_class = ChatForm
     success_url = None
     template_name = 'ques_chat_form.html'
-    error_msg = None
+    can_not_send_mess = False
 
     def get_context_data(self, **kwargs):
         context = super(QuesChatForm, self).get_context_data(**kwargs)
         context['question'] = self.question
         context['msgs_set'] =  self.chat_msgs
-        context['error_msg'] = self.error_msg
+        context['can_change'] = self.can_change
+        context['can_not_send_mess'] = self.can_not_send_mess
         return self.update_context(context)
 
 
@@ -226,44 +229,54 @@ class QuesChatForm(SummMixen, FormView):
         queryset = Chat.objects.filter(question = self.question)
         return queryset
 
-    def get(self, request, *args, **kwargs):
-        self.question  = self.get_object()
-        self.chat_msgs = self.get_object_depends()
-        return super(QuesChatForm, self).get(request, *args, **kwargs)
-
-
-    def post(self, request, *args, **kwargs):
-        self.question  = self.get_object()
-        self.chat_msgs = self.get_object_depends()
-        return super(QuesChatForm, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        if self.question.user_from == self.user:
-            self.sender = True
-        elif self.question.user_to == self.user:
-            self.sender = False
-        else:
-            self.error_msg = u'Вы не можете добавлять коментарии не ко своим вопросам'
+        if self.can_not_send_mess:
+            self.set_message(u'Вы не можете добавлять коментарии не ко своим вопросам', True)
             return self.form_invalid(form)
         body = form.cleaned_data['body']
         file = form.cleaned_data['file']
-        if self.sender:
-            new_msg = Chat(question=self.question, body=body, date=datetime.now())
-        else:
-            new_msg = Chat(question=self.question, body=body, admin_name = self.user, date=datetime.now())
+        new_msg = Chat(question=self.question, admin_name=self.user,body=body, date=now())
         new_msg.save()
         if file:
-            new_file = Files(content_object=new_msg, file=file, name=file.name, size=file.size, date=datetime.now())
+            new_file = Files(content_object=new_msg, file=file, name=file.name, size=file.size, date=now())
             new_file.save()
         answers_count = Chat.objects.filter(question=self.question).count()
         self.question.answers = answers_count
         self.question.save()
-        self.set_success_message(u'Ответ успешно добавлен.')
+        self.set_message(u'Ответ успешно добавлен.')
         return super(QuesChatForm, self).form_valid(form)
 
     def get_success_url(self):
         url = self.question.get_absolute_url()
         return url
+
+    def do_before_handler(self):
+        self.question  = self.get_object()
+        self.chat_msgs = self.get_object_depends()
+        user_to = self.question.user_to
+        user_from = self.question.user_from
+        self.can_change = False
+        post = None
+        is_admin = False
+        try:
+            post_pk = Conform.objects.get(perem = settings.KURATOR)
+            post = Posts.objects.get(pk=post_pk.object_id)
+        except Conform.DoesNotExist:
+            self.set_message(u'Не найдина переменная соответсвия', True)
+        if post:
+            if user_to.profile.is_company:
+                is_admin = CompanyAdmins.objects.filter(post=post, username=self.user, company__com_user=user_to)
+            elif user_from.profile.is_company:
+                is_admin = CompanyAdmins.objects.filter(post=post, username=self.user, company__com_user=user_from)
+            if self.user_profile.is_super_user:
+                is_admin = True
+            if is_admin:
+                self.can_change = True
+        if not self.can_change:
+            if not self.question.user_from == self.user and not self.question.user_to == self.user:
+                self.can_not_send_mess = True
+
 
 
 
@@ -340,7 +353,7 @@ class ChangeUserToForQuestionView(SummMixen, FormView):
             body=question.body,
         )
         new_email.save()
-        self.set_success_message(u'Вопрос успешно перенаправлен.')
+        self.set_message(u'Вопрос успешно перенаправлен.')
         return super(ChangeUserToForQuestionView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -351,61 +364,119 @@ class ChangeUserToForQuestionView(SummMixen, FormView):
 
 
 
+class EditQuesView(LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, FormView):
+    """
+    Представление для изменение вопроса, только для кураторов фирмы или суперпользователей
+    """
+    form_class = EditQuestionForKuratorForm
+    success_url = None
+    template_name = 'edit_question.html'
+
+    def get_object(self,):
+        pk = self.get_pk()
+        try:
+            obj = Questions.objects.get(pk=pk)
+        except Questions.DoesNotExist:
+            raise Http404
+        return obj
+
+    def do_before_handler(self):
+        self.skip_only_user()
+        self.question = self.get_object()
+        user_to = self.question.user_to
+        user_from = self.question.user_from
+        try:
+            post_pk = Conform.objects.get(perem = settings.KURATOR)
+        except Conform.DoesNotExist:
+            url = self.get_success_url()
+            self.set_message(u'Не найдина переменная соответсвия', True)
+            return redirect(url)
+        post = Posts.objects.get(pk=post_pk.object_id)
+        if not self.user_profile.is_super_user:
+            if user_to.profile.is_company:
+                try:
+                    CompanyAdmins.objects.get(post=post, username=self.user, company__com_user=user_to)
+                except CompanyAdmins.DoesNotExist:
+                    raise Http404
+            if user_from.profile.is_company:
+                try:
+                    CompanyAdmins.objects.get(post=post, username=self.user, company__com_user=user_from)
+                except CompanyAdmins.DoesNotExist:
+                    raise Http404
+
+
+    def get_initial(self):
+        body = self.question.body
+        return {
+            'body':body,
+        }
+
+
+    def form_valid(self, form):
+        body = form.cleaned_data['body']
+        self.question.body = body
+        self.question.save()
+        self.set_message(u'Вопрос успешно изменен.')
+        return super(EditQuesView, self).form_valid(form)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(EditQuesView, self).get_context_data(**kwargs)
+        return self.update_context(context)
+
+
+
+    def get_success_url(self):
+        url = reverse('chat', args=[self.question.id])
+        return url
+
+
+
+
 ##################################################################################
 ### Ajax views ###
 ##################################################################################
 
 
 
-class QuesChangeStatus(LoginRequiredMixin, GetOdjectMixin, TemplateView):
+class QuesChangeStatus(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin, View):
     """
     Представление аякс для изменения статуса вопроса
     """
-    template_name = 'ok.html'
-    post_close_question = 'Close'
-    post_open_question = 'Open'
-    post_status_question = 'status'
-
-
-    def get(self, request, *args, **kwargs):
-        return Http404
-
-    def post(self, request, *args, **kwargs):
-        question = self.get_object()
-        status   = self.get_status()
-        question.user_check = status
-        if status:
-            question.user_check_date = datetime.now()
-        else:
-            question.user_check_date = None
-        question.save()
-        if not self.user == question.user_from and not self.user == question.user_to:
-            raise Http404
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
-
-
+    url_kwarg_user_check = 'user_check'
 
     def get_object(self):
         pk = self.get_pk()
-        if pk is not None:
-            try:
-                obj = Questions.objects.get(pk = pk)
-            except Questions.DoesNotExist:
-                raise Http404
-        else:
+        try:
+            obj = Questions.objects.get(pk = pk)
+        except Questions.DoesNotExist:
             raise Http404
         return obj
 
-
-    def get_status(self):
-        status = self.request.POST.get(self.post_status_question, None)
-        if status == self.post_close_question:
-            return True
-        elif status == self.post_open_question:
-            return False
+    def get_user_check(self):
+        user_check = self.kwargs.pop(self.url_kwarg_user_check, None)
+        if user_check:
+            if user_check == u'False':
+                user_check = True
+            elif user_check == u'True':
+                user_check = False
+            else:
+                raise Http404
+            return user_check
         else:
             raise Http404
+
+    def get_context_data(self, **kwagrs):
+        result = {}
+        result['new_status'] = self.change_status()
+        return result
+
+    def change_status(self):
+        question = self.get_object()
+        question.user_check = self.get_user_check()
+        question.save()
+        return question.user_check
+
 
 
 
@@ -449,67 +520,98 @@ class QuestionList(LoginRequiredMixin, ListView):
 
 
 
-class GetQuestionForChat(LoginRequiredMixin, DetailView):
+class GetQuestionForChat(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin, View):
     """
     Представление аякс для получения вопроса на странице чата
 
     optimized 20120706
     """
-    template_name = 'ajax_get_question_for_chat.html'
-    model = Questions
-    context_object_name = 'question'
-
-    def get_queryset(self):
-        queryset = Questions.objects.select_related('user_from__first_name', 'pc_from', 'user_to__first_name', 'user_to__profile').all()
-        return queryset
-
-
-class GetButtonForChat(LoginRequiredMixin, GetOdjectMixin, TemplateView):
-    """
-    Представление аякс для получения кнопки изменения статуса вопроса
-    """
-    template_name = 'ajax_get_but_for_chat_user.html'
 
 
     def get_object(self):
-        """
-        """
         pk = self.get_pk()
-        if pk is not None:
-            try:
-                obj = Questions.objects.get(pk=pk)
-            except Questions.DoesNotExist:
-                obj = Questions.objects.none()
-        else:
-            obj = Questions.objects.none()
+        try:
+            obj = Questions.objects.select_related('user_from', 'pc_from', 'user_to', 'user_to__profile').get(pk=pk)
+        except Questions.DoesNotExist:
+            raise Http404
         return obj
 
-
-    def get(self, request, *args, **kwargs):
-        self.question  = self.get_object()
-        return super(GetButtonForChat, self).get(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
-        kwargs.update({
-            'question' : self.question,
-            })
-        return kwargs
+        result = {}
+        question = self.get_object()
+        mytimezone = timezone(settings.TIME_ZONE)
+        result['date'] = question.date.astimezone(mytimezone).strftime('%H:%M %d/%m/%Y')
+        result['user_from_name'] = question.user_from.first_name
+        result['user_from_last_name'] = None
+        result['pc_from'] = None
+        result['worker_from'] = None
+        result['user_to_name'] = question.user_to.first_name
+        result['user_to_last_name'] = None
+        result['user_check'] = question.user_check
+        result['user_check_date'] = None
+        result['body'] = question.body
+        result['image'] = None
+        if question.user_from.last_name:
+            result['user_from_last_name'] = question.user_from.last_name
+        if question.pc_from:
+            result['pc_from'] = u'%s %s' % (question.pc_from.pc_nameId, question.pc_from.pc_name,)
+            result['worker_from'] = question.worker_from
+        if question.user_to.last_name:
+            result['user_to_last_name'] = question.user_to.last_name
+        if question.user_check_date:
+            result['user_check_date'] = question.user_check_date.astimezone(mytimezone).strftime('%H:%M %d/%m/%Y')
+        if question.user_to.profile.image:
+            result['image'] = question.user_to.profile.image.url
+        return result
 
 
-class GetChatMessages(LoginRequiredMixin, GetOdjectMixin,  ListView):
+class GetChatMessages(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin ,View):
     """
     Представление аякс для получения сообщений в чате
 
     optimized 20120706
     """
-    model = Chat
-    context_object_name = 'msgs_set'
-    template_name = 'ajax_get_chat_mess.html'
 
-    def get_queryset(self):
-        question = self.get_pk()
-        queryset = Chat.objects.select_related('question__user_from__first_name', 'question__pc_from').filter(question = question)
-        return queryset
+
+    def get_object(self):
+        pk = self.get_pk()
+        try:
+            obj = Questions.objects.get(pk=pk)
+        except Questions.DoesNotExist:
+            raise Http404
+        return obj
+
+    def get_context_data(self, **kwargs):
+        result = []
+        mytimezone = timezone(settings.TIME_ZONE)
+        question = self.get_object()
+        chats = Chat.objects.select_related('admin_name', 'admin_name__profile').filter(question = question).order_by('id')
+        if chats:
+            for item in chats:
+                interm = {}
+                interm['sender'] = None
+                interm['date'] = item.date.astimezone(mytimezone).strftime('%H:%M %d/%m/%Y')
+                interm['body'] = item.body
+                interm['files'] = []
+                interm['is_that_sender'] = False
+                interm['id'] = item.id
+                files = item.files.all()
+                if file:
+                    for one_file in files:
+                        interm_files = {}
+                        interm_files['url'] = one_file.file.url
+                        interm_files['name'] = one_file.name
+                        interm_files['size'] = one_file.size
+                        interm['files'].append(interm_files)
+                if item.admin_name:
+                    if item.admin_name == self.user:
+                        interm['is_that_sender'] = True
+                    if not item.admin_name.profile.is_company:
+                        interm['sender'] = u'%s %s' % (item.admin_name.first_name, item.admin_name.last_name,)
+                    else:
+                        interm['sender'] = question.worker_from
+                result.append(interm)
+        return result
 
 
 class GetCompanyListForReportForQuesView(LoginRequiredMixin, ListView):
