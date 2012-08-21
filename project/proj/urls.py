@@ -52,6 +52,7 @@ urlpatterns = patterns('',
     url(r'^add_post/$',                 vc.AddPostView.as_view(), name='add_post'),
     url(r'^posts_list/$',               vc.PostsListView.as_view(), name='posts_list'),
     url(r'^edit_post/(?P<pk>\d+)/$',    vc.PostEditView.as_view(), name='edit_post'),
+    url(r'^edit_user/(?P<pk>\d+)/$',    vp.EditUserView.as_view(), name='edit_user'),
 
 
     #### WIKI ####

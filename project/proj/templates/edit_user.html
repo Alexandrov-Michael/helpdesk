@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    {{ change_that }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ change_that }}</h1>
+    <div id='question' class='borderLine'>
+        <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+            <table id='tableForm' class='user_add'>
+                {{ form.as_table }}
+            </table>
+            <input type="submit" value="Изменить" />
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

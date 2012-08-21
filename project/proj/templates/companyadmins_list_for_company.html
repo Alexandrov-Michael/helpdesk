@@ -9,6 +9,11 @@
     <div class='but'>
         <button type="button" onclick="AddCompanyAdmins(id={{ user_to.com_user.id }})">Изменить должности</button>
     </div>
+    {% if user_is_super %}
+        <div class='but'>
+            <button type="button" onclick="EditUser({{ user_to.com_user.id }})">Изменить данные</button>
+        </div>
+    {% endif %}
     <div id="tableDiv">
         <div id="preTableTop">
             <p>&nbsp;</p>
@@ -50,6 +55,10 @@
         function AddCompanyAdmins(id)
         {
             window.location = '/add_companyadmins_for_company/' + id + '/';
+        }
+        function EditUser(id)
+        {
+            window.location = '/edit_user/'+id+'/';
         }
     </script>
 {% endblock %}

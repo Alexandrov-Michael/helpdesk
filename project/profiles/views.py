@@ -10,6 +10,7 @@ from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse
 from company.models import Posts, Company, CompanyAdmins
 from proj.utils.mixin import JSONResponseMixin, LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, SummMixen
+from forms import EditUserForm, EditCompanyForm
 
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
@@ -190,6 +191,7 @@ class AddCompanyAdminsForUserView(LoginRequiredMixin, GetOdjectMixin, UpdateCont
 
     def do_before_handler(self):
         self.skip_only_super_user()
+        self.user_to = self.get_object()
 
 
     def get_form_kwargs(self):
@@ -249,13 +251,6 @@ class AddCompanyAdminsForUserView(LoginRequiredMixin, GetOdjectMixin, UpdateCont
         self.set_message(u'Кураторство успешно добавлено.')
         return super(AddCompanyAdminsForUserView, self).form_valid(form)
 
-    def get(self, request, *args, **kwargs):
-        self.user_to = self.get_object()
-        return super(AddCompanyAdminsForUserView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.user_to = self.get_object()
-        return super(AddCompanyAdminsForUserView, self).post(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(AddCompanyAdminsForUserView, self).get_context_data(**kwargs)
@@ -480,6 +475,86 @@ class AddCompanyAdminsForCompanyView(SummMixen, FormView):
         return self.update_context(context)
 
 
+
+class EditUserView(LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, FormView):
+    """
+    Представление для изменение сотрудника и компании
+    """
+    form_class = EditUserForm
+    success_url = None
+    template_name = 'edit_user.html'
+
+    def do_before_handler(self):
+        self.skip_only_super_user()
+        self.get_object()
+
+
+    def get_object(self):
+        pk = self.get_pk()
+        try:
+            self.user_obj = User.objects.get(pk=pk)
+            self.user_profile_obj = Profile.objects.get(user=self.user_obj)
+        except User.DoesNotExist:
+            raise Http404
+        except Profile.DoesNotExist:
+            raise Http404
+
+    def get_context_data(self, **kwargs):
+        context = super(EditUserView, self).get_context_data(**kwargs)
+        context['change_that'] = self.change_that
+        return self.update_context(context)
+
+    def form_valid(self, form):
+        login           = form.cleaned_data['login']
+        first_name      = form.cleaned_data['first_name']
+        image           = form.cleaned_data['image']
+        self.user_obj.username   = login
+        self.user_obj.first_name = first_name
+        self.user_profile_obj.image         = image
+        if not self.user_profile_obj.is_company:
+            email           = form.cleaned_data['email']
+            last_name       = form.cleaned_data['last_name']
+            is_super_user   = form.cleaned_data['is_super_user']
+            is_report       = form.cleaned_data['is_report']
+            telefon         = form.cleaned_data['telefon']
+            self.user_obj.last_name  = last_name
+            self.user_obj.email      = email
+            self.user_profile_obj.is_super_user = is_super_user
+            self.user_profile_obj.is_report     = is_report
+            self.user_profile_obj.telefon       = telefon
+        self.user_obj.save()
+        self.user_profile_obj.save()
+        self.set_message(u'Успешно изменено.')
+        return super(EditUserView, self).form_valid(form)
+
+    def get_success_url(self):
+        if self.user_profile_obj.is_company:
+            url = reverse('company_list', args=[])
+        else:
+            url = reverse('user_list', args=[])
+        return url
+
+    def get_form(self, form_class):
+        if self.user_profile_obj.is_company:
+            self.change_that = u'Изменение компании'
+            form_class = EditCompanyForm
+        else:
+            self.change_that = u'Изменение сотрудника'
+            form_class = EditUserForm
+        return form_class(self.user_obj, self.user_profile_obj, **self.get_form_kwargs())
+
+
+
+
+
+
+
+
+
+
+##############################################################
+### Login views
+##############################################################
 
 
 
