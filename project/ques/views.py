@@ -539,8 +539,7 @@ class GetQuestionForChat(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin, 
     def get_context_data(self, **kwargs):
         result = {}
         question = self.get_object()
-        mytimezone = timezone(settings.TIME_ZONE)
-        result['date'] = question.date.astimezone(mytimezone).strftime('%H:%M %d/%m/%Y')
+        result['date'] = self.get_date_to_str(question.date)
         result['user_from_name'] = question.user_from.first_name
         result['user_from_last_name'] = None
         result['pc_from'] = None
@@ -559,9 +558,18 @@ class GetQuestionForChat(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin, 
         if question.user_to.last_name:
             result['user_to_last_name'] = question.user_to.last_name
         if question.user_check_date:
-            result['user_check_date'] = question.user_check_date.astimezone(mytimezone).strftime('%H:%M %d/%m/%Y')
+            result['user_check_date'] = self.get_date_to_str(question.user_check_date)
         if question.user_to.profile.image:
             result['image'] = question.user_to.profile.image.url
+        return result
+
+
+    def get_date_to_str(self, date):
+        """
+        преобразование даты в формат строки с учетом часового пояса
+        """
+        mytimezone = timezone(settings.TIME_ZONE)
+        result = date.astimezone(mytimezone).strftime('%H:%M %d/%m/%Y')
         return result
 
 
@@ -583,14 +591,13 @@ class GetChatMessages(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin ,Vie
 
     def get_context_data(self, **kwargs):
         result = []
-        mytimezone = timezone(settings.TIME_ZONE)
         question = self.get_object()
-        chats = Chat.objects.select_related('admin_name', 'admin_name__profile').filter(question = question).order_by('id')
+        chats = self.get_chat_queryset(question)
         if chats:
             for item in chats:
                 interm = {}
                 interm['sender'] = None
-                interm['date'] = item.date.astimezone(mytimezone).strftime('%H:%M %d/%m/%Y')
+                interm['date'] = self.get_date_to_str(item.date)
                 interm['body'] = item.body
                 interm['files'] = []
                 interm['is_that_sender'] = False
@@ -601,7 +608,8 @@ class GetChatMessages(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin ,Vie
                         interm_files = {}
                         interm_files['url'] = one_file.file.url
                         interm_files['name'] = one_file.name
-                        interm_files['size'] = one_file.size
+                        size, izmer = self.get_size(one_file.size)
+                        interm_files['size'] = u'%s %s' % (size, izmer)
                         interm['files'].append(interm_files)
                 if item.admin_name:
                     if item.admin_name == self.user:
@@ -612,6 +620,43 @@ class GetChatMessages(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin ,Vie
                         interm['sender'] = question.worker_from
                 result.append(interm)
         return result
+
+
+
+    def get_size(self, size):
+        """
+        Получение размера в человекочетаемом формате
+        """
+        size = int(size)
+        size_kb = size/1024
+        size_kb = round(size_kb, 2)
+        if len(str(size_kb)) > 5:
+            size_mb = size_kb/1024
+            result = size_mb
+            izmer = 'Mb'
+        else:
+            result = size_kb
+            izmer = 'Kb'
+        result = round(result, 2)
+        return [result, izmer]
+
+    def get_date_to_str(self, date):
+        """
+        преобразование даты в формат строки с учетом часового пояса
+        """
+        mytimezone = timezone(settings.TIME_ZONE)
+        result = date.astimezone(mytimezone).strftime('%H:%M %d/%m/%Y')
+        return result
+
+
+    def get_chat_queryset(self, question):
+        """
+        получение queryset по чату
+        """
+        queryset = Chat.objects.select_related('admin_name', 'admin_name__profile').filter(question = question).order_by('id')
+        return  queryset
+
+
 
 
 class GetCompanyListForReportForQuesView(LoginRequiredMixin, ListView):
