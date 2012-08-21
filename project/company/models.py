@@ -37,6 +37,7 @@ class Departments(models.Model):
         ordering = ['name']
         verbose_name = u'Отдел'
         verbose_name_plural = u'Отделы'
+        unique_together = ('company', 'name')
 
 
 
