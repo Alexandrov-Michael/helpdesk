@@ -34,12 +34,12 @@ class EditQuestionUser(forms.Form):
         self.fields['user_from'].queryset = user_from
 
 
-    worker_from = forms.CharField(label=u'Ваше ФИО')
-    department  = forms.ModelChoiceField(queryset=None, label=u'Отдел')
-    user_from   = forms.ModelChoiceField(queryset=None, label=u'От кого')
-    user_to     = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому')
-    post        = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема')
-    body        = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
+    worker_from = forms.CharField(label=u'Ваше ФИО', error_messages={'required': 'Заполните пожалуйста поле "Ваше ФИО"'})
+    department  = forms.ModelChoiceField(queryset=None, label=u'Отдел', error_messages={'required': 'Укажите пожалуйста значение поля "Отдел"'})
+    user_from   = forms.ModelChoiceField(queryset=None, label=u'От кого', error_messages={'required': 'Укажите пожалуйста значение поля "От кого"'})
+    user_to     = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому', error_messages={'required': 'Укажите пожалуйста значение поля "Кому"'})
+    post        = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема', error_messages={'required': 'Укажите пожалуйста значение поля "Тема"'})
+    body        = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос', error_messages={'required': 'Заполните пожалуйста поле "Вопрос"'})
 
 
 
@@ -65,27 +65,32 @@ class EditQuestionAdmin(forms.Form):
     for_all = forms.BooleanField(label=u'Для всех ваших компаний', required=False)
     user_to = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому', required=False)
     post    = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема', required=False)
-    body    = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
+    body    = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос', error_messages={'required': 'Поле вопрос не заполнено'})
 
     def clean(self):
         cleaned_data = super(EditQuestionAdmin, self).clean()
         for_all = cleaned_data['for_all']
         user_to = cleaned_data['user_to']
         try:
+            body = cleaned_data['body']
+        except KeyError:
+            body = False
+        try:
             post = cleaned_data['post']
         except KeyError:
             post = False
-        if not for_all:
-            if user_to.profile.is_company:
-                if not post:
-                    mess = u'Укажите тему вопроса'
-                    raise forms.ValidationError(mess)
+        if not for_all and body:
+            if user_to:
+                if user_to.profile.is_company:
+                    if not post:
+                        mess = u'Укажите тему вопроса'
+                        self._errors['post'] = self.error_class([mess])
         if not for_all and not user_to:
             mess = u'Вы не выбрали получателя'
-            raise forms.ValidationError(mess)
+            self._errors['user_to'] = self.error_class([mess])
         if for_all and user_to:
             mess = u'Нельзя выбрать одновременно для всех и отдельно для компании'
-            raise forms.ValidationError(mess)
+            self._errors['for_all'] = self.error_class([mess])
         return cleaned_data
 
 
