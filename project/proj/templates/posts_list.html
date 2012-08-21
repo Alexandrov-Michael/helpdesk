@@ -1,0 +1,64 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Список должностей
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        function GetEditPost(id)
+        {
+            window.location = '/edit_post/'+id+'/';
+        }
+        function OnClickTr()
+        {
+            $('#mainTable').on('click', 'tr', function(){
+                var id = $(this).attr('id');
+                GetEditPost(id);
+            });
+        }
+        $(document).ready(function(){
+            OnClickTr();
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Список должностей</h1>
+    <div id="tableDiv">
+        <div id="preTableTop">
+            <p>Количество должностей {{ paginator.count }}</p>
+        </div>
+        <table class='listTable'>
+            <thead>
+            <tr>
+                <th>Наименование</th>
+                <th>Краткое описание</th>
+            </tr>
+            </thead>
+            <tbody id="mainTable" class='tr_list_hover'>
+            {% for item in posts %}
+                <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ item.id }}">
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.decription|truncatewords:15 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">Должностей нет</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p id='paginator'>&nbsp;
+            {% if paginator.num_pages > 1 %}
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">&larr; Предыдущая &nbsp;</a>
+                {% endif %}
+                <span class="current_page">Страница {{ page_obj.number }} из {{ paginator.num_pages }}.</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">&nbsp; Следующая &rarr;</a>
+                {% endif %}
+            {% endif %}
+        </p>
+    </div>
+{% endblock %}

@@ -91,16 +91,18 @@
                                     {% if user_is_super %}
                                         <li><a href="{% url user_list %}">Сотрудники</a></li>
                                         <li><a href="{% url company_list %}">Компании</a></li>
+                                        <li><a href="{% url posts_list %}">Должности</a></li>
                                     {% endif %}
                                 </ul>
                             </li>
-                            <li class='menu_item_parent' id="menu_item_2"><a href="#">Добавить</a>
+                            <li class='menu_item_parent' id="menu_item_2"><a href="#">Создать</a>
                                 <ul class="hide_menu">
                                     <li><a href="{% url add_pc %}">Компьютер</a></li>
                                     <li><a href="{% url add_dep %}">Отдел</a></li>
                                     {% if user_is_super %}
                                         <li><a href="{% url add_user %}">Сотрудника</a></li>
                                         <li><a href="{% url add_company %}">Компанию</a></li>
+                                        <li><a href="{% url add_post %}">Должность</a></li>
                                     {% endif %}
                                 </ul>
                             </li>

@@ -1,0 +1,21 @@
+{%  extends 'main.html' %}
+
+{% block title %}
+    Добавление должности
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block content %}
+    <h1>Добавление должности</h1>
+    <div id='question' class='borderLine'>
+        <form action="" method="POST">{% csrf_token %}
+            <table id='tableForm'>
+                {{ form.as_table }}
+            </table>
+            <button type="submit">Добавить</button>
+        </form>
+    </div>
+{% endblock %}

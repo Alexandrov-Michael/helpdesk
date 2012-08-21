@@ -4,7 +4,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView, View
 from django.contrib.auth.models import User
-from Forms import ChangePcOptionForm, AddPcOptionForPCForm, AddCompanyPcForm, AddPcOptionsForm, AddDepartamentForm, AddFileForm
+from Forms import ChangePcOptionForm, AddPcOptionForPCForm, AddCompanyPcForm, AddPcOptionsForm, AddDepartamentForm, AddFileForm, AddPostForm, EditPostForm
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from files.models import Files
@@ -423,6 +423,86 @@ class DepartamentsListView(LoginRequiredMixin, UpdateContextDataMixin, TemplateV
     def get_context_data(self, **kwargs):
         context = super(DepartamentsListView, self).get_context_data(**kwargs)
         return self.update_context(context)
+
+
+
+
+class AddPostView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
+    """
+    Представление для добавления должности
+    """
+    form_class = AddPostForm
+    template_name = 'add_post.html'
+    success_url = None
+
+    def do_before_handler(self):
+        self.skip_only_super_user()
+
+    def get_context_data(self, **kwargs):
+        context = super(AddPostView, self).get_context_data(**kwargs)
+        return self.update_context(context)
+
+    def form_valid(self, form):
+        name               = form.cleaned_data['name']
+        description        = form.cleaned_data['description']
+        new_obj            = Posts()
+        new_obj.name       = name
+        new_obj.decription = description
+        new_obj.save()
+        self.set_message(u'Должность успешно добавлена.')
+        return super(AddPostView, self).form_valid(form)
+
+    def get_success_url(self):
+        url = reverse('posts_list', args=[])
+        return url
+
+
+class PostsListView(LoginRequiredMixin, UpdateContextDataMixin, ListView):
+    """
+    Представление списка должностей
+    """
+    model = Posts
+    template_name = 'posts_list.html'
+    context_object_name = 'posts'
+
+    def do_before_handler(self):
+        self.skip_only_super_user()
+
+    def get_context_data(self, **kwargs):
+        context = super(PostsListView, self).get_context_data(**kwargs)
+        return self.update_context(context)
+
+
+class PostEditView(LoginRequiredMixin, UpdateContextDataMixin, UpdateView):
+    """
+    Предсталение для изменение должности
+    """
+    form_class = EditPostForm
+    template_name = 'edit_post.html'
+    success_url = None
+    model = Posts
+
+    def do_before_handler(self):
+        self.skip_only_super_user()
+
+    def get_context_data(self, **kwargs):
+        context = super(PostEditView, self).get_context_data(**kwargs)
+        return self.update_context(context)
+
+    def get_success_url(self):
+        url = reverse('posts_list', args=[])
+        return url
+
+    def form_valid(self, form):
+        self.set_message(u'Должность успешно изменена.')
+        return super(PostEditView, self).form_valid(form)
+
+
+
+
+
+
+
 
 
 

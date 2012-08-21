@@ -2,8 +2,7 @@
 __author__ = 'michael'
 
 from django import forms
-from models import PcOptionsList, PcOptions, CompanyPC, Departments
-from company.models import Posts
+from models import PcOptionsList, PcOptions, CompanyPC, Departments, Posts
 from proj.utils.formUtils import MyCheckboxSelectMultiple, FormsCleanUtils, ModelChoiceFieldForUserTo
 from django.contrib.auth.models import User
 
@@ -178,4 +177,35 @@ class ChangeUserToForQuesForm(forms.Form):
         return queryset
 
     user_to = ModelChoiceFieldForUserTo(queryset=None, label=u'Перенаправить сотруднику:')
+
+
+
+class AddPostForm(forms.Form):
+    """
+    Форма для добавления должности
+    """
+    name       = forms.CharField(label=u'Наименование', max_length=100, error_messages={'required':u'Заполните наименование'})
+    description = forms.CharField(label=u'Описание', error_messages={'required':u'Заполните описание'}, widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}))
+
+    def clean(self):
+        cleaned_data = super(AddPostForm, self).clean()
+        try:
+            name = cleaned_data['name']
+        except KeyError:
+            return cleaned_data
+        try:
+            Posts.objects.get(name = name)
+        except Posts.DoesNotExist:
+            return cleaned_data
+        self._errors['name'] = self.error_class([u'Такая должность уже существует'])
+        return cleaned_data
+
+
+
+class EditPostForm(forms.ModelForm):
+    """
+    Форма для изменения должности
+    """
+    class Meta:
+        model = Posts
 

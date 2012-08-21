@@ -49,6 +49,9 @@ urlpatterns = patterns('',
     url(r'^departament_list/$',         vc.DepartamentsListView.as_view(), name='dep_list'),
     url(r'^edit_dep/(?P<pk>\d+)/$',     vc.EditDepartamentView.as_view(), name='edit_dep'),
     url(r'^edit_question/(?P<pk>\d+)/$', views.EditQuesView.as_view(), name='edit_question'),
+    url(r'^add_post/$',                 vc.AddPostView.as_view(), name='add_post'),
+    url(r'^posts_list/$',               vc.PostsListView.as_view(), name='posts_list'),
+    url(r'^edit_post/(?P<pk>\d+)/$',    vc.PostEditView.as_view(), name='edit_post'),
 
 
     #### WIKI ####
