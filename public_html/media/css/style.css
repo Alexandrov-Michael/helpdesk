@@ -669,6 +669,11 @@ div#message{
 .wiki_system_body{
     padding: 3px 20px;
 }
+/*  обертка для сообщения изменения системы */
+.wrop_sys_mes{
+    width: 100%;
+    float: left;
+}
 
 
 /*  для поля закрт ли вопрос в форме чата к вопросу */
@@ -678,5 +683,7 @@ div#message{
 .green_font{
     color: green;
 }
+
+
 
 
