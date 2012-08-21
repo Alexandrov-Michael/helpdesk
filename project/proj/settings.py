@@ -346,3 +346,4 @@ TINYMCE_DEFAULT_CONFIG={
 
 # название глобальной переменной в таблице соответсвия
 KURATOR = 'kurator'
+SYSTEM_PROGRAMMER = 'sys_programmer'

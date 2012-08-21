@@ -6,6 +6,9 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 from proj.utils.mixin import LoginRequiredMixin, UpdateContextDataMixin
 from forms import AddWikiPageForm
+from conformity.models import Conform
+from proj import settings
+from django.contrib.auth.models import User
 
 
 class IndexWikiView(LoginRequiredMixin, UpdateContextDataMixin, ListView):
@@ -46,11 +49,32 @@ class AddArticleView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddArticleView, self).get_context_data(**kwargs)
+        context['is_system_programmer'] = self.is_system_programmer()
         return self.update_context(context)
 
     def form_valid(self, form):
         self.set_message(u'Страница успешно добавлена.')
         return super(AddArticleView, self).form_valid(form)
+
+    def is_system_programmer(self):
+        """
+        определяет системный програмист ли этот юзер
+        """
+        result = False
+        try:
+            conform = Conform.objects.get(perem = settings.SYSTEM_PROGRAMMER)
+            sys_user = User.objects.get(id = conform.object_id)
+        except Conform.DoesNotExist:
+            self.set_message(u'Глобавльная переменная соответствия %s не определена' % (settings.SYSTEM_PROGRAMMER), True)
+            return result
+        except User.DoesNotExist:
+            self.set_message(u'Пользователь для системных изменений по глобальной переменной не существует', True)
+            return result
+        if self.user == sys_user:
+            result = True
+        return result
+
+
 
 
 class ReadArcticleView(LoginRequiredMixin, UpdateContextDataMixin, DetailView):
