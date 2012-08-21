@@ -48,6 +48,7 @@ class EditUserForm(EditUserlogin):
             'is_super_user': profile.is_super_user,
             'is_report': profile.is_report,
         })
+        self.base_fields.keyOrder = ['login','first_name', 'last_name','email', 'telefon' ,'is_report', 'is_super_user','image']
 
     email           = forms.EmailField()
     first_name      = forms.CharField(label=u'Имя', max_length=30)
@@ -73,6 +74,7 @@ class EditCompanyForm(EditUserlogin):
         self.initial.update({
             'first_name': user.first_name,
             })
+        self.base_fields.keyOrder = ['login','first_name','image']
 
 
     first_name = forms.CharField(label=u'Наименование', max_length=30)

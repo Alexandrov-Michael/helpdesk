@@ -77,6 +77,10 @@ class CreateUserForm(CreateUserlogin):
     Форма для создания пользователя
     """
 
+    def __init__(self, *args, **kwargs):
+        super(CreateUserForm, self).__init__(*args, **kwargs)
+        self.base_fields.keyOrder = ['login','password1','password2','first_name', 'last_name','email', 'telefon' ,'is_report', 'is_super_user','image']
+
     email           = forms.EmailField()
     first_name      = forms.CharField(label=u'Имя', max_length=30)
     last_name       = forms.CharField(label=u'Фамилия', max_length=30)
@@ -103,6 +107,10 @@ class CreateCompanyForm(CreateUserlogin):
     """
     Форма для создания компании
     """
+    def __init__(self, *args, **kwargs):
+        super(CreateCompanyForm, self).__init__(*args, **kwargs)
+        self.base_fields.keyOrder = ['login','password1','password2','first_name','image']
+
     first_name      = forms.CharField(label=u'Наименование', max_length=30)
 
 

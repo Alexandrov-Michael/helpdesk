@@ -15,5 +15,10 @@ class QuestionAdmin(admin.ModelAdmin):
         ChatInLine,
         ]
 
+class EmailsAdmin(admin.ModelAdmin):
+    list_display = ('mail_to', 'subject','sended')
+    ordering = ['sended']
+
 admin.site.register(models.Chat)
 admin.site.register(models.Questions, QuestionAdmin)
+admin.site.register(models.Emails, EmailsAdmin)
