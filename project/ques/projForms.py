@@ -50,7 +50,7 @@ class EditQuestionAdmin(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         if user.profile.is_super_user:
-            user_to = User.objects.exclude(id = user.id)
+            user_to = User.objects.exclude(id = user.id).order_by('profile__is_company')
         else:
             user_ids = []
             company_admins = CompanyAdmins.objects.filter(username=user)
