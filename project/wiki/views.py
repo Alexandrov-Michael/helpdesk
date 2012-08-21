@@ -23,6 +23,11 @@ class IndexWikiView(LoginRequiredMixin, UpdateContextDataMixin, ListView):
         context = super(IndexWikiView, self).get_context_data(**kwargs)
         return self.update_context(context)
 
+    def get_queryset(self):
+        queryset = super(IndexWikiView, self).get_queryset()
+        return queryset.order_by('-date')
+
+
 class AddArticleView(LoginRequiredMixin, UpdateContextDataMixin, CreateView):
     """
     Представление для создания вики страницы
