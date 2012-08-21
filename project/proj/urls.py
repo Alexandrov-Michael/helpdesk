@@ -62,7 +62,7 @@ urlpatterns = patterns('',
 
 
     #tehnikal
-    url( r'^accounts/login/$',  'django.contrib.auth.views.login', { "template_name": "mylogin.html" } ),
+    url( r'^accounts/login/$',  'profiles.views.login'),
     url( r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login', {'login_url': '/accounts/login/'} ),
 
 

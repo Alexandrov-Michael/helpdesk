@@ -12,9 +12,9 @@
             <th>Значение</th>
         </tr>
         </thead>
-        <tbody id="mainTable">
+        <tbody id="mainTable" class='tr_list_hover'>
         {% for item in changes %}
-            <tr class='{% cycle 'firstTd' 'secondTd' %}'>
+            <tr class='{% cycle 'firstTd' 'secondTd' %}' id='{{ item.pc.id }}'>
                 <td>{{ item.date }}</td>
                 <td>{{ item.user.first_name }} {{ item.user.last_name }}</td>
                 <td>{{ item.pc }}</td>

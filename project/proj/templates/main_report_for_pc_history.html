@@ -74,9 +74,10 @@
         }).done(function(){
                     $('.div_choise_pc').fadeIn();
                     $('#loading').fadeOut();
+                    GetReport();
                 });
         }
-        GetReport();
+
     }
     function GetReport(){
         $('#loading').fadeIn();
@@ -103,8 +104,10 @@
                 success: function(data){
                     $('#report_list').empty().append(data).fadeIn();
                     $('#loading').fadeOut();
+                    GetPcInTr();
                 }
             });
+
         }
     }
     function GetPeginatorNext(){
@@ -130,8 +133,10 @@
                 dataType: 'html',
                 success: function(data){
                     $('#report_list').empty().append(data).fadeIn();
+                    GetPcInTr();
                 }
             });
+
         }
     }
     function GetPeginatorPrev(){
@@ -157,14 +162,27 @@
                 dataType: 'html',
                 success: function(data){
                     $('#report_list').empty().append(data).fadeIn();
+                    GetPcInTr();
                 }
             });
+
         }
+    }
+    function GetPcInTr()
+    {
+        $('#mainTable tr').click(function(){
+            var id = $(this).attr('id');
+            if(id)
+            {
+                window.location = '/pc_detail/'+id+'/';
+            }
+        });
     }
     $(document).ready(function(){
         HidePcList();
         GetCompanyList();
         GetUserList();
+        GetPcInTr();
     });
     </script>
 {% endblock %}

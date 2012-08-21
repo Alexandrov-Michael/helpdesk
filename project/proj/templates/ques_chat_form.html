@@ -75,6 +75,8 @@
                                     });
                                 }
                                 message_block.prepend('<div class="oneMsg '+sender_class+'"><div class="userName">'+date+' : '+sender+'</div><p><div class="q_body">'+body+'</div></p><div id="files">'+files_links+'</div></div');
+                                var div_last_message = $('.oneMsg:first-child', message_block);
+                                div_last_message.fadeIn('slow');
                                 last_message = message_id;
                             }
                         });
