@@ -64,14 +64,14 @@ a.section:link, a.section:visited {
     margin:8px 0;
     padding: 0 10px;
 }
+#logo{
+    float:left;
+}
 
 .information{
     font-size: 11px;
-    padding: 1.2em 10px;
-    position: absolute;
-    right: 0;
-    text-align: right;
-    top: 0;
+    float: right;
+    padding:5px 5px 0 0;
 }
 
 .information a{
@@ -812,8 +812,6 @@ div#message{
     padding:6px 24px;
     text-decoration:none;
     text-shadow:1px 1px 0px #528ecc;
-    position:relative;
-    top:-8px;
 }.classname:hover {
      background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #378de5), color-stop(1, #79bbff) );
      background:-moz-linear-gradient( center top, #378de5 5%, #79bbff 100% );
@@ -821,6 +819,6 @@ div#message{
      background-color:#378de5;
  }.classname:active {
       position:relative;
-      top:-7px;
+      top:1px;
   }
 /*  КОНЕЦ  */
