@@ -54,6 +54,7 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         is_super_user   = form.cleaned_data['is_super_user']
         is_report       = form.cleaned_data['is_report']
         telefon         = form.cleaned_data['telefon']
+        is_buh          = form.cleaned_data['is_buh']
         image           = form.cleaned_data['image']
         new_user = User(
             username=login,
@@ -74,6 +75,7 @@ class CreateUserView(LoginRequiredMixin, UpdateContextDataMixin, FormView):
             is_report=is_report,
             is_super_user=is_super_user,
             telefon=telefon,
+            is_buh=is_buh,
             image=image,
         )
         new_profile.save()
@@ -517,11 +519,13 @@ class EditUserView(LoginRequiredMixin, UpdateContextDataMixin, GetOdjectMixin, F
             is_super_user   = form.cleaned_data['is_super_user']
             is_report       = form.cleaned_data['is_report']
             telefon         = form.cleaned_data['telefon']
+            is_buh          = form.cleaned_data['is_buh']
             self.user_obj.last_name  = last_name
             self.user_obj.email      = email
             self.user_profile_obj.is_super_user = is_super_user
             self.user_profile_obj.is_report     = is_report
             self.user_profile_obj.telefon       = telefon
+            self.user_profile_obj.is_buh        = is_buh
         self.user_obj.save()
         self.user_profile_obj.save()
         self.set_message(u'Успешно изменено.')

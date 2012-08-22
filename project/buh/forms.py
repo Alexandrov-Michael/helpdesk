@@ -29,7 +29,7 @@ class AddAccountingForm(forms.Form):
     contract = forms.ModelChoiceField(queryset=Contracts.objects.all(), label=u'Договор')
     month    = forms.ChoiceField(choices=MONTH_CHOISE, label=u'Месяц')
     year     = forms.IntegerField(label='Год', min_value=1990, max_value=2100, initial=datetime.now().year)
-    paid     = forms.BooleanField(label=u'Статус', required=False)
+    paid     = forms.BooleanField(label=u'Статус', required=False, widget=forms.CheckboxInput(attrs={'title':'Статус оплаты за месяц, если стоит галочка значит компания заплатила.'}))
 
 
     def clean(self):

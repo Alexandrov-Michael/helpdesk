@@ -7,7 +7,7 @@ class Contracts(models.Model):
     """
     Модель договоров для фирм
     """
-    name    = models.CharField(u'Номер', max_length=60)
+    name    = models.CharField(u'Номер договора', max_length=60)
     company = models.ForeignKey(Company, verbose_name=u'Компания', related_name='rel_contracts_company')
 
     class Meta:

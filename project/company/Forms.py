@@ -79,7 +79,7 @@ class CreateUserForm(CreateUserlogin):
 
     def __init__(self, *args, **kwargs):
         super(CreateUserForm, self).__init__(*args, **kwargs)
-        self.base_fields.keyOrder = ['login','password1','password2','first_name', 'last_name','email', 'telefon' ,'is_report', 'is_super_user','image']
+        self.base_fields.keyOrder = ['login','password1','password2','first_name', 'last_name','email', 'telefon' ,'is_report', 'is_super_user','is_buh','image']
 
     email           = forms.EmailField()
     first_name      = forms.CharField(label=u'Имя', max_length=30)
@@ -87,6 +87,7 @@ class CreateUserForm(CreateUserlogin):
     telefon         = forms.CharField(label=u'Телефон', max_length=18)
     is_super_user   = forms.BooleanField(label=u'Суперпользователь', required=False)
     is_report       = forms.BooleanField(label=u'Доступ к отчетам', required=False)
+    is_buh          = forms.BooleanField(label=u'Это бухгалтер', required=False)
 
     def clean(self):
         cleaned_data = super(CreateUserForm, self).clean()
