@@ -219,6 +219,7 @@ INSTALLED_APPS = (
     'tinymce',
     'south',
     'conformity',
+    'buh',
 
 )
 

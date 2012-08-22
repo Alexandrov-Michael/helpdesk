@@ -10,6 +10,7 @@ from ques import views
 from company import views as vc
 from profiles import views as vp
 from wiki import views as vw
+from buh import views as vb
 
 urlpatterns = patterns('',
 
@@ -53,6 +54,11 @@ urlpatterns = patterns('',
     url(r'^posts_list/$',               vc.PostsListView.as_view(), name='posts_list'),
     url(r'^edit_post/(?P<pk>\d+)/$',    vc.PostEditView.as_view(), name='edit_post'),
     url(r'^edit_user/(?P<pk>\d+)/$',    vp.EditUserView.as_view(), name='edit_user'),
+    url(r'^buh_index/$',                vb.IndexAccountingView.as_view(), name='buh_index'),
+    url(r'^add_accounting/$',           vb.AddAccountingView.as_view(), name='add_accounting'),
+    url(r'^add_contract/$',             vb.AddContractView.as_view(), name='add_contract'),
+    url(r'^contracts_list/$',           vb.ListContractsView.as_view(), name='list_contracts'),
+    url(r'^edit_contract/(?P<pk>\d+)/$', vb.EditContractView.as_view(), name='edit_contract'),
 
 
     #### WIKI ####
@@ -93,6 +99,11 @@ urlpatterns = patterns('',
     url(r'^ajax/get_posts_for_add_ques/(?P<pk>\d+)/$',              vc.GetPostsForQuestionAddView.as_view()),
     url(r'^ajax/get_user_from_for_ques/(?P<pk>\d+)/$',              vc.GetPcFromForAddQues.as_view(), name='ajax_GetPcFromForAddQues'),
     url(r'^ajax/change_status_ques/(?P<pk>\d+)/(?P<user_check>\w+)/$', views.QuesChangeStatus.as_view()),
+    url(r'^ajax/get_accounting_debts/$',                            vb.GetDebtsView.as_view()),
+    url(r'^ajax/get_company_for_accounting/$',                      vb.GetCompanyForAccountingView.as_view()),
+    url(r'^ajax/get_debs_for_one_company/(?P<pk>\d+)/$',            vb.GetDebsForOneCompanyView.as_view()),
+    url(r'^ajax/get_contracts/(?P<pk>\d+)/$',                       vb.GetContractsView.as_view()),
+    url(r'^ajax/change_accounting_status/(?P<pk>\d+)/(?P<status>\w+)/$', vb.EditAccountingView.as_view()),
 
 
 )

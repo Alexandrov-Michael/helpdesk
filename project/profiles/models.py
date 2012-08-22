@@ -10,6 +10,7 @@ class Profile(models.Model):
     is_company      = models.BooleanField(u'Это компания?', default=True)
     is_report       = models.BooleanField(u'Доступ к отчетам?')
     is_super_user   = models.BooleanField(u'Это супер пользователь?')
+    is_buh          = models.BooleanField(u'Это бухгалтер')
     telefon         = models.CharField(u'Телефон', max_length=18, blank=True)
     image           = models.ImageField(upload_to='profile_img',blank=True, null=True)
 

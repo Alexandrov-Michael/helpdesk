@@ -1,0 +1,77 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Добавить отчетность
+{% endblock %}
+
+{% block content %}
+    <h1>Добавление отчетности</h1>
+    <div id='question' class='borderLine'>
+        <form action="" method="POST" >{% csrf_token %}
+            <table id='tableForm'>
+                {{ form }}
+            </table>
+            <button type="submit">Создать</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    function GetContract()
+    {
+        var loading = $('#loading');
+        var contract = $('#id_contract');
+        var company = $('#id_company').val();
+        loading.fadeIn();
+        contract.fadeOut();
+        contract.empty();
+        contract.append('<option selected="selected" value="">---------</option>');
+        if(company)
+        {
+            $.ajax({
+                url: '/ajax/get_contracts/'+company+'/',
+                type: 'GET',
+                dataType:'json',
+                success: function(data){
+                    contract.removeAttr('disabled');
+                    var counter = CountObjectProperty(data);
+                    if(counter != 0)
+                    {
+                        $.each(data, function(id, name){
+                            contract.append('<option value="'+id+'">'+name+'</option>');
+                        });
+                    }else{
+                        var text = 'У данной фирмы нет договора.';
+                        AddMessageError(text);
+                        contract.attr('disabled', 'disabled');
+                    }
+                }
+            });
+        }else{
+            contract.attr('disabled', 'disabled');
+        }
+        contract.fadeIn();
+        loading.fadeOut();
+    }
+    function OnChangeSelect()
+    {
+        var company = $('#id_company');
+        company.on('change', function(){
+           GetContract();
+        });
+    }
+    function SetMont()
+    {
+        var month = $('#id_month');
+        var date = new Date();
+        var def_month = date.getMonth();
+        month.val(def_month+1);
+    }
+    $(document).ready(function(){
+        GetContract();
+        OnChangeSelect();
+        SetMont();
+    })
+</script>
+{% endblock %}

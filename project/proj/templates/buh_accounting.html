@@ -1,0 +1,164 @@
+{% extends  'main.html' %}
+
+{% block title %}
+    Список задолжностей
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    function StartHide()
+    {
+        var table = $('#tableDiv');
+        table.hide();
+    }
+    function GetCompany()
+    {
+        var loading = $('#loading');
+        var div_select = $('#div_select_company');
+        var select = $('#select_company');
+        loading.fadeIn();
+        div_select.fadeOut();
+        select.empty();
+        select.append('<option selected="selected" value="">---------</option>')
+        $.ajax({
+            url: '/ajax/get_company_for_accounting/',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                var counter = CountObjectProperty(data);
+                if(counter != 0)
+                {
+                    $.each(data, function(id, name){
+                        select.append('<option value="'+id+'">'+name+'</option>')
+                    });
+                }else{
+                    var text = 'Список компаний пуст';
+                    AddMessageError(text);
+                }
+                div_select.fadeIn();
+                loading.fadeOut();
+                GetCompanyFromGEt();
+                GetAccountingForCompany();
+            }
+        })
+
+    }
+    function GetAccountingForCompany()
+    {
+        var loading = $('#loading');
+        var table_body = $('#mainTable');
+        var table = $('#tableDiv');
+        var company = $('#select_company').val();
+        loading.fadeIn();
+        table.fadeOut();
+        table_body.empty();
+        if(company)
+        {
+            $.ajax({
+                url: '/ajax/get_debs_for_one_company/'+company+'/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data){
+                    var counter = CountObjectProperty(data);
+                    if(counter != 0)
+                    {
+                        $.each(data, function(id, value){
+                            table_body.append('<tr><td>'+value["year"]+'</td><td>'+GetMonth(value["month"])+'</td>'+GetPaidTd(value["paid"])+'</td><td><button type="button" onclick="ChangeStatus('+value["id"]+','+value["paid"]+','+company+')">'+GetChangePaidText(value["paid"])+'</button></td></tr>');
+                        });
+                    }else{
+                        table_body.append('<tr><td colspan="4">Нет отчетности</td></tr>');
+                    }
+                    table.fadeIn();
+                    loading.fadeOut();
+                }
+            });
+        }else{
+            loading.fadeOut();
+        }
+    }
+    function ChangeStatus(id, paid, company)
+    {
+        var status;
+
+        if(paid){
+            status = 'False';
+        }else{
+            status = 'True';
+        }
+        $.ajax({
+            url: '/ajax/change_accounting_status/'+id+'/'+status+'/',
+            type: 'GET',
+            success: function(){
+                window.location = '/buh_index/?company='+company;
+            }
+        });
+    }
+    function GetChangePaidText(paid)
+    {
+        var text;
+        if(paid)
+        {
+            text = 'Устновить долг';
+        }else{
+            text = 'Закрыть долг';
+        }
+        return text
+    }
+
+    function GetPaidTd(paid)
+    {
+        var text;
+        if(paid)
+        {
+            text = '<td class="plus">Заплатили';
+        }else{
+            text = '<td class="minus">Долг';
+        }
+        return text
+    }
+    function GetCompanyFromGEt()
+    {
+        var select = $('#select_company');
+        var company_id = getUrlVars()['company'];
+        if(company_id)
+        {
+            select.val(company_id);
+        }
+    }
+    $(document).ready(function(){
+        StartHide();
+        GetCompany();
+
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+    <h1>Список задолжностей</h1>
+    <div class="div_select" id="div_select_company">
+        <label>Компания:<br>
+        <select id='select_company' onchange="GetAccountingForCompany()"></select>
+        </label>
+    </div>
+    <div id="tableDiv">
+        <div id="preTableTop">
+            <p>&nbsp;</p>
+        </div>
+        <table class='listTable'>
+            <thead>
+            <tr>
+                <th>Год</th>
+                <th>Месяц</th>
+                <th>Статус</th>
+                <th class='td-20'>Изменить статус</th>
+            </tr>
+            </thead>
+            <tbody id="mainTable" class='nopointer'>
+                <tr>
+                    <td colspan="4">Нет отчетности</td>
+                </tr>
+            </tbody>
+        </table>
+        <p id='paginator'>&nbsp;</p>
+    </div>
+{% endblock %}

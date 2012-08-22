@@ -31,9 +31,10 @@ class JSONQuerySetValuesResponseMixin(object):
     def render_to_response(self, context, **response_kwargs):
         data = {}
         i = 0
-        for item in context:
-            data[i] = item
-            i += 1
+        if context:
+            for item in context:
+                data[i] = item
+                i += 1
         json = simplejson.dumps(data)
         return HttpResponse(json, mimetype='application/json', **response_kwargs)
 
@@ -80,6 +81,10 @@ class LoginRequiredMixin(object):
         if not self.user_profile.is_report:
             raise Http404
 
+    def skip_only_buh(self):
+        if not self.user_profile.is_buh:
+            raise Http404
+
 
 class UpdateContextDataMixin(object):
     """
@@ -87,11 +92,12 @@ class UpdateContextDataMixin(object):
     """
 
     def update_context(self, context):
-        context['user_is_company'] = self.user_profile.is_company
-        context['user_is_report']  = self.user_profile.is_report
-        context['user_is_super']  = self.user_profile.is_super_user
-        context['success_message'] = self.request.session.pop('message', '')
+        context['user_is_company']  = self.user_profile.is_company
+        context['user_is_report']   = self.user_profile.is_report
+        context['user_is_super']    = self.user_profile.is_super_user
+        context['success_message']  = self.request.session.pop('message', '')
         context['is_error_message'] = self.request.session.pop('is_error_message', False)
+        context['user_is_buh']      = self.user_profile.is_buh
         return context
 
     def set_message(self, text, is_error_message = False):

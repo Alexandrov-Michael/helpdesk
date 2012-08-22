@@ -119,7 +119,7 @@ a.section:link, a.section:visited {
 
 div#message_wrop{
     position: absolute;
-    top: 25px;
+    top: 40px;
     margin: 0 40%;
 }
 
@@ -143,7 +143,17 @@ div.message_err{
 }
 
 
+/*  долги по бухгалтерии */
+#accounting{
+    margin: 0 0 0 30px;
+}
+#accounting li{
+    color: red;
+    font-size: 15px;
+    font-weight: bolder;
+}
 
+/*  КОНЕЦ долги по бухгалтерии */
 
 
 /* content */
@@ -767,3 +777,14 @@ div#message{
 }
 
 
+/* div для селектов перед таблицей значений */
+.div_select{
+    margin: 10px 0 0 0;
+}
+/* КОНЕЦ   */
+
+/* td с шириной  */
+.td-20{
+    width: 20%;
+}
+/* Конец */
