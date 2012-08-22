@@ -55,7 +55,10 @@
         var table_tr = $('#mainTable tr');
         table_tr.on('click', function(){
             var id = $(this).attr('id');
-            GetEditContract(id);
+            if(id)
+            {
+                GetEditContract(id);
+            }
         })
     }
     $(document).ready(function(){
