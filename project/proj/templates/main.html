@@ -71,9 +71,11 @@
             </div>
             <div class='information'>
                 Добро пожаловать, {{ user.first_name }}.
-                <a href="{% url wiki %}">Документация</a>
-                /
-                <a href="/accounts/logout/">Выйти</a>
+                {% if not user_is_company %}
+                    <a href="{% url wiki %}">Документация</a>
+                {% endif %}
+                &nbsp;
+                <a href="/accounts/logout/" class="classname">Выйти</a>
             </div>
         </div><!--headerTop-->
         <div id='headerBot'>
