@@ -66,6 +66,8 @@ a.section:link, a.section:visited {
 }
 #logo{
     float:left;
+    position: relative;
+    top:2px;
 }
 
 .information{
