@@ -478,7 +478,7 @@ class QuesChangeStatus(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin, Vi
         question = self.get_object()
         user_check, date = self.get_user_check()
         question.user_check = user_check
-        question.date = date
+        question.user_check_date = date
         question.save()
         return question.user_check
 
