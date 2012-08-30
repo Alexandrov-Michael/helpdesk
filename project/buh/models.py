@@ -35,4 +35,3 @@ class Accounting(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.month,)
-

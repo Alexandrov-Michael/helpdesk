@@ -130,8 +130,8 @@
                     </ul>
                 {% endblock %}
                 <div id="admin_face_main">
-                    {% if user.profile.image %}
-                        <img src="{{user.profile.image.url }}" width="70" height="70">
+                    {% if user_image %}
+                        <img src="{{user_image.url }}" width="70" height="70">
                     {% endif %}
                 </div>
                 <div id="message_wrop"></div>
@@ -261,7 +261,7 @@
     <script>
         function GetAccounting()
         {
-            var company = '{{ user.profile.is_company }}';
+            var company = '{{ user_is_company }}';
             var loading = $('#loading');
             var accounting = $('#accounting');
             loading.fadeIn();

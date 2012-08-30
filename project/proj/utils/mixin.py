@@ -98,6 +98,7 @@ class UpdateContextDataMixin(object):
         context['success_message']  = self.request.session.pop('message', '')
         context['is_error_message'] = self.request.session.pop('is_error_message', False)
         context['user_is_buh']      = self.user_profile.is_buh
+        context['user_image']       = self.user_profile.image
         return context
 
     def set_message(self, text, is_error_message = False):

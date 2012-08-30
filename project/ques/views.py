@@ -55,6 +55,7 @@ class IndexView(LoginRequiredMixin, UpdateContextDataMixin, TemplateView):
 
 
 
+
 class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
     """
     Представление формы для добавления вопроса
@@ -74,7 +75,7 @@ class QuesAdd(LoginRequiredMixin, UpdateContextDataMixin, FormView):
         else:
             form_class = EditQuestionAdmin
             self.template_name = u'add_q_admin.html'
-        return form_class(user=self.user, **self.get_form_kwargs())
+        return form_class(user=self.user, profile=self.user_profile, **self.get_form_kwargs())
 
     def form_valid(self, form):
         body    = form.cleaned_data['body']
@@ -458,11 +459,13 @@ class QuesChangeStatus(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin, Vi
         if user_check:
             if user_check == u'False':
                 user_check = True
+                date       = now()
             elif user_check == u'True':
                 user_check = False
+                date       = None
             else:
                 raise Http404
-            return user_check
+            return [user_check, date]
         else:
             raise Http404
 
@@ -473,7 +476,9 @@ class QuesChangeStatus(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin, Vi
 
     def change_status(self):
         question = self.get_object()
-        question.user_check = self.get_user_check()
+        user_check, date = self.get_user_check()
+        question.user_check = user_check
+        question.date = date
         question.save()
         return question.user_check
 

@@ -105,6 +105,7 @@ class ListContractsView(LoginRequiredMixin, UpdateContextDataMixin, ListView):
     model = Contracts
     context_object_name = 'contracts'
     paginate_by = 35
+    queryset = Contracts.objects.select_related('company__com_user').all()
 
     def do_before_handler(self):
         if not self.user_profile.is_super_user:

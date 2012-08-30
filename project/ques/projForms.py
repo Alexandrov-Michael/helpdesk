@@ -38,7 +38,7 @@ class EditQuestionUser(forms.Form):
     department  = forms.ModelChoiceField(queryset=None, label=u'Отдел', error_messages={'required': 'Укажите пожалуйста значение поля "Отдел"'})
     user_from   = forms.ModelChoiceField(queryset=None, label=u'От кого', error_messages={'required': 'Укажите пожалуйста значение поля "От кого"'})
     user_to     = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому', error_messages={'required': 'Укажите пожалуйста значение поля "Кому"'})
-    post        = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема', error_messages={'required': 'Укажите пожалуйста значение поля "Тема"'})
+    post        = forms.ModelChoiceField(queryset=Posts.objects.all()[:2], label=u'Тема', error_messages={'required': 'Укажите пожалуйста значение поля "Тема"'})
     body        = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос', error_messages={'required': 'Заполните пожалуйста поле "Вопрос"'})
 
 
@@ -48,12 +48,12 @@ class EditQuestionAdmin(forms.Form):
     Форма для добавления вопроса для админов
     """
 
-    def __init__(self, user, *args, **kwargs):
-        if user.profile.is_super_user:
+    def __init__(self, user,profile, *args, **kwargs):
+        if profile.is_super_user:
             user_to = User.objects.exclude(id = user.id).order_by('profile__is_company')
         else:
             user_ids = []
-            company_admins = CompanyAdmins.objects.filter(username=user)
+            company_admins = CompanyAdmins.objects.select_related('company__com_user').filter(username=user)
             for item in company_admins:
                 user_ids.append(item.company.com_user.id)
             user_to = User.objects.filter((~Q(id = user.id) & ~Q(profile__is_company = True)) | Q(id__in = user_ids)).order_by('profile__is_company')
@@ -64,7 +64,7 @@ class EditQuestionAdmin(forms.Form):
 
     for_all = forms.BooleanField(label=u'Для всех ваших компаний', required=False)
     user_to = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому', required=False)
-    post    = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема', required=False)
+    post    = forms.ModelChoiceField(queryset=Posts.objects.all()[:1], label=u'Тема', required=False)
     body    = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос', error_messages={'required': 'Поле вопрос не заполнено'})
 
     def clean(self):
