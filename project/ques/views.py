@@ -28,7 +28,7 @@ from pytz import timezone
 ### Static views ###
 ##################################################################################
 
-class IndexView(LoginRequiredMixin, UpdateContextDataMixin, TemplateView):
+class IndexView(LoginRequiredMixin, UpdateContextDataMixin, ListView):
     """
     Представление для страртовой страницы, использует шаблон main
     в котором через аякс подхватывается список вопросов данного пользователя
@@ -37,6 +37,9 @@ class IndexView(LoginRequiredMixin, UpdateContextDataMixin, TemplateView):
     """
 
     template_name = 'main.html'
+    model = Questions
+    paginate_by = 20
+    context_object_name = u'questions'
 
 
     def get_company_admins(self):
@@ -49,7 +52,61 @@ class IndexView(LoginRequiredMixin, UpdateContextDataMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['company_admins'] = self.get_company_admins()
+        context['non_check_ques'] = self.non_check_ques
         return self.update_context(context)
+
+    def get_queryset(self):
+        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user)).select_related('user_to__first_name', 'pc_from', 'user_from__first_name')
+        self.non_check_ques = self.get_open_question(queryset)
+        return queryset
+
+    def get_open_question(self, queryset):
+        if not queryset:
+            return 0
+        check_count  = queryset.filter(Q(user_check = False)).count()
+        return check_count
+
+
+
+
+#class QuestionList(LoginRequiredMixin, ListView):
+#
+##    """
+#    Представление для списка вопросов, для каждого пользователя
+#    model - модель на основе которой составляется список
+#   paginate_by - количество объектов на странице
+#    context_object_name - переменная в шаблоне
+#    template_name - шаблон
+#    get_queryset - получаем список объектов для каждого пользователя
+#    dispatch - проверяем пользователя зарегестрированан ли
+#
+#
+#    optimized 20120705
+#    """
+#
+#    model = Questions
+#    paginate_by = 20
+#    context_object_name = u'questions'
+#    template_name = u'ajax_get_index_ques.html'
+#
+#    def get_queryset(self):
+#        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user)).select_related('user_to__first_name', 'pc_from', 'user_from__first_name')
+#        self.non_check_ques = self.get_open_question(queryset)
+#        return queryset
+#
+#    def get_open_question(self, queryset):
+#        if not queryset:
+#            return 0
+#        check_count  = queryset.filter(Q(user_check = False)).count()
+#        return check_count
+#
+#
+#    def get_context_data(self, **kwargs):
+#        context = super(QuestionList, self).get_context_data(**kwargs)
+#        context['non_check_ques'] = self.non_check_ques
+#        return context
+
+
 
 
 
@@ -485,42 +542,6 @@ class QuesChangeStatus(LoginRequiredMixin, GetOdjectMixin, JSONResponseMixin, Vi
 
 
 
-
-class QuestionList(LoginRequiredMixin, ListView):
-    """
-    Представление для списка вопросов, для каждого пользователя
-    model - модель на основе которой составляется список
-    paginate_by - количество объектов на странице
-    context_object_name - переменная в шаблоне
-    template_name - шаблон
-    get_queryset - получаем список объектов для каждого пользователя
-    dispatch - проверяем пользователя зарегестрированан ли
-
-
-    optimized 20120705
-    """
-
-    model = Questions
-    paginate_by = 20
-    context_object_name = u'questions'
-    template_name = u'ajax_get_index_ques.html'
-
-    def get_queryset(self):
-        queryset = Questions.objects.filter(Q(user_to = self.user) | Q(user_from = self.user)).select_related('user_to__first_name', 'pc_from', 'user_from__first_name')
-        self.non_check_ques = self.get_open_question(queryset)
-        return queryset
-
-    def get_open_question(self, queryset):
-        if not queryset:
-            return 0
-        check_count  = queryset.filter(Q(user_check = False)).count()
-        return check_count
-
-
-    def get_context_data(self, **kwargs):
-        context = super(QuestionList, self).get_context_data(**kwargs)
-        context['non_check_ques'] = self.non_check_ques
-        return context
 
 
 

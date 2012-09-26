@@ -5,13 +5,14 @@ from django import forms
 from models import PcOptionsList, PcOptions, CompanyPC, Departments, Posts
 from proj.utils.formUtils import MyCheckboxSelectMultiple, FormsCleanUtils, ModelChoiceFieldForUserTo
 from django.contrib.auth.models import User
+from proj.utils.formUtils import ExtFormMixin
 
 
 
 
 
 
-class ChangePcOptionForm(forms.ModelForm):
+class ChangePcOptionForm(ExtFormMixin, forms.ModelForm):
     """
     Форма для зменения храктеристики ПК
     """
@@ -19,14 +20,14 @@ class ChangePcOptionForm(forms.ModelForm):
         model = PcOptionsList
         fields = ('body', )
 
-class AddPcOptionForPCForm(forms.Form):
+class AddPcOptionForPCForm(ExtFormMixin, forms.Form):
     """
     Форма для добавления характеристики ПК
     """
     option  = forms.ModelChoiceField(queryset=PcOptions.objects.all(), label=u'Характеристика')
     body    = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Значение')
 
-class AddCompanyPcForm(forms.ModelForm):
+class AddCompanyPcForm(ExtFormMixin, forms.ModelForm):
     """
     Форма для добавления ПК
     """
@@ -34,7 +35,7 @@ class AddCompanyPcForm(forms.ModelForm):
         model = CompanyPC
 
 
-class AddPcOptionsForm(forms.ModelForm):
+class AddPcOptionsForm(ExtFormMixin, forms.ModelForm):
     """
     Форма для добавления характеристики ПК
     """
@@ -42,7 +43,7 @@ class AddPcOptionsForm(forms.ModelForm):
         model = PcOptions
 
 
-class AddDepartamentForm(forms.ModelForm):
+class AddDepartamentForm(ExtFormMixin, forms.ModelForm):
     """
     Форма для добавления отдела
     """
@@ -53,7 +54,7 @@ class AddDepartamentForm(forms.ModelForm):
             }
 
 
-class CreateUserlogin(forms.Form, FormsCleanUtils ):
+class CreateUserlogin(ExtFormMixin, forms.Form, FormsCleanUtils ):
     """
     Форма для наследования
     """
@@ -97,7 +98,7 @@ class CreateUserForm(CreateUserlogin):
 
 
 
-class AddFileForm(forms.Form):
+class AddFileForm(ExtFormMixin, forms.Form):
     """
     Форма добавления файла
     """
@@ -116,7 +117,7 @@ class CreateCompanyForm(CreateUserlogin):
 
 
 
-class AddCompanyAdminsForUserForm(forms.Form):
+class AddCompanyAdminsForUserForm(ExtFormMixin, forms.Form):
     """
     Добавленеие кураторов для пользователя
 
@@ -141,7 +142,7 @@ class AddCompanyAdminsForUserForm(forms.Form):
             )
 
 
-class AddCompanyAdminsForCompanyForm(forms.Form):
+class AddCompanyAdminsForCompanyForm(ExtFormMixin, forms.Form):
     """
     Добавленеие кураторов для пользователя
 
@@ -170,7 +171,7 @@ class AddCompanyAdminsForCompanyForm(forms.Form):
 
 
 
-class ChangeUserToForQuesForm(forms.Form):
+class ChangeUserToForQuesForm(ExtFormMixin, forms.Form):
     """
     Форма для перенаправления вопроса
     """
@@ -189,7 +190,7 @@ class ChangeUserToForQuesForm(forms.Form):
 
 
 
-class AddPostForm(forms.Form):
+class AddPostForm(ExtFormMixin, forms.Form):
     """
     Форма для добавления должности
     """
@@ -211,7 +212,7 @@ class AddPostForm(forms.Form):
 
 
 
-class EditPostForm(forms.ModelForm):
+class EditPostForm(ExtFormMixin, forms.ModelForm):
     """
     Форма для изменения должности
     """

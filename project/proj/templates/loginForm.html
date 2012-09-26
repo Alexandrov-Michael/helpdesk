@@ -1,34 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% include 'head_links.html' %}
     <title>Хелпдеск от ФРЕГАТСОФТ</title>
-    <link href="{{ MEDIA_URL }}css/style.css" type='text/css' rel='stylesheet' />
 </head>
 <body id="login">
     <div id="wropper">
-        <div id="content">
-            <div id="form_header">
-                <h1>HELPDESK</h1>
+        <div id="login_form_content" class='container-fluid'>
+            <div class='row-fluid'>
+                <div class='span12'>
+                    <div id="form_header">
+                        <h1>HELPDESK</h1>
+                    </div>
+                </div>
             </div>
-            <div id="form_content">
-                {% for error in form.non_field_errors %}
-                    <p class="errornote">
-                        {{ error }}
-                    </p>
-                {% endfor %}
-                <form action="" method="POST">{% csrf_token %}
-                    <div class="form-row">
-                        <label for="id_username" class="required">Имя:</label> {{ form.username }}
+            <div class='row-fluid'>
+                <div class='span12'>
+                    <div id="form_content">
+                        {% for error in form.non_field_errors %}
+                            <p class="errornote">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                        <form action="" method="POST">{% csrf_token %}
+                            <div class="form-row">
+                                <label for="id_username" class="required">Имя:</label> {{ form.username }}
+                            </div>
+                            <div class="form-row">
+                                <label for="id_password" class="required">Пароль:</label> {{ form.password }}
+                                <input type="hidden" name="this_is_the_login_form" value="1" />
+                                <input type="hidden" name="next" value="{{ next }}" />
+                            </div>
+                            <div class="submit-row">
+                                <button type="submit">Войти</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-row">
-                        <label for="id_password" class="required">Пароль:</label> {{ form.password }}
-                        <input type="hidden" name="this_is_the_login_form" value="1" />
-                        <input type="hidden" name="next" value="{{ next }}" />
-                    </div>
-                    <div class="submit-row">
-                        <button type="submit">Войти</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

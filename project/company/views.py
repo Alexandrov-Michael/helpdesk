@@ -572,7 +572,7 @@ class GetPcForPcList(LoginRequiredMixin, ListView):
     context_object_name = 'pc_list'
     company_url_kwarg  = 'company'
     dep_url_kwarg = 'dep'
-    paginate_by = 40
+    paginate_by = 30
 
     def do_before_handler(self):
         self.skip_only_user()
@@ -829,5 +829,5 @@ class GetPcFromForAddQues(LoginRequiredMixin, GetOdjectMixin, View, JSONResponse
         dep = self.get_object()
         pc_from = CompanyPC.objects.filter(departament=dep)
         for item in pc_from:
-            result[item.id] = u'%s %s' % (item.pc_nameId, item.pc_name,)
+            result[item.id] = u'%s' % (item.pc_nameId[-3:])
         return result

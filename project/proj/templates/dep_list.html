@@ -11,24 +11,21 @@
         <select id='id_company' name='id_company' onchange="GetDepartaments(this)"></select>
     </div>
     <div id='ajax_pc_list'>
-        <div id='tableDiv'>
-            <div id="preTableTop">
-                <p>&nbsp;</p>
-            </div>
-            <table class='listTable'>
-                <thead>
-                <tr>
-                    <th>Отдел</th>
-                </tr>
-                </thead>
-                <tbody id="mainTable" class='tr_list_hover'>
-                    <tr>
-                        <td>Отделов нет</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p id='paginator'>&nbsp;</p>
+        <div id="preTable">
         </div>
+        <table class='m_table m_hover'>
+            <thead>
+            <tr>
+                <th>Отдел</th>
+            </tr>
+            </thead>
+            <tbody id="mainTable">
+                <tr>
+                    <td>Отделов нет</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class='postTable'></div>
     </div>
 {% endblock %}
 

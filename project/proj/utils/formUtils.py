@@ -83,3 +83,13 @@ class ModelChoiceFieldForUserToForQues(ModelChoiceField):
 
     def label_from_instance(self, obj):
         return "%s %s" %(obj.username.first_name, obj.username.last_name,)
+
+
+class ExtFormMixin(object):
+    """
+    Mixin для форм
+    """
+    name = None
+
+    def get_name(self):
+        return self.name

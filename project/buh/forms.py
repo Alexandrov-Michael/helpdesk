@@ -4,6 +4,7 @@ from django import forms
 from company.models import Company
 from buh.models import Contracts, Accounting
 from datetime import datetime
+from proj.utils.formUtils import ExtFormMixin
 
 MONTH_CHOISE = (
     ('1','январь'),
@@ -20,7 +21,7 @@ MONTH_CHOISE = (
     ('12' , 'декабрь'),
 )
 
-class AddAccountingForm(forms.Form):
+class AddAccountingForm(ExtFormMixin, forms.Form):
     """
     Форма для добавления отчетности
     """
@@ -46,7 +47,7 @@ class AddAccountingForm(forms.Form):
 
 
 
-class AddContractForm(forms.ModelForm):
+class AddContractForm(ExtFormMixin, forms.ModelForm):
     """
     Форма добавления контракта
     """

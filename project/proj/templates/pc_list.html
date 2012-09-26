@@ -7,11 +7,11 @@
 {% block content %}
     <h1>Список компьютеров в ваших компаниях</h1>
     <div id="choise_company">
-        <label for="sel_choise_company" >Выберите компанию</label><br>
+        <label for="sel_choise_company" >Выберите компанию</label>
         <select id='sel_choise_company' name='name_sel_choise_company' onchange="GetPcListForCompany()"></select>
     </div>
     <div id="choise_dep">
-        <label for="sel_choise_dep" >Выберите отдел</label><br>
+        <label for="sel_choise_dep" >Выберите отдел</label>
         <select id='sel_choise_dep' name='name_sel_choise_dep' onchange="GetPcListForDep()"></select>
     </div>
     <div id='ajax_pc_list'></div>
@@ -133,16 +133,18 @@
             }
         }
         function GetPcDetail(){
-            $('#mainTable tr').click(function(){
+            $('.m_table tr').click(function(){
                 var id = $(this).attr('id');
-                window.location = '/pc_detail/' + id + '/';
+                if(id)
+                {
+                    window.location = '/pc_detail/' + id + '/';
+                }
             });
         }
         function HideDep(){
             $('#choise_dep').hide();
         }
         function GetPeginatorNext(){
-            $('#tableDiv').hide();
             var page = $('#next').attr('href');
             var com = $('#sel_choise_company').val();
             var dep = $('#sel_choise_dep').val();
@@ -167,7 +169,6 @@
             }
         }
         function GetPeginatorPrev(){
-            $('#tableDiv').hide();
             var page = $('#prev').attr('href');
             var com = $('#sel_choise_company').val();
             var dep = $('#sel_choise_dep').val();

@@ -2,10 +2,11 @@
 __author__ = 'michael'
 from proj.utils.formUtils import FormsCleanUtils
 from django import forms
+from proj.utils.formUtils import ExtFormMixin
 
 
 
-class EditUserlogin(forms.Form, FormsCleanUtils ):
+class EditUserlogin(ExtFormMixin, forms.Form, FormsCleanUtils ):
     """
     Форма для наследования
     """

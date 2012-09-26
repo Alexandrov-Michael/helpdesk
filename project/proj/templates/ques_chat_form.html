@@ -74,7 +74,7 @@
                                         files_links = files_links + text;
                                     });
                                 }
-                                message_block.prepend('<div class="oneMsg '+sender_class+'"><div class="userName">'+date+' : '+sender+'</div><p><div class="q_body">'+body+'</div></p><div id="files">'+files_links+'</div></div');
+                                message_block.prepend('<div class="oneMsg '+sender_class+'"><div class="userName">'+date+' : '+sender+'</div><p><div>'+body+'</div></p><div id="files">'+files_links+'</div></div');
                                 var div_last_message = $('.oneMsg:first-child', message_block);
                                 div_last_message.fadeIn('slow');
                                 last_message = message_id;
@@ -85,8 +85,7 @@
                 }
             });
         }
-        function GetPcInfo(){
-            var id = $('.but_q_pc_detail').attr('id');
+        function GetPcInfo(id){
             window.location = '/pc_detail/' + id + '/'
         }
         function ChangeUserTo(id)
@@ -202,131 +201,137 @@
 
 
 {% block content %}
-    <h1>Обсуждение вопроса</h1>
-    <div class="but_in_question">
-        <button class="changeStatus" type="button" onclick="ChangeStatus()">
-            {% if question.user_check %}
-                Открыть вопрос
-            {% else %}
-                Закрыть вопрос
-            {% endif %}
-        </button>
-    </div>
-    {% if not user_is_company %}
-        <div class='but_in_question'>
-            {% if question.pc_from %}
-                <button onclick="GetPcInfo()" class='but_q_pc_detail' type="button" id="{{ question.pc_from.id }}">Информация о ПК</button>
-            {% endif %}
-        </div>
-        <div class='but_in_question'>
-            <button type="button" onclick="ChangeUserTo({{ question.id }})">Перенаправить</button>
-        </div>
-        {% if can_change %}
-            <div class='but_in_question'>
-                <button type="button" onclick="ChangeQuestion({{ question.id }})">Изменить вопрос</button>
-            </div>
-        {% endif %}
-    {% endif %}
-    <div id='question' class='borderLine3'>
+    <div class="container-fluid">
+        <h2>Обсуждение вопроса</h2>
 
-        <div id="face_wrop">
-            <p>Фотография получателя</p>
-            <div id="admin_face_visilble">
-                {% if question.user_to.profile.image %}
-                    <img src="{{ question.user_to.profile.image.url }}" width="70" height="70">
+    {#    Группа кнопок сверху#}
+
+        <div class="btn-group">
+            <button class="changeStatus btn" type="button" onclick="ChangeStatus()">
+                {% if question.user_check %}
+                    Открыть вопрос
                 {% else %}
-                    <img src="{{ MEDIA_URL }}img/fregat_logo.png" width="70" height="70">
+                    Закрыть вопрос
+                {% endif %}
+            </button>
+            {% if not user_is_company %}
+                {% if question.pc_from %}
+                    <button onclick="GetPcInfo({{ question.pc_from.id }})" class='btn' id="but_q_pc_detail"  type="button">Информация о ПК</button>
+                {% endif %}
+                <button type="button" onclick="ChangeUserTo({{ question.id }})" class='btn'>Перенаправить</button>
+                {% if can_change %}
+                    <button type="button" onclick="ChangeQuestion({{ question.id }})" class='btn'>Изменить вопрос</button>
+                {% endif %}
+            {% endif %}
+        </div>
+
+    {#    Конец группы кнопок#}
+
+
+    {#    Вопрос#}
+
+        <div class="row-fluid" id="question_for_chat">
+            <div class='span10 question_table'>
+                <div class="row-fluid question_table_row">
+                    <div class='span12'>
+                        <div class='div-label'>Фотография получателя:</div>
+                        <div class='div-value'>
+                            <div id="admin_face_visilble">
+                                {% if question.user_to.profile.image %}
+                                    <img src="{{ question.user_to.profile.image.url }}" width="70" height="70">
+                                {% else %}
+                                    <img src="{{ MEDIA_URL }}img/fregat_logo.png" width="70" height="70">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid question_table_row">
+                    <div class='span12'>
+                        <div class='div-label'>Дата создания вопроса:</div>
+                        <div id="question_date" class='div-value'>{{ question.date|date:"H:i d/m/Y" }}</div>
+                    </div>
+                </div>
+                <div class="row-fluid question_table_row">
+                    <div class='span12'>
+                        <div class='div-label'>От кого:</div>
+                        <div id="question_user_from" class='div-value'>
+                            {{ question.user_from.first_name }}
+                            {% if question.user_from.last_name %}
+                                {{ question.user_from.last_name }}
+                            {% endif %}
+                            {% if question.pc_from %}
+                                : {{ question.pc_from }} {{ question.worker_from }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid question_table_row">
+                    <div class='span12'>
+                        <div class='div-label'>Кому:</div>
+                        <div id="question_user_to" class='div-value'>
+                            {{ question.user_to.first_name }}
+                            {% if question.user_to.last_name %}
+                                {{ question.user_to.last_name }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid question_table_row">
+                    <div class='span12'>
+                        <div class='div-label'>Вопрос:</div>
+                        <div class='div-value' id='question_body'>{{ question.body }}</div>
+                    </div>
+                </div>
+                <div class="row-fluid question_table_row">
+                    <div class='span12'>
+                        <div class='div-label'>Вопрос закрыт:</div>
+                        {% if question.user_check %}
+                            <div id="question_user_check" class='green_font div-value'>Вопрос закрыт</div>
+                        {% else %}
+                            <div id="question_user_check" class='red_font div-value'>Вопрос открыт</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row-fluid question_table_row">
+                    <div class='span12 '>
+                        <div class='div-label'>Дата закрытия</div>
+                        <div id="question_user_check_date" class='div-value'>
+                            {% if question.user_check_date %}
+                                {{ question.user_check_date|date:"H:i d/m/Y" }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="span2"></div>
+        </div>
+
+
+{#    Конец вопроса #}
+
+        <div class="row-fluid">
+            <div class="span7">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div id="messBlock"></div>
+                    </div>
+                </div>
+                {% if not can_not_send_mess %}
+                    <div id="messForm" class="chatForm">
+                        <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                           {% include 'form_template.html' with form=form %}
+                            <div class="control-group">
+                                <div class="controls">
+                                    <button type="submit" class='btn btn-primary btn-large'>Отправить</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 {% endif %}
             </div>
+            <div class="span5"></div>
         </div>
-        <table>
-            <tbody id="q_table">
-            <tr>
-                <th>Дата создания вопроса:</th>
-                <td id="question_date">{{ question.date|date:"H:i d/m/Y" }}</td>
-            </tr>
-            <tr>
-                <th>От кого:</th>
-                <td id="question_user_from">
-                    {{ question.user_from.first_name }}
-                    {% if question.user_from.last_name %}
-                        {{ question.user_from.last_name }}
-                    {% endif %}
-                    {% if question.pc_from %}
-                        : {{ question.pc_from }} {{ question.worker_from }}
-                    {% endif %}
-                </td>
-            </tr>
-            <tr>
-                <th>Кому:</th>
-                <td id="question_user_to">
-                    {{ question.user_to.first_name }}
-                    {% if question.user_to.last_name %}
-                        {{ question.user_to.last_name }}
-                    {% endif %}
-                </td>
-            </tr>
-            <tr>
-                <th>Вопрос:</th>
-                <td class='chat_question_body'><div class='q_body' id='question_body'>{{ question.body }}</div></td>
-            </tr>
-            <tr>
-                <th>Вопрос закрыт:</th>
-                    {% if question.user_check %}
-                        <td id="question_user_check" class='green_font'>Вопрос закрыт</td>
-                    {% else %}
-                        <td id="question_user_check" class='red_font'>Вопрос открыт</td>
-                    {% endif %}
-            </tr>
-            <tr>
-                <th>Дата закрытия</th>
-                <td id="question_user_check_date">
-                    {% if question.user_check_date %}
-                        {{ question.user_check_date }}
-                    {% endif %}
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-    </div>
-    <div id="messages">
-        <div id="messBlock"></div>
-
-        {% if not can_not_send_mess %}
-            <div id="messForm" class="borderLine chatForm">
-                <form action="{% url chat question.pk %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
-                    {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                    {% endfor %}
-                    {{ form.non_field_errors }}
-                    <div class="fieldWrapper">
-                        <span id="error_mess">{{ form.body.errors }}</span>
-                        <label id="mes_table_lable" for="id_body">Сообщение:</label>
-                        <table id="mes_table">
-                            <tbody>
-                                <tr>
-                                    <td id='mes_table_message'>{{ form.body }}</td>
-                                    <td id="mes_table_button"><input id="mes_button" type="submit" value="Отправить" /></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <label for='id_file'>Прикрепить файл:</label>
-                        <div>{{ form.file }}</div>
-                    </div>
-                </form>
-            </div>
-        {% endif %}
-
-    </div>
-    <div class="but_in_question">
-        <button class="changeStatus" type="button" onclick="ChangeStatus()">
-            {% if question.user_check %}
-                Открыть вопрос
-            {% else %}
-                Закрыть вопрос
-            {% endif %}
-        </button>
-    </div>
+   </div>
 {% endblock %}
 

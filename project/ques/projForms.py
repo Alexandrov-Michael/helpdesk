@@ -4,16 +4,19 @@ __author__ = 'michael'
 from django import forms
 from company.models import CompanyPC, User, Posts, Departments, CompanyAdmins, Company
 from django.http import Http404
-from proj.utils.formUtils import ModelChoiceFieldForUserTo
+from proj.utils.formUtils import ModelChoiceFieldForUserTo,ExtFormMixin
 from django.db.models import Q
 
 
 
-class EditQuestionUser(forms.Form):
+class EditQuestionUser(ExtFormMixin, forms.Form):
     """
     Форма для добавления вопроса для компаний
     """
-    def __init__(self, user, *args, **kwargs):
+    name = 'add_ques_for_company'
+
+
+    def __init__(self, user, profile, *args, **kwargs):
         try:
             company = Company.objects.get(com_user=user)
         except Company.DoesNotExist:
@@ -38,15 +41,17 @@ class EditQuestionUser(forms.Form):
     department  = forms.ModelChoiceField(queryset=None, label=u'Отдел', error_messages={'required': 'Укажите пожалуйста значение поля "Отдел"'})
     user_from   = forms.ModelChoiceField(queryset=None, label=u'От кого', error_messages={'required': 'Укажите пожалуйста значение поля "От кого"'})
     user_to     = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому', error_messages={'required': 'Укажите пожалуйста значение поля "Кому"'})
-    post        = forms.ModelChoiceField(queryset=Posts.objects.all()[:2], label=u'Тема', error_messages={'required': 'Укажите пожалуйста значение поля "Тема"'})
+    post        = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема', error_messages={'required': 'Укажите пожалуйста значение поля "Тема"'})
     body        = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос', error_messages={'required': 'Заполните пожалуйста поле "Вопрос"'})
 
 
 
-class EditQuestionAdmin(forms.Form):
+class EditQuestionAdmin(ExtFormMixin, forms.Form):
     """
     Форма для добавления вопроса для админов
     """
+
+    name = 'add_ques_for_admins'
 
     def __init__(self, user,profile, *args, **kwargs):
         if profile.is_super_user:
@@ -64,7 +69,7 @@ class EditQuestionAdmin(forms.Form):
 
     for_all = forms.BooleanField(label=u'Для всех ваших компаний', required=False)
     user_to = ModelChoiceFieldForUserTo(queryset=None, label=u'Кому', required=False)
-    post    = forms.ModelChoiceField(queryset=Posts.objects.all()[:1], label=u'Тема', required=False)
+    post    = forms.ModelChoiceField(queryset=Posts.objects.all(), label=u'Тема', required=False)
     body    = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос', error_messages={'required': 'Поле вопрос не заполнено'})
 
     def clean(self):
@@ -94,19 +99,24 @@ class EditQuestionAdmin(forms.Form):
         return cleaned_data
 
 
-class ChatForm(forms.Form):
+class ChatForm(ExtFormMixin, forms.Form):
     """
     Форма чата в вопросе
     """
+
+    name = 'chat_corm'
 
     body = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 5}), label=u'Сообщение')
     file = forms.FileField(max_length=100, allow_empty_file=False, label=u'Прикрепить файл', required=False)
 
 
 
-class EditQuestionForKuratorForm(forms.Form):
+class EditQuestionForKuratorForm(ExtFormMixin, forms.Form):
     """
     Форма для изменения тела вопроса
     """
+
+    name = 'question_body_change'
+
     body = forms.CharField(widget=forms.Textarea(attrs={'cols': 70, 'rows': 10}), label=u'Вопрос')
 

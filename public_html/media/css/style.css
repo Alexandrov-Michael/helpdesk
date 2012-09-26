@@ -1,324 +1,157 @@
-/*stylesheet for FREGATSOFT*/
-* {
-    margin: 0;
-    padding: 0;
-    /*overflow: auto;*/
+/* style for helpdesk */
+
+/* wropper  -------------------------------------  */
+#wropper{
+    margin:8px;
 }
 
 
 
-body {
-    margin: 0;
-    padding: 0;
-    font-size: 12px;
-    font-family: Verdana,Arial,sans-serif;
-    color: #333;
-    background: #fff;
+/******* HEADER ******/
+#admin_face_main{
+    float:right;
 }
-
-/* LINKS */
-
-a{
-    outline: none;
-}
-
-a:link, a:visited {
-    color: #5b80b2;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #036;
-}
-
-a img {
-    border: none;
-}
-
-a.section:link, a.section:visited {
-    color: white;
-    text-decoration: none;
-}
-
-.errorlist{
-    color: red;
-    margin: 3px;
-}
-
-
-/* header */
-
-/* headerTop */
-
-#headerTop {
-    background: none repeat scroll 0 0 #417690;
-    color: #FFFFCC;
-    overflow: hidden;
-    padding-bottom: 5px;
-}
-
-#logo h1 {
-    color: #F4F379;
-    font-size: 18px;
-    font-weight: normal;
-    margin:8px 0;
-    padding: 0 10px;
-}
-#logo{
+/* загрузка индикатор */
+#loading_wrop{
+    width: 35px;
+    height: 35px;
     float:left;
-    position: relative;
-    top:2px;
 }
-
-.information{
-    font-size: 11px;
-    float: right;
-    padding:5px 5px 0 0;
-}
-
-.information a{
-    color:white;
-}
-
-
-/* menu */
-
-#menu{
-    padding: 5px 5px 5px 10px;
-    height: 40px;
-    position: relative;
-}
-
-#menu a{
-    font-size: 17px;
-}
-
-#menu>ul>li{
-    display: block;
-    float: left;
-    margin: 0 10px 0 0;
-}
-#menu>ul>li>a{
-    padding: 5px;
-    display: block;
-    background-color: #428fa8;
-    position:relative;
-    text-decoration:none;
-    color:#fff;
-    border: solid 1px #417690;
-    border-radius: 5px;
-}
-#menu>ul>li>a:active{
-    padding:6px 5px 4px;
-    top:1px;
-}
-#menu>ul>li>a:hover{
-    background-color: #3c6079;
-}
-
-
-
-/* обертка для сообщений  */
-
-div#message_wrop{
-    position: absolute;
-    top: 40px;
-    margin: 0 40%;
-}
-
-/* div для вывода сообщений на javascript */
-div.show_message{
-    border: 1px solid #c9c9c9;
-    background-color: #fefe98;
-    border-radius: 6px;
-    padding: 3px 7px;
-    word-wrap: normal;
-    white-space: nowrap;
-    font-weight: bolder;
-    font-size: 13px;
-    margin: 0 0 5px 0;
-    float: left;
+#loading{
+    background: url("../img/loading.gif") no-repeat;
+    width: 35px;
+    height: 35px;
     display: none;
 }
-/* сообщение об ошибке всплывающее */
-div.message_err{
-    color: red;
+#menu{
+    position:relative;
 }
+/* конец загрузки нидикатора */
 
 
-/*  долги по бухгалтерии */
-#accounting{
-    margin: 0 0 0 30px;
+
+/******* END HEADER  ******/
+
+
+/******* MAIN *******/
+#main{
+    clear:both;
 }
-#accounting li{
-    color: red;
-    font-size: 15px;
-    font-weight: bolder;
+/* талица с данными */
+.m_table{
+   border:1px solid #cccccc; 
+   border-collapse:collapse;
+   width:100%;
 }
-
-/*  КОНЕЦ долги по бухгалтерии */
-
-
-/* content */
-
-#content{
-    /*margin: 10px 15px;*/
-    /*change 20120628*/
-    float: left;
-    padding: 10px 15px;
-    width: 97%;
+.m_table td, .m_table th{
+    border:1px solid #CCCCCC;
 }
-
-
-/* tableDiv */
-
-#tableDiv {
-    position: relative;
-    width: 100%;
-    background: none repeat scroll 0 0 white;
-    border: 1px solid #CCCCCC;
-    margin:5px 0 10px 0;
+.m_hover tbody tr:hover td{
+    background-color: #6699ff;
+    cursor: pointer;
 }
-
-#preTableTop {
+.preTable, .postTable{
+    height:30px;
+    border:1px solid #cccccc;
+}
+.preTable{
     background: url("../img/nav-bg-reverse.gif") repeat-x scroll 0 -10px white;
     border-bottom: 1px solid #DDDDDD;
-    border-top: 1px solid #FFFFFF;
     color: #999999;
-    padding: 7px;
     font-size: 13px;
+    padding: 7px;
+    border-bottom:none;
 }
-
-#paginator {
-    background: url("../img/nav-bg.gif") repeat-x scroll 0 180% white;
-    border-bottom: 1px solid #EEEEEE;
-    border-top: none;
+.postTable{
+    background: url("../img/nav-bg.gif") repeat-x scroll 0 100% white;
+    border-top: medium none;
     color: #666666;
     overflow: hidden;
     padding: 10px;
+    border-top:none;
 }
-
-.listTable {
-    border-collapse: collapse;
-    width: 100%;
+.preTable p{
+    margin:0;
+    height:100%;
+    padding:5px 0 0 0;
 }
-.listTable th, .listTable td{
-    padding: 5px;
-}
-
-.listTable thead tr th{
-    border: 1px solid #ccc;
-    border-top: none;
-}
-
-.listTable thead tr th:first-child{
-    border-left: none;
-}
-
-.listTable thead tr th:last-child{
-    border-right: none;
-}
-
-.listTable tbody tr td{
-    border: 1px solid #ccc;
-}
-
-.listTable tbody tr td:last-child{
-    border-right: none;
-}
-
-
 .firstTd{
     background: none repeat scroll 0 0 #EDF3FE;
 }
-
-.secondTd{
-
+.m_table td{
+    padding:3px 5px;
 }
-
-.plus{
-    background-color: #C8FFCB;
-}
-
-.minus{
-    background-color: yellow;
-}
-.check{
-    width: 10px;
+.m_table th{
+    padding:6px;   
 }
 .dateCol{
-    width: 60px;
-    text-align: center;
+    text-align:center;
+    width:5%;
+}
+.proq5Col{
+    width:5%;
+}
+.plus{
+    background: #C8FFCB;
+}
+.minus{
+    background: yellow;
+}
+/* end table */
+
+/* question chat */
+#question_for_chat{
+    margin: 15px 0;
+}
+.div-label{
+    display: table-cell;
+    width: 200px;
+    text-align: right;
+    padding-right: 15px;
+}
+.div-value{
+    display: table-cell;
+}
+.question_table{
+    display: table;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    background: #fff;
+}
+.question_table_row{
+    display: table-row;
+}
+#question_body{
+    font-style:italic;
+}
+.red_font{
+    color:red;
+}
+.green_font{
+    color:green;
 }
 
-
-.valueCol{
-    width: 30%;
+/**** форма отправки сообщения в чате */
+#messForm{
+    margin-bottom: 20px;
+    background: #eee;
+}
+textarea#id_body{
+    width:600px;
+    height:150px;
 }
 
-.numbers{
-    width: 4%;
+/*  message info alert success */
+#message_wrop{
+    position:absolute;
+    margin:0 0 0 35%;
 }
-
-#mainTable tr:hover{
-    cursor: pointer;
-}
-#mainTable.nopointer tr:hover{
-    cursor: default;
-}
-
-/* edit questions */
-
-.borderLine {
-    border:1px solid #ccc;
-}
-
-
-#question{
-    padding: 7px;
-    margin:10px 0 0 0;
-    width: 800px;
-}
-
-.q_body{
-    word-wrap: break-word;
-    width: 600px;
-    white-space: pre-wrap;
-}
-
-#messages{
-    margin: 15px 0 0 0;
-    width: 60%;
-}
-
-.admins_list {
-    margin: 10px;
-    font-size: 15px;
-    color: #000000;
-}
-.admins_list a{
-    color: #000000;
-}
-.admins_list a:hover{
-    text-decoration: underline;
-    color: blue;
-}
-.admins_list li{
-    padding: 0 7px 0 0;
-}
-.admins_list ul{
-    margin: 0 0 0 10px;
-}
-
-
-
-
-/* сообщение в чате  */
+/* chat message */
 .oneMsg{
     border-radius: 11px;
     padding: 10px;
     margin:0 0 10px 0;
-    width: 620px;
     border:2px solid #ccc;
     display: none;
 }
@@ -327,8 +160,6 @@ div.message_err{
 .chatForm{
     border-radius: 11px;
     padding: 10px;
-    margin:0 0 10px 0;
-    width: 620px;
 }
 
 .oneMsgAdmin{
@@ -343,484 +174,12 @@ div.message_err{
     font-weight: bold;
     margin:0 0 5px 0;
 }
-
-
-.quesBut{
-    margin: 10px;
-}
-
-
-/* chat */
-#q_table{
-    width: 800px;
-}
-
-#q_table th{
-    text-align: right;
-    padding: 5px 0 0 0;
-}
-
-#q_table td{
-    padding: 5px 0 0 10px;
-}
-
-#mes_button{
-    width: 95px;
-    height: 95px;
-}
-
-#mes_table_lable{
-    font-weight: bold;
-}
-
-#error_mess ul{
-    margin: 0 0 0 13px;
-    color: red;
-}
-
-.borderLine3{
-    border:3px solid #ccc;
-}
-
-.chat_question_body{
-    font-style: italic;
-}
-
-.p_error{
-    color: blue;
-    font-size: 15px;
-    margin: 10px 0 10px 0;
-}
-
-#choise_company{
-    margin: 10px 10px 10px 0;
-    float: left;
-}
-
-#choise_dep{
+#choise_company, #choise_dep{
     float:left;
-    margin: 10px 0 0 0;
+    margin: 0 10px 0 0;
 }
-
-#pc_detail_parent{
-    margin: 10px;
-}
-
 #ajax_pc_list{
-    margin: 60px 0 0 0;
+    clear:both;
 }
 
-#table_pc_parent th{
-    text-align: right;
-    padding: 3px 5px 0 0;
-}
-
-#div_add_but{
-    margin: 10px;
-}
-
-.q_pc_detail{
-    margin: 0 0 10px 10px;
-}
-
-.but_history_but{
-    margin: 0 0 5px 10px;
-}
-
-.bold_span{
-    font-weight: bold;
-}
-
-#message{
-    font-weight: bold;
-    color: red;
-    margin: 15px 0 5px 0;
-}
-
-input[type="submit"], button{
-    -moz-border-bottom-colors: none;
-    -moz-border-image: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
-    background: url("../img/nav-bg.gif") repeat-x scroll center bottom white;
-    border-color: #DDDDDD #AAAAAA #AAAAAA #DDDDDD;
-    border-style: solid;
-    border-width: 1px;
-    color: black;
-    padding: 3px 5px;
-}
-input[type="submit"]:active, button:active{
-    position: relative;
-    top:1px;
-    background: url('../img/nav-bg-reverse.gif') center top;
-
-}
-#tableForm{
-    margin: 0 0 10px 0;
-}
-#tableForm.user_add th{
-    text-align: right;
-}
-
-#tableForm td{
-    padding: 0 0 0 5px;
-}
-
-#change_pc_option{
-    padding: 7px;
-}
-
-.but_add_option_for_all{
-    margin: 5px 0 5px 0;
-}
-
-.note{
-    color: #003398;
-    margin: 5px 0 5px 0;
-    font-size: 15px;
-}
-
-.red_error{
-    color: red;
-    font-size: 17px;
-    margin: 10px 0 10px 0;
-}
-
-.div_choise_company{
-    float: left;
-}
-
-.div_choise_user{
-    float: left;
-}
-
-.choise_margin{
-    margin: 10px 10px 10px 0;
-}
-
-#report_list{
-    margin: 60px 0 0 0;
-}
-
-.choise_options P{
-    margin: 0 0 3px 0;
-}
-
-.div_choise_pc{
-    float: left;
-}
-
-#menu li .hide_menu li{
-    list-style: none;
-}
-
-.hide_menu{
-    position:absolute;
-    background: #fff;
-    z-index: 1;
-    top: 35px;
-    border-left:1px solid #808080;
-    border-right:1px solid #808080;
-    border-bottom: 1px solid #808080;
-    width: 200px;
-    padding: 5px;
-}
-
-.body_q{
-    word-wrap: break-word;
-    width: 500px;
-}
-
-#id_body{
-    width:500px;
-}
-
-#ieDiv{
-    background: #d7d7d7;
-    position: absolute;
-    width: 100%;
-    height: 400px;
-    text-align: center;
-    z-index: 999;
-    opacity: 0.90;
-}
-
-#ieDiv p{
-    color: red;
-    font-size: 30px;
-    font-weight: bold;
-    margin: 20px;
-}
-
-#ieDiv table{
-    margin: auto;
-    color: #000000;
-    font-size: 20px;
-}
-
-#ieDiv table td{
-    padding: 0 20px 0 0;
-}
-
-#id_for_all{
-    margin: 3px 0 0 0;
-}
-
-.menu_item_parent{
-    position: relative;
-}
-#loading{
-    background: url("../img/loading.gif") no-repeat;
-    width: 35px;
-    height: 35px;
-    display: none;
-}
-#loading_wrop{
-    width: 35px;
-    height: 35px;
-}
-#files{
-    margin: 5px 0 0 0;
-}
-.but_file_add{
-    margin: 5px 0 5px 10px;
-}
-#file_list{
-    margin: 5px 0 15px 10px;
-}
-#file_list ol{
-    margin: 5px 0 0 20px;
-}
-#file_list span{
-    font-weight: bold;
-}
-#file_list li{
-    margin: 5px 0 0 0;
-}
-.content_inner{
-    margin: 10px 0 0;
-    padding: 7px;
-}
-.but{
-    margin: 15px 0 15px;
-}
-.input_td{
-    text-align: center;
-}
-#admin_face{
-    width: 70px;
-    height: 70px;
-    background: url('../img/fregat_logo.png');
-    margin:5px auto 10px;
-    border: 1px solid grey;
-}
-#face_wrop p{
-    text-align: center;
-}
-#admin_face img{
-    display: none;
-}
-#admin_face_visilble{
-    width: 70px;
-    height: 70px;
-    margin:5px auto 10px;
-    border: 1px solid grey;
-}
-#admin_face_main{
-    float:right;
-    margin: 0 20px 0 0;
-    width: 70px;
-    height: 70px;
-}
-.but_in_question{
-    margin: 15px 10px 0;
-}
-#curators_main{
-    border: 1px solid black;
-    font-weight: normal;
-    font-size: 13px;
-}
-#curators_main td, #curators_main th{
-    border: 1px solid black;
-    padding: 2px 5px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-div#message{
-    height: 1em;
-}
-#div_button{
-    margin: 10px 0;
-}
-#add_page{
-    margin: 10px 0;
-}
-#wiki-list{
-    margin: 20px;
-}
-#article_body{
-    margin: 20px;
-}
-
-/* рабочий ховер на отчет в списке вопросов */
-.tr_list_hover tr:hover td{
-    background-color: #6699ff;
-}
-
-/*  сообщения для виви о системных изменениях */
-.system_change_message{
-    margin: 5px 0 0 0;
-    border: 1px solid #c6c6c6;
-    padding: 10px;
-    border-radius: 10px;
-    float: left;
-}
-
-/* тело сообщения об изменениях системы */
-.wiki_system_body{
-    padding: 3px 20px;
-}
-/*  обертка для сообщения изменения системы */
-.wrop_sys_mes{
-    width: 100%;
-    float: left;
-}
-
-
-/*  для поля закрт ли вопрос в форме чата к вопросу */
-.red_font{
-    color: red;
-}
-.green_font{
-    color: green;
-}
-
-
-
-/*  Форма логина */
-#login{
-    width: 100%;
-    height: 100%;
-    background: #eee;
-}
-#login div#wropper{
-    background: #eee;
-    width: 100%;
-    height: 100%;
-}
-#login #content{
-    width: 28em;
-    margin-top: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid #ccc;
-    background: #ffffff;
-    min-width: 300px;
-    float: none;
-    padding: 0;
-}
-#login #form_header{
-    background: url('../img/admin-tools.png') repeat-x;
-    color: #FFFFCC;
-    padding: 7px 0;
-}
-#login #form_header h1{
-    text-align: center;
-}
-#login #form_content{
-    margin: 10px 15px;
-}
-#login .form-row{
-    float: left;
-    padding: 4px 0;
-    width: 100%;
-}
-#login .form-row label{
-    color: #333;
-    float: left;
-    font-size: 1em;
-    line-height: 2em;
-    padding-right: 0.5em;
-    text-align: right;
-    width: 9em;
-}
-#login .form-row #id_username, #login .form-row #id_password{
-    width: 14em;
-    margin: 2px 0;
-    padding: 2px 3px;
-    vertical-align: middle;
-    border: 1px solid #ccc;
-    font-size: 11px;
-
-}
-#login .submit-row{
-    clear: both;
-    text-align: center;
-    padding: 10px 0 20px;
-}
-#login .errornote{
-    border: 1px solid red;
-    color: red;
-    display: block;
-    font-size: 12px !important;
-    margin: 0 0 3px;
-    padding: 4px 5px 4px 25px;
-    background: url('../img/icon_error.gif') no-repeat scroll 5px 0.3em #FFFFCC;
-}
-
-
-/* div для селектов перед таблицей значений */
-.div_select{
-    margin: 10px 0 0 0;
-}
-/* КОНЕЦ   */
-
-/* td с шириной  */
-.td-20{
-    width: 20%;
-}
-/* Конец */
-
-
-/*  Кнопка выходы   */
-.classname {
-    -moz-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
-    -webkit-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
-    box-shadow:inset 0px 1px 0px 0px #bbdaf7;
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #378de5) );
-    background:-moz-linear-gradient( center top, #79bbff 5%, #378de5 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#378de5');
-    background-color:#79bbff;
-    -moz-border-radius:6px;
-    -webkit-border-radius:6px;
-    border-radius:6px;
-    border:1px solid #84bbf3;
-    display:inline-block;
-    color:#ffffff;
-    font-family:arial;
-    font-size:15px;
-    font-weight:bold;
-    padding:6px 24px;
-    text-decoration:none;
-    text-shadow:1px 1px 0px #528ecc;
-}.classname:hover {
-     background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #378de5), color-stop(1, #79bbff) );
-     background:-moz-linear-gradient( center top, #378de5 5%, #79bbff 100% );
-     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#378de5', endColorstr='#79bbff');
-     background-color:#378de5;
- }.classname:active {
-      position:relative;
-      top:1px;
-  }
-/*  КОНЕЦ  */
+/******* END MAIN *******/

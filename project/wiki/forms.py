@@ -4,8 +4,9 @@ __author__ = 'michael'
 from django import forms
 from models import SimpleWiki
 from tinymce.widgets import TinyMCE
+from proj.utils.formUtils import ExtFormMixin
 
-class AddWikiPageForm(forms.ModelForm):
+class AddWikiPageForm(ExtFormMixin, forms.ModelForm):
     """
     Форма для создания вики страницы
     """

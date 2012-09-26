@@ -6,23 +6,37 @@
 
 
 {% block content %}
-    <h1>Задать вопрос</h1>
-    <div id='question' class='borderLine'>
-        <div id="face_wrop">
-            <p>Фотография получателя</p>
-            <div id="admin_face">
-                <img src="{{ MEDIA_URL }}img/fregat_logo.png" width="70" height="70">
+    <h2>Задать вопрос</h2>
+    <div class='container-fluid'>
+        <div class="row-fluid">
+        </div>
+        <div class='row-fluid'>
+            <div class='span10 well white-well'>
+                <div class="row-fluid">
+                    <div class='span12'>
+                        <div id="face_wrop">
+                            <p>Фотография получателя</p>
+                            <div id="admin_face">
+                                <img src="{{ MEDIA_URL }}img/fregat_logo.png" width="70" height="70">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class='span12'>
+                        <form action="" method="POST" class="form-horizontal" name="{{ form.get_name }}">{% csrf_token %}
+                            {% include 'form_template.html' with form=form %}
+                            <div class="control-group">
+                                <div class="controls">
+                                    <button type="submit" class='btn btn-primary btn-large'>Создать вопрос</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
+            <div class='span2'></div>
         </div>
-        <div class="note">
-            <p>Представтесь пожалуйста</p>
-        </div>
-        <form action="{% url add_q %}" method="POST">{% csrf_token %}
-            <table id='tableForm'>
-                {{ form.as_table }}
-            </table>
-            <input type="submit" value="Создать вопрос" />
-        </form>
     </div>
 {% endblock %}
 
