@@ -1,0 +1,846 @@
+/*stylesheet for FREGATSOFT*/
+
+/* LINKS */
+
+.errorlist{
+    color: red;
+    margin: 3px;
+}
+
+
+/* header */
+
+
+
+/* menu */
+
+#menu{
+    padding: 5px 5px 5px 10px;
+    height: 40px;
+    position: relative;
+}
+
+
+#menu>ul>li{
+    display: block;
+    float: left;
+    margin: 0 10px 0 0;
+}
+#menu>ul>li>a{
+    padding: 5px;
+    display: block;
+    background-color: #428fa8;
+    position:relative;
+    text-decoration:none;
+    color:#fff;
+    border: solid 1px #417690;
+    border-radius: 5px;
+}
+#menu>ul>li>a:active{
+    padding:6px 5px 4px;
+    top:1px;
+}
+#menu>ul>li>a:hover{
+    background-color: #3c6079;
+}
+
+
+
+/* обертка для сообщений  */
+
+div#message_wrop{
+    position: absolute;
+    top: 40px;
+    margin: 0 40%;
+}
+
+/* div для вывода сообщений на javascript */
+div.show_message{
+    border: 1px solid #c9c9c9;
+    background-color: #fefe98;
+    border-radius: 6px;
+    padding: 3px 7px;
+    word-wrap: normal;
+    white-space: nowrap;
+    font-weight: bolder;
+    font-size: 13px;
+    margin: 0 0 5px 0;
+    float: left;
+    display: none;
+}
+/* сообщение об ошибке всплывающее */
+div.message_err{
+    color: red;
+}
+
+
+/*  долги по бухгалтерии */
+#accounting{
+    margin: 0 0 0 30px;
+}
+#accounting li{
+    color: red;
+    font-size: 15px;
+    font-weight: bolder;
+}
+
+/*  КОНЕЦ долги по бухгалтерии */
+
+
+
+
+
+
+/* tableDiv */
+
+#tableDiv {
+    position: relative;
+    width: 100%;
+    background: none repeat scroll 0 0 white;
+    border: 1px solid #CCCCCC;
+    margin:5px 0 10px 0;
+}
+
+#preTableTop {
+    background: url("../img/nav-bg-reverse.gif") repeat-x scroll 0 -10px white;
+    border-bottom: 1px solid #DDDDDD;
+    border-top: 1px solid #FFFFFF;
+    color: #999999;
+    padding: 7px;
+}
+
+#paginator {
+    background: url("../img/nav-bg.gif") repeat-x scroll 0 180% white;
+    border-bottom: 1px solid #EEEEEE;
+    border-top: none;
+    color: #666666;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.listTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+.listTable th, .listTable td{
+    padding: 5px;
+}
+
+.listTable thead tr th{
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.listTable thead tr th:first-child{
+    border-left: none;
+}
+
+.listTable thead tr th:last-child{
+    border-right: none;
+}
+
+.listTable tbody tr td{
+    border: 1px solid #ccc;
+}
+
+.listTable tbody tr td:last-child{
+    border-right: none;
+}
+
+
+.firstTd{
+    background: none repeat scroll 0 0 #EDF3FE;
+}
+
+.secondTd{
+
+}
+
+#wropper td.plus{
+    background-color: #C8FFCB;
+}
+
+#wropper td.minus{
+    background-color: yellow;
+}
+.check{
+    width: 10px;
+}
+.dateCol{
+    width: 60px;
+    text-align: center;
+}
+
+
+.valueCol{
+    width: 30%;
+}
+
+.numbers{
+    width: 4%;
+}
+
+.nopointer tr:hover{
+    cursor: default;
+}
+
+/* edit questions */
+
+.borderLine {
+    border:1px solid #ccc;
+}
+
+
+.admins_list {
+    margin: 10px;
+    color: #000000;
+}
+.admins_list a{
+    color: #000000;
+}
+.admins_list a:hover{
+    text-decoration: underline;
+    color: blue;
+}
+.admins_list li{
+    padding: 0 7px 0 0;
+}
+.admins_list ul{
+    margin: 0 0 0 10px;
+}
+
+
+
+
+/* сообщение в чате  */
+.oneMsg{
+    border-radius: 11px;
+    padding: 10px;
+    margin:0 0 10px 0;
+    border:2px solid #ccc;
+    display: none;
+}
+
+
+.chatForm{
+    border-radius: 11px;
+    padding: 10px;
+}
+
+.oneMsgAdmin{
+    border:2px solid #AEC5FF;
+}
+
+.oneMsgUser{
+    border:2px solid #93DC8F;
+}
+
+.userName{
+    font-weight: bold;
+    margin:0 0 5px 0;
+}
+
+
+.quesBut{
+    margin: 10px;
+}
+
+
+/* chat */
+#q_table{
+    width: 800px;
+}
+
+#q_table th{
+    text-align: right;
+    padding: 5px 0 0 0;
+}
+
+#q_table td{
+    padding: 5px 0 0 10px;
+}
+
+#mes_button{
+    width: 95px;
+    height: 95px;
+}
+
+#mes_table_lable{
+    font-weight: bold;
+}
+
+#error_mess ul{
+    margin: 0 0 0 13px;
+    color: red;
+}
+
+.borderLine3{
+    border:3px solid #ccc;
+}
+
+.chat_question_body{
+    font-style: italic;
+}
+
+.p_error{
+    color: blue;
+    font-size: 15px;
+    margin: 10px 0 10px 0;
+}
+
+#choise_company{
+    margin: 10px 10px 10px 0;
+    float: left;
+}
+
+#choise_dep{
+    float:left;
+    margin: 10px 0 0 0;
+}
+
+#pc_detail_parent{
+    margin: 10px;
+}
+
+#ajax_pc_list{
+    margin: 60px 0 0 0;
+}
+
+#table_pc_parent th{
+    text-align: right;
+    padding: 3px 5px 0 0;
+}
+
+#div_add_but{
+    margin: 10px;
+}
+
+.q_pc_detail{
+    margin: 0 0 10px 10px;
+}
+
+.but_history_but{
+    margin: 0 0 5px 10px;
+}
+
+.bold_span{
+    font-weight: bold;
+}
+
+#message{
+    font-weight: bold;
+    color: red;
+    margin: 15px 0 5px 0;
+}
+
+input[type="submit"], button{
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: url("../img/nav-bg.gif") repeat-x scroll center bottom white;
+    border-color: #DDDDDD #AAAAAA #AAAAAA #DDDDDD;
+    border-style: solid;
+    border-width: 1px;
+    color: black;
+    padding: 3px 5px;
+}
+input[type="submit"]:active, button:active{
+    position: relative;
+    top:1px;
+    background: url('../img/nav-bg-reverse.gif') center top;
+
+}
+#tableForm{
+    margin: 0 0 10px 0;
+}
+#tableForm.user_add th{
+    text-align: right;
+}
+
+#tableForm td{
+    padding: 0 0 0 5px;
+}
+
+#change_pc_option{
+    padding: 7px;
+}
+
+.but_add_option_for_all{
+    margin: 5px 0 5px 0;
+}
+
+.note{
+    color: #003398;
+    margin: 5px 0 5px 0;
+    font-size: 15px;
+}
+
+.red_error{
+    color: red;
+    font-size: 17px;
+    margin: 10px 0 10px 0;
+}
+
+.div_choise_company{
+    float: left;
+}
+
+.div_choise_user{
+    float: left;
+}
+
+.choise_margin{
+    margin: 10px 10px 10px 0;
+}
+
+#report_list{
+    margin: 60px 0 0 0;
+}
+
+.choise_options P{
+    margin: 0 0 3px 0;
+}
+
+.div_choise_pc{
+    float: left;
+}
+
+#menu li .hide_menu li{
+    list-style: none;
+}
+
+.hide_menu{
+    position:absolute;
+    background: #fff;
+    z-index: 1;
+    top: 35px;
+    border-left:1px solid #808080;
+    border-right:1px solid #808080;
+    border-bottom: 1px solid #808080;
+    width: 200px;
+    padding: 5px;
+}
+
+.body_q{
+    word-wrap: break-word;
+    width: 500px;
+}
+
+#id_body{
+    width:95%;
+}
+
+#ieDiv{
+    background: #d7d7d7;
+    position: absolute;
+    width: 100%;
+    height: 400px;
+    text-align: center;
+    z-index: 999;
+    opacity: 0.90;
+}
+
+#ieDiv p{
+    color: red;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+#ieDiv table{
+    margin: auto;
+    color: #000000;
+    font-size: 20px;
+}
+
+#ieDiv table td{
+    padding: 0 20px 0 0;
+}
+
+.menu_item_parent{
+    position: relative;
+}
+#loading{
+    background: url("../img/loading.gif") no-repeat;
+    width: 35px;
+    height: 35px;
+    display: none;
+}
+#loading_wrop{
+    width: 35px;
+    height: 35px;
+}
+#files{
+    margin: 5px 0 0 0;
+}
+.but_file_add{
+    margin: 5px 0 5px 10px;
+}
+#file_list{
+    margin: 5px 0 15px 10px;
+}
+#file_list ol{
+    margin: 5px 0 0 20px;
+}
+#file_list span{
+    font-weight: bold;
+}
+#file_list li{
+    margin: 5px 0 0 0;
+}
+.content_inner{
+    margin: 10px 0 0;
+    padding: 7px;
+}
+.but{
+    margin: 15px 0 15px;
+}
+.input_td{
+    text-align: center;
+}
+
+#admin_face img{
+    display: none;
+}
+#admin_face_visilble{
+    width: 70px;
+    height: 70px;
+    border: 1px solid grey;
+    margin-bottom: 15px;
+}
+
+.but_in_question{
+    margin: 15px 10px 0;
+}
+#curators_main{
+    border: 1px solid black;
+    font-weight: normal;
+}
+#curators_main td, #curators_main th{
+    border: 1px solid black;
+    padding: 2px 5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+div#message{
+    height: 1em;
+}
+#div_button{
+    margin: 10px 0;
+}
+#add_page{
+    margin: 10px 0;
+}
+#wiki-list{
+    margin: 20px;
+}
+#article_body{
+    margin: 20px;
+}
+
+/* рабочий ховер на отчет в списке вопросов */
+.tr_list_hover tr:hover td{
+    background-color: #6699ff;
+    cursor: pointer;
+}
+
+/*  сообщения для виви о системных изменениях */
+.system_change_message{
+    margin: 5px 0 0 0;
+    border: 1px solid #c6c6c6;
+    padding: 10px;
+    border-radius: 10px;
+    float: left;
+}
+
+/* тело сообщения об изменениях системы */
+.wiki_system_body{
+    padding: 3px 20px;
+}
+/*  обертка для сообщения изменения системы */
+.wrop_sys_mes{
+    width: 100%;
+    float: left;
+}
+
+
+/*  для поля закрт ли вопрос в форме чата к вопросу */
+.red_font{
+    color: red;
+}
+.green_font{
+    color: green;
+}
+
+
+
+/*  Форма логина */
+
+
+
+
+
+#login #form_content{
+    margin: 10px 15px;
+}
+#login .form-row{
+    float: left;
+    padding: 4px 0;
+    width: 100%;
+}
+#login .form-row label{
+    color: #333;
+    float: left;
+    font-size: 1em;
+    line-height: 2em;
+    padding-right: 0.5em;
+    text-align: right;
+    width: 9em;
+}
+#login .form-row #id_username, #login .form-row #id_password{
+    width: 14em;
+    margin: 2px 0;
+    padding: 2px 3px;
+    vertical-align: middle;
+    border: 1px solid #ccc;
+    font-size: 11px;
+
+}
+#login .submit-row{
+    clear: both;
+    text-align: center;
+    padding: 10px 0 20px;
+}
+#login .errornote{
+    border: 1px solid red;
+    color: red;
+    display: block;
+    font-size: 12px !important;
+    margin: 0 0 3px;
+    padding: 4px 5px 4px 25px;
+    background: url('../img/icon_error.gif') no-repeat scroll 5px 0.3em #FFFFCC;
+}
+
+
+/* div для селектов перед таблицей значений */
+.div_select{
+    margin: 10px 0 0 0;
+}
+/* КОНЕЦ   */
+
+/* td с шириной  */
+.td-20{
+    width: 20%;
+}
+/* Конец */
+
+
+/*   body */
+html{
+    width: 100%;
+    height: 100%;
+}
+html body{
+    background: #f8f8f8;
+    /*background: #ffffff; *//* Old browsers */
+    /*background: -moz-linear-gradient(top,  #ffffff 0%, #efefef 100%); *//* FF3.6+ */
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#efefef)); *//* Chrome,Safari4+ */
+    /*background: -webkit-linear-gradient(top,  #ffffff 0%,#efefef 100%); *//* Chrome10+,Safari5.1+ */
+    /*background: -o-linear-gradient(top,  #ffffff 0%,#efefef 100%); *//* Opera 11.10+ */
+    /*background: -ms-linear-gradient(top,  #ffffff 0%,#efefef 100%); *//* IE10+ */
+    /*background: linear-gradient(to bottom,  #ffffff 0%,#efefef 100%); *//* W3C */
+    /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#efefef',GradientType=0 ); *//* IE6-9 */
+
+
+
+    width: 100%;
+    min-height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+/* end body */
+
+
+
+
+
+
+
+
+
+
+/* изображение в форме вопроса фото админа */
+#admin_face{
+    width: 70px;
+    height: 70px;
+    background: url('../img/fregat_logo.png');
+    margin:5px auto 10px;
+    border: 1px solid grey;
+}
+/* конец фото админа */
+
+
+
+
+
+/********************************** HEADER */
+
+
+/*  Заголовок страницы */
+#headerBot h1{
+    float: left;
+    margin-left:10px;
+    /*margin-top: 30px;*/
+}
+/* конец заголовка страницы */
+
+/* изображение аккаунта вверху перед меню главным */
+#admin_face_main{
+    float:right;
+    margin-top: 5px;
+    margin-right: 10px;
+    width: 70px;
+    height: 70px;
+    overflow: hidden;
+}
+/* конец изображения */
+
+
+
+/********************************* END HEADER */
+
+
+
+
+/********** TABLES */
+
+/* таблицы основные для вывода инфы в списке*/
+.table{
+    background: #fff;
+}
+/*  конец таблиц */
+
+#wropper table.table th{
+    text-align: center;
+    vertical-align: middle;
+    background: #ebebeb;
+}
+
+
+
+
+/********* end tables */
+
+
+
+/********* FORMS */
+/* белый окрас well */
+#wropper .white-well{
+    background: #fff;
+}
+/* конец well */
+
+
+/********* edn forms */
+
+
+
+/***** forms login */
+div#login_form_content{
+    padding: 0;
+    height: 270px !important;
+    overflow: hidden;
+}
+
+#login div#wropper{
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+html body#login{
+    width: 28em;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 300px;
+    float: none;
+    padding: 0;
+    height: 290px !important;
+    min-height: 0%;
+}
+
+
+#login #form_header{
+    background: url('../img/login_header.png') repeat;
+    color: #FFFFCC;
+    padding: 5px 0 0 0;
+}
+#login #form_header h1{
+    text-align: center;
+}
+/***** end form login */
+
+
+
+/***** Forms chata question */
+#question_for_chat{
+    margin: 15px 0;
+}
+
+/* поле лейбла это к вопросу для каждой строки*/
+.div-label{
+    display: table-cell;
+    width: 200px;
+    text-align: right;
+    padding-right: 15px;
+}
+.div-value{
+    display: table-cell;
+}
+.question_table{
+    display: table;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    background: #fff;
+}
+.question_table_row{
+    display: table-row;
+}
+/* конец поля лейбла */
+
+/*** question body */
+#question_body{
+    font-style: italic;
+}
+/**** end question body */
+
+/**** форма отправки сообщения в чате */
+#messForm{
+    margin-bottom: 20px;
+    background: #fff;
+}
+/* конец формы отправки сообщения в чате */
+
+
+/**** End form chat */
+
+
+
+/***** main кщнтейнер для контента на главном шаблоне */
+#main{
+    clear: both;
+}
+/***** end main */

@@ -1,0 +1,84 @@
+<div class='preTable'>
+    <p>Количество вопросов {{ paginator.count }}, из них незакрытых <strong>{{ non_check_ques }}</strong></p>
+</div>
+<table class='m_table m_hover'>
+   <thead>
+    <tr>
+        <th class='proq5Col'>ID</th>
+        <th>Дата создания</th>
+        <th>От кого</th>
+        <th>Кому</th>
+        <th>Вопрос</th>
+        <th class='proq5Col'>Ответов</th>
+        <th class='proq5Col'>Вопрос закрыт</th>
+        <th class='proq5Col'>Дата закрытия</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for ques in questions %}
+        <tr class='{% cycle 'firstTd' 'secondTd' %}' id="{{ ques.id }}">
+            <td>{{ ques.slug }}</td>
+            <td class='dateCol'>{{ ques.date|date:'H:i d/m/Y' }}</td>
+            <td>
+                {% if ques.pc_from %}
+                    {{ ques.worker_from }}
+                {% else %}
+                    {{ ques.user_from.first_name }} {{ ques.user_from.last_name }}
+                {%  endif  %}
+            </td>
+            <td>
+                {{ ques.user_to.first_name }}
+                {% if ques.user_to.last_name %}
+                    {{ ques.user_to.last_name }}
+                {% endif %}
+            </td>
+            <td>
+                {{ ques.body|truncatewords:15 }}
+            </td>
+            <td>{{ ques.answers }}</td>
+            <td class='
+                                {% if ques.user_check %}
+                                    plus
+                                {% else %}
+                                    minus
+                                {% endif %}
+                             check'>
+                {% if ques.user_check %}
+                    Закрыт
+                {% else %}
+                    Открыт
+                {% endif %}
+            </td>
+            <td class='dateCol'>
+                {% if ques.user_check_date %}
+                    {{ ques.user_check_date|date:'H:i d/m/Y' }}
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="8">Вопросов нет</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class='postTable'></div>
+<ul class="pager">
+    {% if not page_obj.has_previous %}
+    <li class='disabled'>
+        <a href="#">&larr; Предыдущая</a>
+    {% else %}
+    <li>
+        <a href="?page={{ page_obj.previous_page_number }}" >&larr; Предыдущая</a>
+    {% endif %}
+    </li>
+    <span class="current_page">Страница {{ page_obj.number }} из {{ paginator.num_pages }}.</span>
+    {% if not page_obj.has_next %}
+    <li class='disabled'>
+        <a href="#">Следующая &rarr;</a>
+    {% else %}
+    <li>
+        <a href="?page={{ page_obj.next_page_number }}">Следующая &rarr;</a>
+    {% endif %}
+    </li>
+</ul>

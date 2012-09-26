@@ -1,0 +1,31 @@
+/* style for helpdesk */
+
+/* wropper  -------------------------------------  */
+#wropper{
+    margin:8px;
+}
+
+
+
+/******* HEADER ******/
+#admin_face_main{
+    float:right;
+}
+
+#loading_wrop{
+    width: 35px;
+    height: 35px;
+}
+
+
+
+
+/******* END HEADER  ******/
+
+
+/******* MAIN *******/
+#main{
+    clear:both;
+}
+
+/******* END MAIN *******/

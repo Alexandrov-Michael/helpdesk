@@ -1,0 +1,70 @@
+{% url main as main %}
+{% url add_q as add_q %}
+{% url wiki as wiki %}
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="brand" href="/">Helpdesk</a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class='{% if request.path == main %}active{% endif %}'><a href="{{ main }}">Главная</a></li>
+                    <li class='{% if request.path == add_q %}active{% endif %}'><a href="{{ add_q }}">Задать вопрос</a></li>
+                    {% if not user_is_company %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Списки</a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="{% url pc_list %}">Компьютеры</a></li>
+                                <li><a href="{% url short_company_name %}">Сокращения</a></li>
+                                <li><a href="{% url dep_list %}">Отделы</a></li>
+                                {% if user_is_super %}
+                                    <li><a href="{% url user_list %}">Сотрудники</a></li>
+                                    <li><a href="{% url company_list %}">Компании</a></li>
+                                    <li><a href="{% url posts_list %}">Должности</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Создать</a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="{% url add_pc %}">Компьютер</a></li>
+                                <li><a href="{% url add_dep %}">Отдел</a></li>
+                                {% if user_is_super %}
+                                    <li><a href="{% url add_user %}">Сотрудника</a></li>
+                                    <li><a href="{% url add_company %}">Компанию</a></li>
+                                    <li><a href="{% url add_post %}">Должность</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if user_is_report %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Отчеты</a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="{% url report_ques %}">Отчет по вопросам</a></li>
+                                <li><a href="{% url report_pc_history %}">Отчет по пк</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if user_is_super or user_is_buh %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Бухгалтерия</a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="{% url buh_index %}">Список отчетности</a></li>
+                                <li><a href="{% url list_contracts %}">Список договоров</a></li>
+                                <li><a href="{% url add_accounting %}">Создать отчетность</a></li>
+                                <li><a href="{% url add_contract %}">Создать договор</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+                <a class='btn pull-right btn-info' href="/accounts/logout/">Выйти</a>
+                <ul class="nav pull-right">
+                    {% if not user_is_company %}
+                        <li {% if request.path == wiki %}class='active'{% endif %}><a href="{{ wiki }}">Документация</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
